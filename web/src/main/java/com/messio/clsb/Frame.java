@@ -1,6 +1,9 @@
 package com.messio.clsb;
 
+import com.messio.clsb.entity.Instruction;
+
 import java.time.LocalTime;
+import java.util.List;
 
 /**
  * Created by jpc on 22-09-16.
@@ -8,10 +11,12 @@ import java.time.LocalTime;
 public class Frame {
     private final LocalTime from;
     private final LocalTime to;
+    private final List<Instruction> instructions;
 
-    public Frame(LocalTime from, LocalTime to) {
+    public Frame(LocalTime from, LocalTime to, List<Instruction> instructions) {
         this.from = from;
         this.to = to;
+        this.instructions = instructions;
     }
 
     public LocalTime getFrom() {
@@ -21,4 +26,9 @@ public class Frame {
     public LocalTime getTo() {
         return to;
     }
+
+    public List<Instruction> getInstructions() {
+        return instructions;
+    }
 }
+

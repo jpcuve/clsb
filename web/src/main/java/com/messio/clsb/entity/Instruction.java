@@ -9,7 +9,7 @@ import java.time.LocalTime;
 /**
  * Created by jpc on 9/26/16.
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.MINIMAL_CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class")
+@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class")
 public class Instruction {
     private LocalTime when;
     private String account;

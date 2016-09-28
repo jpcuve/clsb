@@ -1,6 +1,7 @@
 package com.messio.clsb.session;
 
 import com.messio.clsb.Frame;
+import com.messio.clsb.entity.Instruction;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
@@ -18,5 +19,8 @@ public class PayInManager {
 
     public void period(@Observes Frame frame) {
         LOGGER.info(String.format("period: %s %s", frame.getFrom(), frame.getTo()));
+        for (Instruction instruction: frame.getInstructions()){
+            LOGGER.info(String.format(" instruction: %s", instruction));
+        }
     }
 }
