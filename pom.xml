@@ -4,15 +4,12 @@
 
     <groupId>com.messio</groupId>
     <artifactId>clsb</artifactId>
-    <version>${version}</version>
+    <version>0.9</version>
+    <packaging>pom</packaging>
 
     <modules>
         <module>web</module>
 		<module>cli</module>
     </modules>
-
-    <properties>
-        <version>0.1</version>
-    </properties>
 
 </project>
