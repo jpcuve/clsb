@@ -1,5 +1,7 @@
 package com.messio.clsb;
 
+import com.messio.clsb.entity.Account;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -18,5 +20,11 @@ public class ClsbService {
 
     @PersistenceContext(unitName = "example")
     private EntityManager em;
+
+    @GET
+    @Path("/accounts")
+    public List<Account> accounts(){
+        return em.createNamedQuery(Account.ACCOUNT_ALL, Account.class).getResultList();
+    }
 
 }

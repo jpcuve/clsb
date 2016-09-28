@@ -1,9 +1,11 @@
 package com.messio.clsb;
 
 import com.messio.clsb.entity.Instruction;
+import com.messio.clsb.entity.PayIn;
 
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by jpc on 22-09-16.
@@ -27,8 +29,8 @@ public class Frame {
         return to;
     }
 
-    public List<Instruction> getInstructions() {
-        return instructions;
+    public List<PayIn> getPayIns() {
+        return instructions.stream().filter(i -> PayIn.class.equals(i.getClass())).map(i -> (PayIn) i).collect(Collectors.toList());
     }
 }
 
