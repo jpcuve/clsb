@@ -1,14 +1,10 @@
 package com.messio.clsb.entity;
 
 import com.messio.clsb.Position;
-import com.messio.clsb.adapter.LocalTimeAdapter;
 import com.messio.clsb.adapter.PositionAdapter;
 import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.math.BigDecimal;
-import java.time.LocalTime;
 
 /**
  * Created by jpc on 22-09-16.

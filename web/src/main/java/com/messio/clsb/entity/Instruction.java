@@ -5,7 +5,6 @@ import com.messio.clsb.Position;
 import com.messio.clsb.adapter.LocalTimeAdapter;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.math.BigDecimal;
 import java.time.LocalTime;
 
 /**

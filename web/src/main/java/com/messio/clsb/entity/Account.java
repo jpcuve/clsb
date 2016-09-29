@@ -5,7 +5,6 @@ import com.messio.clsb.adapter.PositionAdapter;
 import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 /**
  * Created by jpc on 22-09-16.

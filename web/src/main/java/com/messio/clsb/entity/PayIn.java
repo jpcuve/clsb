@@ -1,7 +1,5 @@
 package com.messio.clsb.entity;
 
-import java.math.BigDecimal;
-
 /**
  * Created by jpc on 9/26/16.
  */
