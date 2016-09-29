@@ -1,0 +1,4 @@
+[
+  {"@class":"com.messio.clsb.entity.Instruction","when":"00:02","account":"a"},
+  {"@class":"com.messio.clsb.entity.PayIn","when":"00:15","account":"b", "amount": 100.45}
+]

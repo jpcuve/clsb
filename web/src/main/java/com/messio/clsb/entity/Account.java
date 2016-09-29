@@ -6,12 +6,15 @@ import java.math.BigDecimal;
 /**
  * Created by jpc on 22-09-16.
  */
+@Entity
 @NamedQueries({
+        @NamedQuery(name = Account.ACCOUNT_ALL, query = "select a from Account a order by a.name"),
         @NamedQuery(name = Account.ACCOUNT_BY_NAME, query = "select a from Account a where a.name = :name")
 })
-@Entity
+@Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 public class Account {
     public static final String ACCOUNT_BY_NAME = "Account.byName";
+    public static final String ACCOUNT_ALL = "account.all";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")

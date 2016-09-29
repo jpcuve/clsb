@@ -1,13 +1,12 @@
 package com.messio.clsb;
 
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.messio.clsb.entity.Instruction;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalTime;
 
 /**
@@ -23,11 +22,17 @@ public class TestJson {
         final JaxbAnnotationModule annotationModule = new JaxbAnnotationModule();
         objectMapper.registerModule(annotationModule);
         objectMapper.writeValue(System.out, instruction);
+    }
 
-/*
-        final Instruction instruction1 = objectMapper.readValue("{\"@class\":\".Instruction\",\"when\":\"15:07:10.892\",\"account\":\"test account\"}", Instruction.class);
-        System.out.println(instruction1);
-*/
-
+    @Test
+    public void testPolymorphicReadValue() throws IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final JaxbAnnotationModule annotationModule = new JaxbAnnotationModule();
+        objectMapper.registerModule(annotationModule);
+        final InputStream is = getClass().getClassLoader().getResourceAsStream("scenario-test.json");
+        final Instruction[] instructions = objectMapper.readValue(is, Instruction[].class);
+        for (final Instruction instruction: instructions){
+            System.out.println(instruction);
+        }
     }
 }

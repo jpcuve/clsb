@@ -1,16 +1,27 @@
 package com.messio.clsb.entity;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 
 /**
  * Created by jpc on 22-09-16.
  */
+@Entity
+@Table(name = "movements")
 public class Movement {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
-    private LocalTime created;
+    @ManyToOne
+    @JoinColumn(name = "orig_account_id")
     private Account orig;
+    @ManyToOne
+    @JoinColumn(name = "dest_account_id")
     private Account dest;
+    @Basic
+    @Column(name = "amount")
     private BigDecimal amount;
 
     public Long getId() {
@@ -19,14 +30,6 @@ public class Movement {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public LocalTime getCreated() {
-        return created;
-    }
-
-    public void setCreated(LocalTime created) {
-        this.created = created;
     }
 
     public Account getOrig() {
