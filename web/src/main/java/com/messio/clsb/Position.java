@@ -19,11 +19,21 @@ public class Position extends HashMap<String, BigDecimal> {
         this.put(ccy, new BigDecimal(amount));
     }
 
+    public Position(String ccy1, double amount1, String ccy2, double amount2){
+        this.put(ccy1, new BigDecimal(amount1));
+        this.put(ccy2, new BigDecimal(amount2));
+    }
+
+    public Position(String ccy1, double amount1, String ccy2, double amount2, String ccy3, double amount3){
+        this.put(ccy1, new BigDecimal(amount1));
+        this.put(ccy2, new BigDecimal(amount2));
+        this.put(ccy3, new BigDecimal(amount3));
+    }
+
     public Position add(Position that){
-        final Set<String> currencies = new HashSet<>(keySet());
-        currencies.addAll(that.keySet());
         final Position ret = new Position();
-        currencies.forEach(c -> ret.put(c, getOrDefault(c, BigDecimal.ZERO).add(that.getOrDefault(c, BigDecimal.ZERO))));
+        ret.putAll(that);
+        entrySet().forEach(e -> ret.put(e.getKey(), e.getValue().add(ret.getOrDefault(e.getKey(),BigDecimal.ZERO))));
         return ret;
     }
 
@@ -39,6 +49,6 @@ public class Position extends HashMap<String, BigDecimal> {
 
     @Override
     public String toString() {
-        return entrySet().stream().map(e -> String.format("%s:%s", e.getKey(), e.getValue())).collect(Collectors.joining(","));
+        return entrySet().stream().map(e -> String.format("%s:%s", e.getKey(), e.getValue())).collect(Collectors.joining(";"));
     }
 }

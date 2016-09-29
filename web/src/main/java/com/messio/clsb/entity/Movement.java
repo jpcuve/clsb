@@ -3,6 +3,7 @@ package com.messio.clsb.entity;
 import com.messio.clsb.Position;
 import com.messio.clsb.adapter.LocalTimeAdapter;
 import com.messio.clsb.adapter.PositionAdapter;
+import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -15,6 +16,7 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "movements")
 public class Movement {
+    private static final FieldConverter<String, Position> CONVERTER_POSITION = new FieldConverter<>(new PositionAdapter());
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -54,10 +56,10 @@ public class Movement {
     }
 
     public Position getAmount() {
-        return amount;
+        return CONVERTER_POSITION.unmarshal(amount);
     }
 
     public void setAmount(Position amount) {
-        this.amount = amount;
+        this.amount = CONVERTER_POSITION.marshal(amount);
     }
 }

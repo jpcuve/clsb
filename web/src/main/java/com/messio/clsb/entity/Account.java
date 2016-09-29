@@ -1,6 +1,8 @@
 package com.messio.clsb.entity;
 
 import com.messio.clsb.Position;
+import com.messio.clsb.adapter.PositionAdapter;
+import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -15,6 +17,7 @@ import java.math.BigDecimal;
 })
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 public class Account {
+    private static final FieldConverter<String, Position> CONVERTER_POSITION = new FieldConverter<>(new PositionAdapter());
     public static final String ACCOUNT_BY_NAME = "Account.byName";
     public static final String ACCOUNT_ALL = "account.all";
     @Id
@@ -24,8 +27,9 @@ public class Account {
     @Basic
     @Column(name = "name")
     private String name;
+    @Basic
     @Column(name = "position")
-    private Position position;
+    private String position;
 
     public Long getId() {
         return id;
@@ -44,10 +48,10 @@ public class Account {
     }
 
     public Position getPosition() {
-        return position;
+        return CONVERTER_POSITION.unmarshal(position);
     }
 
     public void setPosition(Position position) {
-        this.position = position;
+        this.position = CONVERTER_POSITION.marshal(position);
     }
 }
