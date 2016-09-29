@@ -9,6 +9,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 /**
@@ -26,7 +27,7 @@ public class PayInManager {
         LOGGER.info(String.format("period: %s %s", frame.getFrom(), frame.getTo()));
         for (PayIn payIn: frame.getPayIns()){
             LOGGER.info(String.format(" pay-in: %s", payIn));
-            facade.book(new Transfer(payIn.getAmount(), payIn.getAccount()));
+            facade.book(Collections.singletonList(new Transfer(payIn.getAmount(), payIn.getAccount())));
         }
     }
 }

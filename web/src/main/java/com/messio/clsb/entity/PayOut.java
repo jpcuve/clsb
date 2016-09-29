@@ -1,9 +1,8 @@
 package com.messio.clsb.entity;
 
-import java.math.BigDecimal;
 
 /**
  * Created by jpc on 9/26/16.
  */
-public class PayIn extends Instruction {
+public class PayOut extends Instruction {
 }

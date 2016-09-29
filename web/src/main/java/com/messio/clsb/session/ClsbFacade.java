@@ -9,6 +9,10 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jpc on 25-09-16.
@@ -29,19 +33,25 @@ public class ClsbFacade {
         });
     }
 
-    public Movement book(Transfer transfer){
-        final Account origAccount = loadAccount(transfer.getOrig());
-        final Account destAccount = loadAccount(transfer.getDest());
-        final BigDecimal amount = transfer.getAmount();
-        origAccount.setPosition(origAccount.getPosition().subtract(amount));
-        destAccount.setPosition(destAccount.getPosition().add(amount));
-        final Movement movement = new Movement();
-        movement.setOrig(origAccount);
-        movement.setDest(destAccount);
-        movement.setAmount(amount);
-        em.persist(origAccount);
-        em.persist(destAccount);
-        em.persist(movement);
-        return movement;
+    public List<Movement> book(List<Transfer> transfers){
+        final List<Movement> list = new ArrayList<>();
+        final Map<String, Account> accountMap = new HashMap<>();
+        for (final Transfer transfer: transfers){
+            final Account origAccount = accountMap.computeIfAbsent(transfer.getOrig(), k -> loadAccount(transfer.getOrig()));
+            final Account destAccount = accountMap.computeIfAbsent(transfer.getDest(), k -> loadAccount(transfer.getDest()));
+            final BigDecimal amount = transfer.getAmount();
+            origAccount.setPosition(origAccount.getPosition().subtract(amount));
+            destAccount.setPosition(destAccount.getPosition().add(amount));
+            final Movement movement = new Movement();
+            movement.setOrig(origAccount);
+            movement.setDest(destAccount);
+            movement.setAmount(amount);
+            em.persist(movement);
+            list.add(movement);
+        }
+        for (final Account account: accountMap.values()){
+            em.persist(account);
+        }
+        return list;
     }
 }

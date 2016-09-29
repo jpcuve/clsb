@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.messio.clsb.adapter.LocalTimeAdapter;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 /**
@@ -13,6 +14,7 @@ import java.time.LocalTime;
 public class Instruction {
     private LocalTime when;
     private String account;
+    private BigDecimal amount;
 
     @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     public LocalTime getWhen() {
@@ -31,8 +33,16 @@ public class Instruction {
         this.account = account;
     }
 
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s:%s", when, account);
+        return String.format("[%s]%s:%s:%s", getClass().getSimpleName(), when, account, amount);
     }
 }

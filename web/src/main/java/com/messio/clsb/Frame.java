@@ -2,6 +2,7 @@ package com.messio.clsb;
 
 import com.messio.clsb.entity.Instruction;
 import com.messio.clsb.entity.PayIn;
+import com.messio.clsb.entity.Settlement;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -32,5 +33,11 @@ public class Frame {
     public List<PayIn> getPayIns() {
         return instructions.stream().filter(i -> PayIn.class.equals(i.getClass())).map(i -> (PayIn) i).collect(Collectors.toList());
     }
+
+    public List<Settlement> getSettlements() {
+        return instructions.stream().filter(i -> Settlement.class.equals(i.getClass())).map(i -> (Settlement) i).collect(Collectors.toList());
+    }
+
+
 }
 
