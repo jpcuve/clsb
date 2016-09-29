@@ -1,5 +1,7 @@
 package com.messio.clsb.entity;
 
+import com.messio.clsb.Position;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 
@@ -23,7 +25,7 @@ public class Account {
     @Column(name = "name")
     private String name;
     @Column(name = "position")
-    private BigDecimal position;
+    private Position position;
 
     public Long getId() {
         return id;
@@ -41,11 +43,11 @@ public class Account {
         this.name = name;
     }
 
-    public BigDecimal getPosition() {
+    public Position getPosition() {
         return position;
     }
 
-    public void setPosition(BigDecimal position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 }

@@ -1,6 +1,5 @@
 package com.messio.clsb;
 
-import java.math.BigDecimal;
 
 /**
  * Created by jpc on 9/22/16.
@@ -8,22 +7,22 @@ import java.math.BigDecimal;
 public class Transfer {
     public static final String MIRROR_NAME = "_MIRROR_";
     private String orig;
-    private BigDecimal amount;
+    private Position amount;
     private String dest;
 
-    public Transfer(String orig, BigDecimal amount, String dest) {
+    public Transfer(String orig, Position amount, String dest) {
         this.orig = orig;
         this.amount = amount;
         this.dest = dest;
     }
 
     // pay-out
-    public Transfer(String orig, BigDecimal amount){
+    public Transfer(String orig, Position amount){
         this(orig, amount, MIRROR_NAME);
     }
 
     // pay-in
-    public Transfer(BigDecimal amount, String dest){
+    public Transfer(Position amount, String dest){
         this(MIRROR_NAME, amount, dest);
     }
 
@@ -43,7 +42,7 @@ public class Transfer {
         return dest;
     }
 
-    public BigDecimal getAmount() {
+    public Position getAmount() {
         return amount;
     }
 

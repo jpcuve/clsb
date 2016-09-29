@@ -1,6 +1,7 @@
 package com.messio.clsb.entity;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.messio.clsb.Position;
 import com.messio.clsb.adapter.LocalTimeAdapter;
 
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -14,7 +15,7 @@ import java.time.LocalTime;
 public class Instruction {
     private LocalTime when;
     private String account;
-    private BigDecimal amount;
+    private Position amount;
 
     @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     public LocalTime getWhen() {
@@ -33,11 +34,11 @@ public class Instruction {
         this.account = account;
     }
 
-    public BigDecimal getAmount() {
+    public Position getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Position amount) {
         this.amount = amount;
     }
 

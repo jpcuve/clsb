@@ -1,6 +1,11 @@
 package com.messio.clsb.entity;
 
+import com.messio.clsb.Position;
+import com.messio.clsb.adapter.LocalTimeAdapter;
+import com.messio.clsb.adapter.PositionAdapter;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 
@@ -22,7 +27,7 @@ public class Movement {
     private Account dest;
     @Basic
     @Column(name = "amount")
-    private BigDecimal amount;
+    private String amount;
 
     public Long getId() {
         return id;
@@ -48,11 +53,11 @@ public class Movement {
         this.dest = dest;
     }
 
-    public BigDecimal getAmount() {
+    public Position getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Position amount) {
         this.amount = amount;
     }
 }

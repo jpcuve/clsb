@@ -1,5 +1,6 @@
 package com.messio.clsb.session;
 
+import com.messio.clsb.Position;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.Account;
 import com.messio.clsb.entity.Movement;
@@ -27,7 +28,7 @@ public class ClsbFacade {
         return em.createNamedQuery(Account.ACCOUNT_BY_NAME, Account.class).setParameter("name", name).getResultList().stream().findFirst().orElseGet(() -> {
             final Account a = new Account();
             a.setName(name);
-            a.setPosition(BigDecimal.ZERO);
+            a.setPosition(Position.ZERO);
             em.persist(a);
             return a;
         });
@@ -39,7 +40,7 @@ public class ClsbFacade {
         for (final Transfer transfer: transfers){
             final Account origAccount = accountMap.computeIfAbsent(transfer.getOrig(), k -> loadAccount(transfer.getOrig()));
             final Account destAccount = accountMap.computeIfAbsent(transfer.getDest(), k -> loadAccount(transfer.getDest()));
-            final BigDecimal amount = transfer.getAmount();
+            final Position amount = transfer.getAmount();
             origAccount.setPosition(origAccount.getPosition().subtract(amount));
             destAccount.setPosition(destAccount.getPosition().add(amount));
             final Movement movement = new Movement();

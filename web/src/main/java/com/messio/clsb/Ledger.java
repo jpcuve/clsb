@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
  * Created by jpc on 9/22/16.
  */
 public class Ledger {
-    private Map<String, BigDecimal> positions = new TreeMap<>();
+    private Map<String, Position> positions = new TreeMap<>();
 
     public Set<String> getAccounts(){
         return positions.keySet();
     }
 
-    public BigDecimal getPosition(String account){
-        return positions.getOrDefault(account, BigDecimal.ZERO);
+    public Position getPosition(String account){
+        return positions.getOrDefault(account, Position.ZERO);
     }
 
     public boolean apply(Transfer transfer){
@@ -25,8 +25,8 @@ public class Ledger {
     }
 
     public boolean apply(Transfer transfer, Predicate<Transfer> test){
-        final BigDecimal origPosition = getPosition(transfer.getOrig());
-        final BigDecimal destPosition = getPosition(transfer.getDest());
+        final Position origPosition = getPosition(transfer.getOrig());
+        final Position destPosition = getPosition(transfer.getDest());
         boolean accept = test.test(transfer);
         if (accept){
             positions.put(transfer.getOrig(), origPosition.subtract(transfer.getAmount()));
@@ -44,17 +44,17 @@ public class Ledger {
     }
 
     public void output(final PrintStream pw){
-        for (final Map.Entry<String, BigDecimal> entry: positions.entrySet()){
+        for (final Map.Entry<String, Position> entry: positions.entrySet()){
             pw.println(String.format("%s: %s", entry.getKey(), entry.getValue()));
         }
     }
 
     public static void main(String[] args) {
         final Ledger ledger = new Ledger();
-        ledger.apply(new Transfer(new BigDecimal(150), "annie"));
+        ledger.apply(new Transfer(new Position("EUR", 150), "annie"));
         System.out.println("after pay-in");
         ledger.output(System.out);
-        ledger.apply(new Transfer("annie", new BigDecimal(100), "jpc"));
+        ledger.apply(new Transfer("annie", new Position("EUR", 100), "jpc"));
         System.out.println("after settlement");
         ledger.output(System.out);
         System.out.println("payouts:");
