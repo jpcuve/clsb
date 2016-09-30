@@ -29,12 +29,10 @@ public class SettlementManager {
 
 
     public void period(@Observes Frame frame) {
-        LOGGER.info(String.format("period: %s %s", frame.getFrom(), frame.getTo()));
         for (Settlement settlement: frame.getSettlements()){
             LOGGER.info(String.format(" settlement: %s", settlement));
             settlements.add(settlement);
         }
-        LOGGER.info(String.format("total settlement instructions: %s", settlements.size()));
         // say we settle at 01:00 (has to be a parameter)
         if (LocalTime.of(1, 0).equals(frame.getTo())){
             LOGGER.info("matching instructions");

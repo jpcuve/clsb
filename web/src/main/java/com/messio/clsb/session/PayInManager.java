@@ -24,7 +24,6 @@ public class PayInManager {
 
 
     public void period(@Observes Frame frame) {
-        LOGGER.info(String.format("period: %s %s", frame.getFrom(), frame.getTo()));
         for (PayIn payIn: frame.getPayIns()){
             LOGGER.info(String.format(" pay-in: %s", payIn));
             facade.book(Collections.singletonList(new Transfer(payIn.getAmount(), payIn.getAccount())));
