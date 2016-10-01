@@ -13,12 +13,12 @@ import java.math.BigDecimal;
 @Entity
 @NamedQueries({
         @NamedQuery(name = Account.ACCOUNT_ALL, query = "select a from Account a order by a.name"),
-        @NamedQuery(name = Account.ACCOUNT_BY_NAME, query = "select a from Account a where a.name = :name")
+        @NamedQuery(name = Account.ACCOUNT_BY_NAME_BY_BANK, query = "select a from Account a where a.name = :name and a.bank = :bank")
 })
-@Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
+@Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "bank_id"})})
 public class Account {
     private static final FieldConverter<String, Position> CONVERTER_POSITION = new FieldConverter<>(new PositionAdapter());
-    public static final String ACCOUNT_BY_NAME = "Account.byName";
+    public static final String ACCOUNT_BY_NAME_BY_BANK = "Account.byName";
     public static final String ACCOUNT_ALL = "account.all";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,6 +30,9 @@ public class Account {
     @Basic
     @Column(name = "position")
     private String position;
+    @ManyToOne
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
 
     public Long getId() {
         return id;
@@ -53,5 +56,13 @@ public class Account {
 
     public void setPosition(Position position) {
         this.position = CONVERTER_POSITION.marshal(position);
+    }
+
+    public Bank getBank() {
+        return bank;
+    }
+
+    public void setBank(Bank bank) {
+        this.bank = bank;
     }
 }
