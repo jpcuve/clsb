@@ -3,13 +3,17 @@ package com.messio.clsb.session;
 import com.messio.clsb.Position;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.Account;
+import com.messio.clsb.entity.Bank;
+import com.messio.clsb.entity.Currency;
 import com.messio.clsb.entity.Movement;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,14 +27,35 @@ import java.util.Map;
 public class ClsbFacade {
     @PersistenceContext
     private EntityManager em;
+    private Bank bank;
+
+    @PostConstruct
+    public void init(){
+        this.bank = em.createNamedQuery(Bank.BANK_BY_NAME, Bank.class).setParameter("name", Bank.DEFAULT_NAME).getResultList().stream().findFirst().orElseGet(() -> {
+            final Bank b = new Bank();
+            em.persist(b);
+            return b;
+        });
+    }
 
     public Account loadAccount(final String name){
-        return em.createNamedQuery(Account.ACCOUNT_BY_NAME, Account.class).setParameter("name", name).getResultList().stream().findFirst().orElseGet(() -> {
+        return em.createNamedQuery(Account.ACCOUNT_BY_NAME_BY_BANK, Account.class).setParameter("name", name).setParameter("bank", this.bank).getResultList().stream().findFirst().orElseGet(() -> {
             final Account a = new Account();
+            a.setBank(this.bank);
             a.setName(name);
             a.setPosition(Position.ZERO);
             em.persist(a);
             return a;
+        });
+    }
+
+    public Currency loadCurrency(final String iso){
+        return em.createNamedQuery(Currency.CURRENCY_BY_ISO_BY_BANK, Currency.class).setParameter("iso", iso).setParameter("bank", this.bank).getResultList().stream().findFirst().orElseGet(() -> {
+            final Currency c = new Currency();
+            c.setBank(this.bank);
+            c.setIso(iso);
+            em.persist(c);
+            return c;
         });
     }
 

@@ -30,16 +30,18 @@ public class PayOutManager {
 
 
     public void period(@Observes Frame frame) {
-        LOGGER.info(String.format("period: %s %s", frame.getFrom(), frame.getTo()));
         if (LocalTime.of(1, 30).equals(frame.getTo())){
-            LOGGER.info("computing pay-outs");
             final List<PayOut> payOuts = new ArrayList<>();
             for (final Account account: em.createNamedQuery(Account.ACCOUNT_ALL, Account.class).getResultList()){
-                final PayOut payOut = new PayOut();
-                payOut.setAccount(account.getName());
-                payOut.setWhen(frame.getTo());
-                payOut.setAmount(account.getPosition());
-                payOuts.add(payOut);
+                if (!Transfer.MIRROR_NAME.equals(account.getName())){
+                    final PayOut payOut = new PayOut();
+                    payOut.setAccount(account.getName());
+                    payOut.setWhen(frame.getTo());
+                    payOut.setAmount(account.getPosition());
+                    payOuts.add(payOut);
+                    LOGGER.info(String.format(" pay-out: %s", payOut));
+                }
+
             }
             LOGGER.info("booking pay-outs");
             final List<Transfer> transfers = new ArrayList<>();

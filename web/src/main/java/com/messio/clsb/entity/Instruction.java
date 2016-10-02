@@ -14,6 +14,7 @@ import java.time.LocalTime;
 public class Instruction {
     private LocalTime when;
     private String account;
+    private String reference;
     private Position amount;
 
     @XmlJavaTypeAdapter(LocalTimeAdapter.class)
@@ -33,6 +34,14 @@ public class Instruction {
         this.account = account;
     }
 
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
     public Position getAmount() {
         return amount;
     }
@@ -43,6 +52,6 @@ public class Instruction {
 
     @Override
     public String toString() {
-        return String.format("[%s]%s:%s:%s", getClass().getSimpleName(), when, account, amount);
+        return String.format("%s;%s[%s](%s)%s", when, account, getClass().getSimpleName(), reference, amount);
     }
 }

@@ -53,7 +53,9 @@ public class Clock {
     public void timeout(){
         final LocalTime to = localTime.plusMinutes(10);
         final List<Instruction> list = Arrays.stream(instructions).filter(i -> localTime.isBefore(i.getWhen()) && i.getWhen().isBefore(to)).collect(Collectors.toList());
-        frameEvent.fire(new Frame(localTime, to, list));
+        final Frame frame = new Frame(localTime, to, list);
+        LOGGER.info(String.format("period: %s %s", frame.getFrom(), frame.getTo()));
+        frameEvent.fire(frame);
         localTime = to;
     }
 }
