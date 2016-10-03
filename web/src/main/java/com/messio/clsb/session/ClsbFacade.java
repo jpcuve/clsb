@@ -14,10 +14,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jpc on 25-09-16.
@@ -31,7 +28,12 @@ public class ClsbFacade {
 
     @PostConstruct
     public void init(){
-        this.bank = em.createNamedQuery(Bank.BANK_BY_NAME, Bank.class).setParameter("name", Bank.DEFAULT_NAME).getResultList().stream().findFirst().orElseGet(() -> {
+        this.bank = loadBank(Bank.DEFAULT_NAME);
+        Arrays.asList("EUR", "USD", "JPY").forEach(this::loadCurrency);
+    }
+
+    public Bank loadBank(String name){
+        return em.createNamedQuery(Bank.BANK_BY_NAME, Bank.class).setParameter("name", name).getResultList().stream().findFirst().orElseGet(() -> {
             final Bank b = new Bank();
             em.persist(b);
             return b;
