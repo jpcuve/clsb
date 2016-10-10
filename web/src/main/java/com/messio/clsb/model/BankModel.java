@@ -3,6 +3,7 @@ package com.messio.clsb.model;
 import com.messio.clsb.entity.Account;
 import com.messio.clsb.entity.Bank;
 import com.messio.clsb.entity.Currency;
+import com.messio.clsb.entity.Instruction;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ public class BankModel {
     private Bank bank;
     private List<Currency> currencies;
     private List<Account> accounts;
+    private List<Instruction> instructions;
 
     public Bank getBank() {
         return bank;
@@ -36,5 +38,13 @@ public class BankModel {
 
     public void setAccounts(List<Account> accounts) {
         this.accounts = accounts;
+    }
+
+    public List<Instruction> getInstructions() {
+        return instructions;
+    }
+
+    public void setInstructions(List<Instruction> instructions) {
+        this.instructions = instructions;
     }
 }
