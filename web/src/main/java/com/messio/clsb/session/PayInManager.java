@@ -4,6 +4,7 @@ import com.messio.clsb.Frame;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.Instruction;
 import com.messio.clsb.entity.PayIn;
+import legacyb1.TimeOfDay;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
@@ -21,6 +22,10 @@ public class PayInManager {
     public static final Logger LOGGER = Logger.getLogger(PayInManager.class.getCanonicalName());
     @Inject
     private ClsbFacade facade;
+
+    public void bookPayIns(TimeOfDay limit){
+        LOGGER.info("Booking pay-ins");
+    }
 
 
     public void period(@Observes Frame frame) {
