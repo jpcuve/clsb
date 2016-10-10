@@ -35,6 +35,14 @@ public class Currency {
     @Column(name = "closing")
     @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime closing;
+    @Basic
+    @Column(name = "funding_completion_target")
+    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
+    private LocalTime fundingCompletionTarget;
+    @Basic
+    @Column(name = "close")
+    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
+    private LocalTime close;
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
@@ -69,6 +77,22 @@ public class Currency {
 
     public void setClosing(LocalTime closing) {
         this.closing = closing;
+    }
+
+    public LocalTime getFundingCompletionTarget() {
+        return fundingCompletionTarget;
+    }
+
+    public void setFundingCompletionTarget(LocalTime fundingCompletionTarget) {
+        this.fundingCompletionTarget = fundingCompletionTarget;
+    }
+
+    public LocalTime getClose() {
+        return close;
+    }
+
+    public void setClose(LocalTime close) {
+        this.close = close;
     }
 
     public Bank getBank() {

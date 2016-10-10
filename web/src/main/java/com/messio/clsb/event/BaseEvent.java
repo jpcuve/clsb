@@ -21,12 +21,4 @@ public class BaseEvent {
     public String getName() {
         return name;
     }
-
-    @Override
-    public String toString() {
-        return "BaseEvent{" +
-                "when=" + when +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }

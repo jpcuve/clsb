@@ -6,7 +6,9 @@ import com.messio.clsb.Frame;
 import com.messio.clsb.entity.Bank;
 import com.messio.clsb.entity.Currency;
 import com.messio.clsb.entity.Instruction;
+import com.messio.clsb.event.BankEvent;
 import com.messio.clsb.event.BaseEvent;
+import com.messio.clsb.event.CurrencyEvent;
 import com.messio.clsb.model.BankModel;
 
 import javax.annotation.PostConstruct;
@@ -56,11 +58,14 @@ public class Scheduler {
         } catch(IOException e){
             LOGGER.severe("cannot read bank model, " + e.getMessage());
         }
-        events.add(new BaseEvent(bank.getOpening(), String.format("Opening bank %s", bank.getName())));
-        events.add(new BaseEvent(bank.getClosing(), String.format("Closing bank %s", bank.getName())));
+        events.add(new BankEvent(bank.getOpening(), "opening", bank));
+        events.add(new BankEvent(bank.getSettlementCompletionTarget(), "sct", bank));
+        events.add(new BankEvent(bank.getClosing(), "closing", bank));
         for (final Currency currency: facade.findCurrencies(bank)){
-            events.add(new BaseEvent(currency.getOpening(), String.format("Opening %s", currency.getIso())));
-            events.add(new BaseEvent(currency.getClosing(), String.format("Closing %s", currency.getIso())));
+            events.add(new CurrencyEvent(currency.getOpening(), "opening", currency));
+            events.add(new CurrencyEvent(currency.getClosing(), "fct", currency));
+            events.add(new CurrencyEvent(currency.getClosing(), "close", currency));
+            events.add(new CurrencyEvent(currency.getClosing(), "closing", currency));
         }
         final TimerConfig timerConfig = new TimerConfig();
         timerConfig.setPersistent(false);
@@ -70,7 +75,6 @@ public class Scheduler {
     @Timeout
     public void timeout(){
         final LocalTime to = localTime.plusMinutes(10);
-        LOGGER.info(String.format("Period: %s %s", localTime, to));
         events.stream().filter(e -> (localTime.isBefore(e.getWhen()) || localTime.equals(e.getWhen())) && e.getWhen().isBefore(to)).forEach(e -> emitter.fire(e));
         localTime = to;
     }
