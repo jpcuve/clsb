@@ -1,0 +1,36 @@
+{
+  "bank":{
+    "name": "TEST-01",
+    "opening": "03:00",
+    "closing": "23:00",
+    "settlementCompletionTarget": "11:00"
+  },
+  "currencies":[
+    {
+      "iso": "EUR",
+      "opening": "04:00",
+      "closing": "05:00"
+    },
+    {
+      "iso": "USD",
+      "opening": "05:30",
+      "closing": "06:30"
+    },
+    {
+      "iso": "JPY",
+      "opening": "07:00",
+      "closing": "08:00"
+    }
+  ],
+  "accounts":[
+    {
+      "name": "a"
+    },
+    {
+      "name": "b"
+    },
+    {
+      "name": "c"
+    }
+  ]
+}

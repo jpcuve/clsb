@@ -1,6 +1,9 @@
 package com.messio.clsb.entity;
 
+import com.messio.clsb.adapter.LocalTimeAdapter;
+
 import javax.persistence.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalTime;
 
 /**
@@ -9,12 +12,14 @@ import java.time.LocalTime;
 @Entity
 @NamedQueries({
         @NamedQuery(name = Currency.CURRENCY_ALL, query = "select c from Currency c order by c.iso"),
+        @NamedQuery(name = Currency.CURRENCY_BY_BANK, query = "select c from Currency c where c.bank = :bank order by c.iso"),
         @NamedQuery(name = Currency.CURRENCY_BY_ISO_BY_BANK, query = "select c from Currency c where c.iso = :iso and c.bank = :bank")
 })
 @Table(name = "currencies", uniqueConstraints = {@UniqueConstraint(columnNames = {"iso", "bank_id"})})
 public class Currency {
     public static final String CURRENCY_ALL = "currency.all";
     public static final String CURRENCY_BY_ISO_BY_BANK = "currency.byIsoByBank";
+    public static final String CURRENCY_BY_BANK = "currency.byBank";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
@@ -23,8 +28,12 @@ public class Currency {
     @Column(name = "iso")
     private String iso;
     @Basic
+    @Column(name = "opening")
+    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime opening;
     @Basic
+    @Column(name = "closing")
+    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime closing;
     @ManyToOne
     @JoinColumn(name = "bank_id")

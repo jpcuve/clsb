@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @Entity
 @NamedQueries({
         @NamedQuery(name = Account.ACCOUNT_ALL, query = "select a from Account a order by a.name"),
+        @NamedQuery(name = Account.ACCOUNT_BY_BANK, query = "select a from Account a where a.bank = :bank order by a.name"),
         @NamedQuery(name = Account.ACCOUNT_BY_NAME_BY_BANK, query = "select a from Account a where a.name = :name and a.bank = :bank")
 })
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "bank_id"})})
@@ -20,6 +21,7 @@ public class Account {
     private static final FieldConverter<String, Position> CONVERTER_POSITION = new FieldConverter<>(new PositionAdapter());
     public static final String ACCOUNT_BY_NAME_BY_BANK = "Account.byName";
     public static final String ACCOUNT_ALL = "account.all";
+    public static final String ACCOUNT_BY_BANK = "account.byBank";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
