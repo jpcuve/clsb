@@ -28,6 +28,7 @@ public class SettlementManager {
     private List<Settlement> settlements = new ArrayList<>();
 
 
+/*
     public void period(@Observes Frame frame) {
         for (Settlement settlement: frame.getSettlements()){
             LOGGER.info(String.format(" settlement: %s", settlement));
@@ -62,5 +63,6 @@ public class SettlementManager {
             facade.book(transfers);
         }
     }
+*/
 
 }

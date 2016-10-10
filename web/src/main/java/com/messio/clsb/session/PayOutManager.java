@@ -29,6 +29,7 @@ public class PayOutManager {
     private EntityManager em;
 
 
+/*
     public void period(@Observes Frame frame) {
         if (LocalTime.of(1, 30).equals(frame.getTo())){
             final List<PayOut> payOuts = new ArrayList<>();
@@ -48,7 +49,8 @@ public class PayOutManager {
             for (final PayOut payOut: payOuts){
                 transfers.add(new Transfer(payOut.getAccount(), payOut.getAmount()));
             }
-            facade.book(transfers);
+            facade.book(null, transfers);
         }
     }
+*/
 }

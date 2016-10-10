@@ -1,17 +1,15 @@
 package com.messio.clsb.session;
 
-import com.messio.clsb.Frame;
 import com.messio.clsb.Transfer;
-import com.messio.clsb.entity.Instruction;
+import com.messio.clsb.entity.Bank;
 import com.messio.clsb.entity.PayIn;
-import legacyb1.TimeOfDay;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Created by jpc on 22-09-16.
@@ -23,15 +21,12 @@ public class PayInManager {
     @Inject
     private ClsbFacade facade;
 
-    public void bookPayIns(TimeOfDay limit){
-        LOGGER.info("Booking pay-ins");
-    }
-
-
-    public void period(@Observes Frame frame) {
-        for (PayIn payIn: frame.getPayIns()){
-            LOGGER.info(String.format(" pay-in: %s", payIn));
-            facade.book(Collections.singletonList(new Transfer(payIn.getAmount(), payIn.getAccount())));
-        }
+    public void bookPayIns(final Bank bank, final List<PayIn> payIns, final String iso){
+        LOGGER.info(String.format("Booking pay-ins for %s", iso));
+        final List<Transfer> transfers = payIns.stream()
+                .filter(pi -> pi.getAmount().containsKey(iso))
+                .map(pi -> new Transfer(pi.getAmount().filter(iso), pi.getAccount()))
+                .collect(Collectors.toList());
+        facade.book(bank, transfers);
     }
 }

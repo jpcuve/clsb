@@ -48,12 +48,16 @@ public class ClsbFacade {
         return em.createNamedQuery(Account.ACCOUNT_BY_BANK, Account.class).setParameter("bank", bank).getResultList();
     }
 
-    public List<Movement> book(List<Transfer> transfers){
+    public Account findAccount(final Bank bank, final String name){
+        return em.createNamedQuery(Account.ACCOUNT_BY_NAME_BY_BANK, Account.class).setParameter("name", name).setParameter("bank", bank).getResultList().stream().findFirst().orElseGet(() -> null);
+    }
+
+    public List<Movement> book(Bank bank, List<Transfer> transfers){
         final List<Movement> list = new ArrayList<>();
         final Map<String, Account> accountMap = new HashMap<>();
         for (final Transfer transfer: transfers){
-            final Account origAccount = accountMap.computeIfAbsent(transfer.getOrig(), a -> em.find(Account.class, a));
-            final Account destAccount = accountMap.computeIfAbsent(transfer.getDest(), a -> em.find(Account.class, a));
+            final Account origAccount = accountMap.computeIfAbsent(transfer.getOrig(), a -> findAccount(bank, a));
+            final Account destAccount = accountMap.computeIfAbsent(transfer.getDest(), a -> findAccount(bank, a));
             if (origAccount != null && destAccount != null){
                 final Position amount = transfer.getAmount();
                 origAccount.setPosition(origAccount.getPosition().subtract(amount));

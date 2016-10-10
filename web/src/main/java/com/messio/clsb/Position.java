@@ -1,9 +1,7 @@
 package com.messio.clsb;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +42,13 @@ public class Position extends HashMap<String, BigDecimal> {
     public Position negate(){
         final Position ret = new Position();
         entrySet().forEach(e -> ret.put(e.getKey(), e.getValue().negate()));
+        return ret;
+    }
+
+    public Position filter(String... isos){
+        final Position ret = new Position();
+        final List<String> ts = Arrays.asList(isos);
+        entrySet().stream().filter(e -> ts.contains(e.getKey())).forEach(e -> ret.put(e.getKey(), e.getValue()));
         return ret;
     }
 
