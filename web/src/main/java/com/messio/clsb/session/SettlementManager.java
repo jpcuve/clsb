@@ -7,6 +7,7 @@ import com.messio.clsb.entity.Settlement;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -48,8 +49,8 @@ public class SettlementManager {
         return transfers;
     }
 
-    public void settleUnconditionally(final Bank bank, final List<Transfer> transfers){
+    public void settleUnconditionally(final Bank bank, final LocalTime when, final List<Transfer> transfers){
         LOGGER.info(String.format("Booking settelements"));
-        facade.book(bank, transfers);
+        facade.book(bank, when, transfers);
     }
 }

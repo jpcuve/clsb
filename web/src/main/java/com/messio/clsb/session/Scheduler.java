@@ -85,8 +85,10 @@ public class Scheduler {
     public void onBankEvent(@Observes BankEvent event) {
         LOGGER.info(String.format("Bank event: %s", event));
         final Bank bank = bankModel.getBank();
+        final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
         switch(event.getName()){
             case "opening":
+                LOGGER.info(String.format("Bank opening: %s", mirror.getPositionOrZero()));
                 break;
             case "sct":
                 final List<Settlement> settlements = this.bankModel.getInstructions().stream()
@@ -95,9 +97,10 @@ public class Scheduler {
                         .collect(Collectors.toList());
                 final List<Transfer> queue = settlementManager.buildSettlementQueue(settlements);
                 LOGGER.info(String.format("Settlement queue size: %s", queue.size()));
-                settlementManager.settleUnconditionally(bank, queue);
+                settlementManager.settleUnconditionally(bank, event.getWhen(), queue);
                 break;
             case "closing":
+                LOGGER.info(String.format("Bank closing: %s", mirror.getPositionOrZero()));
                 break;
         }
     }
@@ -106,24 +109,21 @@ public class Scheduler {
         LOGGER.info(String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
         final Bank bank = bankModel.getBank();
-        final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
         switch(event.getName()){
             case "opening":
-                LOGGER.info(String.format("Bank opening: %s", mirror.getPositionOrZero()));
                 break;
             case "fct":
                 final List<PayIn> payIns = this.bankModel.getInstructions().stream()
                         .filter(i -> i instanceof PayIn && i.getWhen().isBefore(event.getWhen()))
                         .map(i -> (PayIn) i)
                         .collect(Collectors.toList());
-                payInManager.bookPayIns(bank, payIns, iso);
+                payInManager.bookPayIns(bank, event.getWhen(), payIns, iso);
                 break;
             case "close":
                 final List<PayOut> payOuts = payOutManager.computePayOuts(bank, iso);
-                payOutManager.bookPayOuts(bank, payOuts);
+                payOutManager.bookPayOuts(bank, event.getWhen(), payOuts);
                 break;
             case "closing":
-                LOGGER.info(String.format("Bank closing: %s", mirror.getPositionOrZero()));
                 break;
         }
     }

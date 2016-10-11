@@ -1,10 +1,13 @@
 package com.messio.clsb.entity;
 
 import com.messio.clsb.Position;
+import com.messio.clsb.adapter.LocalTimeAdapter;
 import com.messio.clsb.adapter.PositionAdapter;
 import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.time.LocalTime;
 
 /**
  * Created by jpc on 22-09-16.
@@ -13,10 +16,15 @@ import javax.persistence.*;
 @Table(name = "movements")
 public class Movement {
     private static final FieldConverter<String, Position> CONVERTER_POSITION = new FieldConverter<>(new PositionAdapter());
+    private static final FieldConverter<String, LocalTime> CONVERTER_LOCAL_TIME = new FieldConverter<>(new LocalTimeAdapter());
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
+    @Basic
+    @Column(name = "when")
+    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
+    private String when;
     @ManyToOne
     @JoinColumn(name = "orig_account_id")
     private Account orig;
@@ -36,6 +44,14 @@ public class Movement {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public LocalTime getWhen() {
+        return CONVERTER_LOCAL_TIME.unmarshal(when);
+    }
+
+    public void setWhen(LocalTime when) {
+        this.when = CONVERTER_LOCAL_TIME.marshal(when);
     }
 
     public Account getOrig() {
@@ -72,6 +88,6 @@ public class Movement {
 
     @Override
     public String toString() {
-        return String.format("[%s] %s -> %s -> %s", information, orig.getName(), amount, dest.getName());
+        return String.format("[%s] %s %s -> %s -> %s", information, when, orig.getName(), amount, dest.getName());
     }
 }
