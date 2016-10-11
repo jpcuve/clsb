@@ -2,6 +2,7 @@ package com.messio.clsb.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.*;
 import com.messio.clsb.event.BankEvent;
 import com.messio.clsb.event.BaseEvent;
@@ -40,6 +41,8 @@ public class Scheduler {
     private PayInManager payInManager;
     @Inject
     private PayOutManager payOutManager;
+    @Inject
+    private SettlementManager settlementManager;
 
     private BankModel bankModel;
     private LocalTime localTime = LocalTime.MIN;
@@ -60,8 +63,8 @@ public class Scheduler {
             events.add(new BankEvent(bank.getClosing(), "closing", bank));
             for (final Currency currency: facade.findCurrencies(bank)){
                 events.add(new CurrencyEvent(currency.getOpening(), "opening", currency));
-                events.add(new CurrencyEvent(currency.getClosing(), "fct", currency));
-                events.add(new CurrencyEvent(currency.getClosing(), "close", currency));
+                events.add(new CurrencyEvent(currency.getFundingCompletionTarget(), "fct", currency));
+                events.add(new CurrencyEvent(currency.getClose(), "close", currency));
                 events.add(new CurrencyEvent(currency.getClosing(), "closing", currency));
             }
         } catch(IOException e){
@@ -81,10 +84,18 @@ public class Scheduler {
 
     public void onBankEvent(@Observes BankEvent event) {
         LOGGER.info(String.format("Bank event: %s", event));
+        final Bank bank = bankModel.getBank();
         switch(event.getName()){
             case "opening":
                 break;
             case "sct":
+                final List<Settlement> settlements = this.bankModel.getInstructions().stream()
+                        .filter(i -> i instanceof Settlement && i.getWhen().isBefore(event.getWhen()))
+                        .map(i -> (Settlement) i)
+                        .collect(Collectors.toList());
+                final List<Transfer> queue = settlementManager.buildSettlementQueue(settlements);
+                LOGGER.info(String.format("Settlement queue size: %s", queue.size()));
+                settlementManager.settleUnconditionally(bank, queue);
                 break;
             case "closing":
                 break;
@@ -92,11 +103,13 @@ public class Scheduler {
     }
 
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
-//        LOGGER.info(String.format("Currency event: %s", event));
+        LOGGER.info(String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
         final Bank bank = bankModel.getBank();
+        final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
         switch(event.getName()){
             case "opening":
+                LOGGER.info(String.format("Bank opening: %s", mirror.getPositionOrZero()));
                 break;
             case "fct":
                 final List<PayIn> payIns = this.bankModel.getInstructions().stream()
@@ -110,6 +123,7 @@ public class Scheduler {
                 payOutManager.bookPayOuts(bank, payOuts);
                 break;
             case "closing":
+                LOGGER.info(String.format("Bank closing: %s", mirror.getPositionOrZero()));
                 break;
         }
     }

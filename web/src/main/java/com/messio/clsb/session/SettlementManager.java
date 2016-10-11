@@ -1,5 +1,7 @@
 package com.messio.clsb.session;
 
+import com.messio.clsb.Transfer;
+import com.messio.clsb.entity.Bank;
 import com.messio.clsb.entity.Settlement;
 
 import javax.ejb.LocalBean;
@@ -19,44 +21,35 @@ public class SettlementManager {
     @Inject
     private ClsbFacade facade;
 
-    private List<Settlement> settlements = new ArrayList<>();
-
-
-/*
-    public void period(@Observes Frame frame) {
-        for (Settlement settlement: frame.getSettlements()){
-            LOGGER.info(String.format(" settlement: %s", settlement));
-            settlements.add(settlement);
-        }
-        // say we settle at 01:00 (has to be a parameter)
-        if (LocalTime.of(1, 0).equals(frame.getTo())){
-            LOGGER.info("matching instructions");
-            final List<Transfer> transfers = new ArrayList<>();
-            Settlement[] pair;
-            do {
-                pair = null;
-                for (int i = 0; i < settlements.size(); i++){
-                    for (int j = i + 1; j < settlements.size(); j++){
-                        final Settlement a = settlements.get(i);
-                        final Settlement b = settlements.get(j);
-                        boolean match = a.getCounterParty().equals(b.getAccount()) && a.getAccount().equals(b.getCounterParty()) && a.getAmount().equals(b.getAmount().negate());
-                        if (match){
-                            LOGGER.info(String.format("matched: %s %s", a, b));
-                            pair = new Settlement[]{ a, b };
-                            break;
-                        }
+    public List<Transfer> buildSettlementQueue(final List<Settlement> settlements){
+        final List<Transfer> transfers = new ArrayList<>();
+        Settlement[] pair;
+        do {
+            pair = null;
+            for (int i = 0; i < settlements.size(); i++){
+                for (int j = i + 1; j < settlements.size(); j++){
+                    final Settlement a = settlements.get(i);
+                    final Settlement b = settlements.get(j);
+                    boolean match = a.getCounterParty().equals(b.getAccount()) && a.getAccount().equals(b.getCounterParty()) && a.getAmount().equals(b.getAmount().negate());
+                    if (match){
+                        LOGGER.info(String.format("Matched: %s %s", a, b));
+                        pair = new Settlement[]{ a, b };
+                        break;
                     }
                 }
-                if (pair != null){
-                    transfers.add(new Transfer(pair[0].getAccount(), pair[0].getAmount(), pair[1].getAccount()));
-                    for (int i = 0; i < pair.length; i++){
-                        settlements.remove(pair[i]);
-                    }
+            }
+            if (pair != null){
+                transfers.add(new Transfer(String.format("%s<>%s", pair[0].getReference(), pair[1].getReference()), pair[0].getAccount(), pair[0].getAmount(), pair[1].getAccount()));
+                for (int i = 0; i < pair.length; i++){
+                    settlements.remove(pair[i]);
                 }
-            } while (pair != null);
-            facade.book(transfers);
-        }
+            }
+        } while (pair != null);
+        return transfers;
     }
-*/
 
+    public void settleUnconditionally(final Bank bank, final List<Transfer> transfers){
+        LOGGER.info(String.format("Booking settelements"));
+        facade.book(bank, transfers);
+    }
 }

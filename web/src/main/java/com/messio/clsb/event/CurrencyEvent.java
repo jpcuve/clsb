@@ -18,4 +18,9 @@ public class CurrencyEvent extends BaseEvent {
     public Currency getCurrency() {
         return currency;
     }
+
+    @Override
+    public String toString() {
+        return String.format("+ %s %s %s", getWhen(), getName(), currency.getIso());
+    }
 }

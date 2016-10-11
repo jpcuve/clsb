@@ -18,4 +18,9 @@ public class BankEvent extends BaseEvent {
     public Bank getBank() {
         return bank;
     }
+
+    @Override
+    public String toString() {
+        return String.format("+ %s %s", getWhen(), getName());
+    }
 }
