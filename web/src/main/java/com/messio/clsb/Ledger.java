@@ -1,5 +1,7 @@
 package com.messio.clsb;
 
+import com.messio.clsb.entity.Account;
+
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.*;
@@ -36,11 +38,11 @@ public class Ledger {
     }
 
     public List<Transfer> getPayIns(){
-        return positions.entrySet().stream().filter(e -> !Transfer.MIRROR_NAME.equals(e.getKey())).map(e -> new Transfer(e.getValue().negate(), e.getKey())).collect(Collectors.toList());
+        return positions.entrySet().stream().filter(e -> !Account.MIRROR_NAME.equals(e.getKey())).map(e -> new Transfer("pi", e.getValue().negate(), e.getKey())).collect(Collectors.toList());
     }
 
     public List<Transfer> getPayOuts(){
-        return positions.entrySet().stream().filter(e -> !Transfer.MIRROR_NAME.equals(e.getKey())).map(e -> new Transfer(e.getKey(), e.getValue())).collect(Collectors.toList());
+        return positions.entrySet().stream().filter(e -> !Account.MIRROR_NAME.equals(e.getKey())).map(e -> new Transfer("po", e.getKey(), e.getValue())).collect(Collectors.toList());
     }
 
     public void output(final PrintStream pw){
@@ -51,7 +53,7 @@ public class Ledger {
 
     public static void main(String[] args) {
         final Ledger ledger = new Ledger();
-        ledger.apply(new Transfer(new Position("EUR", 150), "annie"));
+        ledger.apply(new Transfer("pi", new Position("EUR", 150), "annie"));
         System.out.println("after pay-in");
         ledger.output(System.out);
         ledger.apply(new Transfer("annie", new Position("EUR", 100), "jpc"));

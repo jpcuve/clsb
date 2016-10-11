@@ -1,37 +1,44 @@
 package com.messio.clsb;
 
 
+import com.messio.clsb.entity.Account;
+
 /**
  * Created by jpc on 9/22/16.
  */
 public class Transfer {
-    public static final String MIRROR_NAME = "_MIRROR_";
-    private String orig;
-    private Position amount;
-    private String dest;
+    private final String information;
+    private final String orig;
+    private final Position amount;
+    private final String dest;
 
-    public Transfer(String orig, Position amount, String dest) {
+    public Transfer(String information, String orig, Position amount, String dest) {
+        this.information = information;
         this.orig = orig;
         this.amount = amount;
         this.dest = dest;
     }
 
     // pay-out
-    public Transfer(String orig, Position amount){
-        this(orig, amount, MIRROR_NAME);
+    public Transfer(String information, String orig, Position amount){
+        this(information, orig, amount, Account.MIRROR_NAME);
     }
 
     // pay-in
-    public Transfer(Position amount, String dest){
-        this(MIRROR_NAME, amount, dest);
+    public Transfer(String information, Position amount, String dest){
+        this(information, Account.MIRROR_NAME, amount, dest);
     }
 
     public boolean isPayIn(){
-        return MIRROR_NAME.equals(orig);
+        return Account.MIRROR_NAME.equals(orig);
     }
 
     public boolean isPayOut(){
-        return MIRROR_NAME.equals(dest);
+        return Account.MIRROR_NAME.equals(dest);
+    }
+
+    public String getInformation() {
+        return information;
     }
 
     public String getOrig() {
@@ -48,6 +55,6 @@ public class Transfer {
 
     @Override
     public String toString() {
-        return String.format("%s -> %s -> %s", orig, amount, dest);
+        return String.format("[%s] %s -> %s -> %s", information, orig, amount, dest);
     }
 }

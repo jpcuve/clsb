@@ -24,6 +24,9 @@ public class Movement {
     @JoinColumn(name = "dest_account_id")
     private Account dest;
     @Basic
+    @Column(name = "information")
+    private String information;
+    @Basic
     @Column(name = "amount")
     private String amount;
 
@@ -51,11 +54,24 @@ public class Movement {
         this.dest = dest;
     }
 
+    public String getInformation() {
+        return information;
+    }
+
+    public void setInformation(String information) {
+        this.information = information;
+    }
+
     public Position getAmount() {
         return CONVERTER_POSITION.unmarshal(amount);
     }
 
     public void setAmount(Position amount) {
         this.amount = CONVERTER_POSITION.marshal(amount);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[%s] %s -> %s -> %s", information, orig.getName(), amount, dest.getName());
     }
 }

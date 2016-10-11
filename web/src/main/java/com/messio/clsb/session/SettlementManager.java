@@ -1,17 +1,11 @@
 package com.messio.clsb.session;
 
-import com.messio.clsb.Frame;
-import com.messio.clsb.Transfer;
-import com.messio.clsb.entity.PayIn;
 import com.messio.clsb.entity.Settlement;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 

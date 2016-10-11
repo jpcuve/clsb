@@ -13,19 +13,61 @@ public class Position extends HashMap<String, BigDecimal> {
     public Position() {
     }
 
-    public Position(String ccy, double amount) {
-        this.put(ccy, new BigDecimal(amount));
+    public Position(String iso, double amount) {
+        this.putAmount(iso, amount);
     }
 
-    public Position(String ccy1, double amount1, String ccy2, double amount2){
-        this.put(ccy1, new BigDecimal(amount1));
-        this.put(ccy2, new BigDecimal(amount2));
+    public Position(String iso1, double amount1, String iso2, double amount2){
+        this.putAmount(iso1, amount1).putAmount(iso2, amount2);
     }
 
-    public Position(String ccy1, double amount1, String ccy2, double amount2, String ccy3, double amount3){
-        this.put(ccy1, new BigDecimal(amount1));
-        this.put(ccy2, new BigDecimal(amount2));
-        this.put(ccy3, new BigDecimal(amount3));
+    public Position(String iso1, double amount1, String iso2, double amount2, String iso3, double amount3){
+        this.putAmount(iso1, amount1).putAmount(iso2, amount2).putAmount(iso3, amount3);
+    }
+
+    private Position putAmount(String iso, double amount){
+        this.put(iso, new BigDecimal(amount));
+        return this;
+    }
+
+    public boolean isLong(){
+        for (BigDecimal amount: normalize().values()){
+            if (amount.signum() < 0){
+                return false;
+            }
+        }
+        return !isZero();
+    }
+
+    public boolean isShort(){
+        for (BigDecimal amount: normalize().values()){
+            if (amount.signum() > 0){
+                return false;
+            }
+        }
+        return !isZero();
+    }
+
+    public Position xlong(){
+        final Position ret = new Position();
+        entrySet().stream().filter(e -> e.getValue().signum() > 0).forEach(e -> ret.put(e.getKey(), e.getValue()));
+        return ret;
+    }
+
+    public Position xshort(){
+        final Position ret = new Position();
+        entrySet().stream().filter(e -> e.getValue().signum() < 0).forEach(e -> ret.put(e.getKey(), e.getValue()));
+        return ret;
+    }
+
+    public Position normalize(){
+        final Position ret = new Position();
+        entrySet().stream().filter(e -> e.getValue().signum() != 0).forEach(e -> ret.put(e.getKey(), e.getValue()));
+        return ret;
+    }
+
+    public boolean isZero(){
+        return normalize().isEmpty();
     }
 
     public Position add(Position that){

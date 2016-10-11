@@ -1,5 +1,0 @@
-[
-  {"@class":"com.messio.clsb.entity.PayIn","when":"00:15","reference":"pay-in 1","account":"b", "amount": "EUR:100.45"},
-  {"@class":"com.messio.clsb.entity.Settlement","when":"00:22","reference":"set. 1","account":"a", "amount": "EUR:50", "counterParty":"b"},
-  {"@class":"com.messio.clsb.entity.Settlement","when":"00:32","reference":"set. 2","account":"b", "amount": "EUR:-50", "counterParty": "a"}
-]

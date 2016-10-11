@@ -16,6 +16,7 @@ import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by jpc on 25-09-16.
@@ -23,6 +24,7 @@ import java.util.*;
 @Stateless(name = "clsb/clsb-facade")
 @LocalBean
 public class ClsbFacade {
+    private static final Logger LOGGER = Logger.getLogger(ClsbFacade.class.getCanonicalName());
     @PersistenceContext
     private EntityManager em;
 
@@ -60,12 +62,16 @@ public class ClsbFacade {
             final Account destAccount = accountMap.computeIfAbsent(transfer.getDest(), a -> findAccount(bank, a));
             if (origAccount != null && destAccount != null){
                 final Position amount = transfer.getAmount();
-                origAccount.setPosition(origAccount.getPosition().subtract(amount));
-                destAccount.setPosition(destAccount.getPosition().add(amount));
+                final Position origPosition = origAccount.getPosition();
+                final Position destPosition = destAccount.getPosition();
+                origAccount.setPosition(origPosition == null ? amount.negate() : origPosition.subtract(amount));
+                destAccount.setPosition(destPosition == null ? amount : destPosition.add(amount));
                 final Movement movement = new Movement();
+                movement.setInformation(transfer.getInformation());
                 movement.setOrig(origAccount);
                 movement.setDest(destAccount);
                 movement.setAmount(amount);
+                LOGGER.info(String.format("Movement: %s", movement));
                 em.persist(movement);
                 list.add(movement);
             }

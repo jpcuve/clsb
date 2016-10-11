@@ -25,7 +25,7 @@ public class PayInManager {
         LOGGER.info(String.format("Booking pay-ins for %s", iso));
         final List<Transfer> transfers = payIns.stream()
                 .filter(pi -> pi.getAmount().containsKey(iso))
-                .map(pi -> new Transfer(pi.getAmount().filter(iso), pi.getAccount()))
+                .map(pi -> new Transfer(String.format("pay-in: %s", pi.getReference()), pi.getAmount().filter(iso), pi.getAccount()))
                 .collect(Collectors.toList());
         facade.book(bank, transfers);
     }

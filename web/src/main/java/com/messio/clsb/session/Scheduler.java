@@ -2,12 +2,7 @@ package com.messio.clsb.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-import com.messio.clsb.Frame;
-import com.messio.clsb.Transfer;
-import com.messio.clsb.entity.Bank;
-import com.messio.clsb.entity.Currency;
-import com.messio.clsb.entity.Instruction;
-import com.messio.clsb.entity.PayIn;
+import com.messio.clsb.entity.*;
 import com.messio.clsb.event.BankEvent;
 import com.messio.clsb.event.BaseEvent;
 import com.messio.clsb.event.CurrencyEvent;
@@ -23,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -44,6 +38,8 @@ public class Scheduler {
     private Event<BaseEvent> emitter;
     @Inject
     private PayInManager payInManager;
+    @Inject
+    private PayOutManager payOutManager;
 
     private BankModel bankModel;
     private LocalTime localTime = LocalTime.MIN;
@@ -96,8 +92,9 @@ public class Scheduler {
     }
 
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
-        LOGGER.info(String.format("Currency event: %s", event));
+//        LOGGER.info(String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
+        final Bank bank = bankModel.getBank();
         switch(event.getName()){
             case "opening":
                 break;
@@ -106,9 +103,11 @@ public class Scheduler {
                         .filter(i -> i instanceof PayIn && i.getWhen().isBefore(event.getWhen()))
                         .map(i -> (PayIn) i)
                         .collect(Collectors.toList());
-                payInManager.bookPayIns(bankModel.getBank(), payIns, iso);
+                payInManager.bookPayIns(bank, payIns, iso);
                 break;
             case "close":
+                final List<PayOut> payOuts = payOutManager.computePayOuts(bank, iso);
+                payOutManager.bookPayOuts(bank, payOuts);
                 break;
             case "closing":
                 break;

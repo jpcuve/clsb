@@ -14,12 +14,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @Entity
 @NamedQueries({
         @NamedQuery(name = Account.ACCOUNT_ALL, query = "select a from Account a order by a.name"),
-        @NamedQuery(name = Account.ACCOUNT_BY_BANK, query = "select a from Account a where a.bank = :bank order by a.name"),
+        @NamedQuery(name = Account.ACCOUNT_BY_BANK, query = "select a from Account a where a.bank = :bank and a.name <> '_MIRROR_' order by a.name"),
         @NamedQuery(name = Account.ACCOUNT_BY_NAME_BY_BANK, query = "select a from Account a where a.name = :name and a.bank = :bank")
 })
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "bank_id"})})
 public class Account {
     private static final FieldConverter<String, Position> CONVERTER_POSITION = new FieldConverter<>(new PositionAdapter());
+    public static final String MIRROR_NAME = "_MIRROR_";
     public static final String ACCOUNT_BY_NAME_BY_BANK = "Account.byName";
     public static final String ACCOUNT_ALL = "account.all";
     public static final String ACCOUNT_BY_BANK = "account.byBank";
@@ -37,6 +38,11 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
+
+    @Transient
+    public Position getPositionOrZero(){
+        return getPosition() == null ? Position.ZERO : getPosition();
+    }
 
     public Long getId() {
         return id;
