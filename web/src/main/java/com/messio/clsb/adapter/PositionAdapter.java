@@ -1,6 +1,7 @@
 package com.messio.clsb.adapter;
 
 import com.messio.clsb.Position;
+import com.messio.clsb.util.FieldConverter;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.math.BigDecimal;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
  * Created by jpc on 9/29/16.
  */
 public class PositionAdapter extends XmlAdapter<String, Position> {
+    public static final FieldConverter<String, Position> CONVERTER = new FieldConverter<>(new PositionAdapter());
+
     @Override
     public Position unmarshal(String v) throws Exception {
         final Position position = new Position();

@@ -14,4 +14,18 @@ public class TestPosition {
         System.out.println(p2.add(p1));
         System.out.println(p2.negate());
     }
+
+    @Test
+    public void testShortAndLong(){
+        final Position p1 = new Position("EUR", 10, "USD", -5, "JPY", 100);
+        System.out.println(p1.xshort());
+        System.out.println(p1.xlong());
+    }
+
+    @Test
+    public void testNegate(){
+        final Position p1 = new Position("EUR", 10, "USD", -5, "JPY", 100);
+        System.out.println(p1.negate());
+
+    }
 }

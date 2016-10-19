@@ -1,9 +1,6 @@
 package com.messio.clsb.entity;
 
-import com.messio.clsb.adapter.LocalTimeAdapter;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalTime;
 
 /**
@@ -25,16 +22,17 @@ public class Bank {
     private String name = DEFAULT_NAME;
     @Basic
     @Column(name = "opening", nullable = false)
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime opening = LocalTime.of(8, 0);
     @Basic
     @Column(name = "closing", nullable = false)
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime closing = LocalTime.of(17, 0);
     @Basic
     @Column(name = "sct", nullable = false)
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime settlementCompletionTarget = LocalTime.of(10, 0);
+    @Basic
+    @Column(name = "position")
+    private String minimumPayIn;
+
 
     public long getId() {
         return id;
@@ -74,5 +72,13 @@ public class Bank {
 
     public void setSettlementCompletionTarget(LocalTime settlementCompletionTarget) {
         this.settlementCompletionTarget = settlementCompletionTarget;
+    }
+
+    public String getMinimumPayIn() {
+        return minimumPayIn;
+    }
+
+    public void setMinimumPayIn(String minimumPayIn) {
+        this.minimumPayIn = minimumPayIn;
     }
 }

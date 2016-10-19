@@ -1,9 +1,6 @@
 package com.messio.clsb.entity;
 
-import com.messio.clsb.adapter.LocalTimeAdapter;
-
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalTime;
 
 /**
@@ -27,21 +24,20 @@ public class Currency {
     @Basic
     @Column(name = "iso")
     private String iso;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "currency_group")
+    private CurrencyGroup group;
     @Basic
     @Column(name = "opening")
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime opening;
     @Basic
     @Column(name = "closing")
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime closing;
     @Basic
     @Column(name = "funding_completion_target")
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime fundingCompletionTarget;
     @Basic
     @Column(name = "close")
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime close;
     @ManyToOne
     @JoinColumn(name = "bank_id")
@@ -61,6 +57,14 @@ public class Currency {
 
     public void setIso(String iso) {
         this.iso = iso;
+    }
+
+    public CurrencyGroup getGroup() {
+        return group;
+    }
+
+    public void setGroup(CurrencyGroup group) {
+        this.group = group;
     }
 
     public LocalTime getOpening() {

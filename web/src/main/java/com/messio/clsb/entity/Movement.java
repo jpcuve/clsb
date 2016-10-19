@@ -3,10 +3,8 @@ package com.messio.clsb.entity;
 import com.messio.clsb.Position;
 import com.messio.clsb.adapter.LocalTimeAdapter;
 import com.messio.clsb.adapter.PositionAdapter;
-import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalTime;
 
 /**
@@ -15,15 +13,12 @@ import java.time.LocalTime;
 @Entity
 @Table(name = "movements")
 public class Movement {
-    private static final FieldConverter<String, Position> CONVERTER_POSITION = new FieldConverter<>(new PositionAdapter());
-    private static final FieldConverter<String, LocalTime> CONVERTER_LOCAL_TIME = new FieldConverter<>(new LocalTimeAdapter());
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
     @Basic
     @Column(name = "when")
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private String when;
     @ManyToOne
     @JoinColumn(name = "orig_account_id")
@@ -47,11 +42,11 @@ public class Movement {
     }
 
     public LocalTime getWhen() {
-        return CONVERTER_LOCAL_TIME.unmarshal(when);
+        return LocalTimeAdapter.CONVERTER.unmarshal(when);
     }
 
     public void setWhen(LocalTime when) {
-        this.when = CONVERTER_LOCAL_TIME.marshal(when);
+        this.when = LocalTimeAdapter.CONVERTER.marshal(when);
     }
 
     public Account getOrig() {
@@ -79,11 +74,11 @@ public class Movement {
     }
 
     public Position getAmount() {
-        return CONVERTER_POSITION.unmarshal(amount);
+        return PositionAdapter.CONVERTER.unmarshal(amount);
     }
 
     public void setAmount(Position amount) {
-        this.amount = CONVERTER_POSITION.marshal(amount);
+        this.amount = PositionAdapter.CONVERTER.marshal(amount);
     }
 
     @Override

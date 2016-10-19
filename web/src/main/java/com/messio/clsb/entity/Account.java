@@ -1,12 +1,10 @@
 package com.messio.clsb.entity;
 
 import com.messio.clsb.Position;
-import com.messio.clsb.adapter.LocalTimeAdapter;
 import com.messio.clsb.adapter.PositionAdapter;
 import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  * Created by jpc on 22-09-16.
@@ -19,7 +17,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 })
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "bank_id"})})
 public class Account {
-    private static final FieldConverter<String, Position> CONVERTER_POSITION = new FieldConverter<>(new PositionAdapter());
     public static final String MIRROR_NAME = "_MIRROR_";
     public static final String ACCOUNT_BY_NAME_BY_BANK = "Account.byName";
     public static final String ACCOUNT_ALL = "account.all";
@@ -33,7 +30,6 @@ public class Account {
     private String name;
     @Basic
     @Column(name = "position")
-    @XmlJavaTypeAdapter(PositionAdapter.class)
     private String position;
     @ManyToOne
     @JoinColumn(name = "bank_id")
@@ -61,11 +57,11 @@ public class Account {
     }
 
     public Position getPosition() {
-        return CONVERTER_POSITION.unmarshal(position);
+        return PositionAdapter.CONVERTER.unmarshal(position);
     }
 
     public void setPosition(Position position) {
-        this.position = CONVERTER_POSITION.marshal(position);
+        this.position = PositionAdapter.CONVERTER.marshal(position);
     }
 
     public Bank getBank() {

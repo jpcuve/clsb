@@ -2,10 +2,6 @@ package com.messio.clsb.entity;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.messio.clsb.Position;
-import com.messio.clsb.adapter.LocalTimeAdapter;
-import com.messio.clsb.adapter.PositionAdapter;
-
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalTime;
 
 /**
@@ -13,11 +9,9 @@ import java.time.LocalTime;
  */
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class")
 public class Instruction {
-    @XmlJavaTypeAdapter(LocalTimeAdapter.class)
     private LocalTime when;
     private String account;
     private String reference;
-    @XmlJavaTypeAdapter(PositionAdapter.class)
     private Position amount;
 
     public LocalTime getWhen() {

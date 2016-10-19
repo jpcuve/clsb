@@ -25,6 +25,10 @@ public class Position extends HashMap<String, BigDecimal> {
         this.putAmount(iso1, amount1).putAmount(iso2, amount2).putAmount(iso3, amount3);
     }
 
+    public Position(Position p){
+        this.putAll(p);
+    }
+
     private Position putAmount(String iso, double amount){
         this.put(iso, new BigDecimal(amount));
         return this;
@@ -48,22 +52,20 @@ public class Position extends HashMap<String, BigDecimal> {
         return !isZero();
     }
 
+    public Position one(){
+        return entrySet().stream().collect(Position::new, (p, e) -> p.put(e.getKey(), BigDecimal.ONE), Position::add);
+    }
+
     public Position xlong(){
-        final Position ret = new Position();
-        entrySet().stream().filter(e -> e.getValue().signum() > 0).forEach(e -> ret.put(e.getKey(), e.getValue()));
-        return ret;
+        return entrySet().stream().filter(e -> e.getValue().signum() > 0).collect(Position::new, (p, e) -> p.put(e.getKey(), e.getValue()), Position::add);
     }
 
     public Position xshort(){
-        final Position ret = new Position();
-        entrySet().stream().filter(e -> e.getValue().signum() < 0).forEach(e -> ret.put(e.getKey(), e.getValue()));
-        return ret;
+        return entrySet().stream().filter(e -> e.getValue().signum() < 0).collect(Position::new, (p, e) -> p.put(e.getKey(), e.getValue()), Position::add);
     }
 
     public Position normalize(){
-        final Position ret = new Position();
-        entrySet().stream().filter(e -> e.getValue().signum() != 0).forEach(e -> ret.put(e.getKey(), e.getValue()));
-        return ret;
+        return entrySet().stream().filter(e -> e.getValue().signum() != 0).collect(Position::new, (p, e) -> p.put(e.getKey(), e.getValue()), Position::add);
     }
 
     public boolean isZero(){
@@ -71,10 +73,7 @@ public class Position extends HashMap<String, BigDecimal> {
     }
 
     public Position add(Position that){
-        final Position ret = new Position();
-        ret.putAll(that);
-        entrySet().forEach(e -> ret.put(e.getKey(), e.getValue().add(ret.getOrDefault(e.getKey(),BigDecimal.ZERO))));
-        return ret;
+        return entrySet().stream().collect(() -> new Position(that), (p, e) -> p.put(e.getKey(), e.getValue().add(p.getOrDefault(e.getKey(),BigDecimal.ZERO))), Position::add);
     }
 
     public Position subtract(Position that){
@@ -82,16 +81,12 @@ public class Position extends HashMap<String, BigDecimal> {
     }
 
     public Position negate(){
-        final Position ret = new Position();
-        entrySet().forEach(e -> ret.put(e.getKey(), e.getValue().negate()));
-        return ret;
+        return entrySet().stream().collect(Position::new, (p, e) -> p.put(e.getKey(), e.getValue().negate()), Position::add);
     }
 
     public Position filter(String... isos){
-        final Position ret = new Position();
         final List<String> ts = Arrays.asList(isos);
-        entrySet().stream().filter(e -> ts.contains(e.getKey())).forEach(e -> ret.put(e.getKey(), e.getValue()));
-        return ret;
+        return entrySet().stream().filter(e -> ts.contains(e.getKey())).collect(Position::new, (p, e) -> p.put(e.getKey(), e.getValue()), Position::add);
     }
 
     @Override
