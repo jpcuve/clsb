@@ -20,7 +20,11 @@ public class TestPosition {
     public void testShortAndLong(){
         final Position p1 = new Position("EUR", 10, "USD", -5, "JPY", 100);
         assertEquals(p1.xshort(), new Position("USD", -5));
+        assertTrue(p1.xshort().isShort());
+        assertFalse(p1.xshort().isLong());
         assertEquals(p1.xlong(),  new Position("EUR", 10, "JPY", 100));
+        assertTrue(p1.xlong().isLong());
+        assertFalse(p1.xlong().isShort());
     }
 
 }
