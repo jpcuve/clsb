@@ -29,9 +29,9 @@ public class TestPosition {
 
     @Test
     public void applyVolatility(){
-        final Position p1 = Position.parse("EUR:10;USD:-5;JPY:100");
+        final Position p1 = Position.parse("EUR:10;USD:-5;JPY:100;GBP:7");
         final Position vm = Position.parse("EUR:0.1;USD:0.2;JPY:0.01");
-        assertEquals(Position.parse("EUR:9;USD:-6;JPY:99"), p1.applyVolatility(vm));
+        assertEquals(Position.parse("EUR:9;USD:-6;JPY:99;GBP:7"), p1.applyVolatility(vm));
 
     }
 

@@ -40,6 +40,15 @@ public class Position extends HashMap<String, BigDecimal> {
         return this;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Position){
+            final Position that = (Position) o;
+            return subtract(that).normalize().isZero();
+        }
+        return false;
+    }
+
     public boolean isLong(){
         for (BigDecimal amount: normalize().values()){
             if (amount.signum() < 0){
