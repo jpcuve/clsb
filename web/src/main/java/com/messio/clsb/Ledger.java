@@ -3,10 +3,8 @@ package com.messio.clsb;
 import com.messio.clsb.entity.Account;
 
 import java.io.PrintStream;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Created by jpc on 9/22/16.
@@ -14,12 +12,21 @@ import java.util.stream.Collectors;
 public class Ledger {
     private Map<String, Position> positions = new TreeMap<>();
 
-    public Set<String> getAccounts(){
+    public Ledger() {
+    }
+
+    public Ledger(List<Account> accounts) {
+        for (final Account account: accounts){
+            positions.put(account.getName(), account.getPosition());
+        }
+    }
+
+    public Set<String> getAccountNames(){
         return positions.keySet();
     }
 
-    public Position getPosition(String account){
-        return positions.getOrDefault(account, Position.ZERO);
+    public Position getPosition(String accountName){
+        return positions.getOrDefault(accountName, Position.ZERO);
     }
 
     public boolean apply(Transfer transfer){
@@ -37,35 +44,9 @@ public class Ledger {
         return accept;
     }
 
-    public List<Transfer> getPayIns(){
-        return positions.entrySet().stream().filter(e -> !Account.MIRROR_NAME.equals(e.getKey())).map(e -> new Transfer("pi", e.getValue().negate(), e.getKey())).collect(Collectors.toList());
-    }
-
-    public List<Transfer> getPayOuts(){
-        return positions.entrySet().stream().filter(e -> !Account.MIRROR_NAME.equals(e.getKey())).map(e -> new Transfer("po", e.getKey(), e.getValue())).collect(Collectors.toList());
-    }
-
     public void output(final PrintStream pw){
         for (final Map.Entry<String, Position> entry: positions.entrySet()){
             pw.println(String.format("%s: %s", entry.getKey(), entry.getValue()));
         }
-    }
-
-    public static void main(String[] args) {
-        final Ledger ledger = new Ledger();
-        ledger.apply(new Transfer("pi", new Position("EUR", 150), "annie"));
-        System.out.println("after pay-in");
-        ledger.output(System.out);
-        ledger.apply(new Transfer("annie", new Position("EUR", 100), "jpc"));
-        System.out.println("after settlement");
-        ledger.output(System.out);
-        System.out.println("payouts:");
-        List<Transfer> payOuts = ledger.getPayOuts();
-        for (final Transfer transfer: payOuts){
-            System.out.println("  " + transfer);
-        }
-        payOuts.forEach(ledger::apply);
-        System.out.println("after payout");
-        ledger.output(System.out);
     }
 }

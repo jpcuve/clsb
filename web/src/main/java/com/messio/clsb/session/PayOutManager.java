@@ -1,5 +1,6 @@
 package com.messio.clsb.session;
 
+import com.messio.clsb.Ledger;
 import com.messio.clsb.Position;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.Account;
@@ -37,6 +38,15 @@ public class PayOutManager {
                 payOuts.add(payOut);
             }
         }
+        return payOuts;
+    }
+
+    public List<PayOut> computePayOutsBuild1(final Bank bank, final List<Transfer> projectedTransfers){
+        final List<PayOut> payOuts = new ArrayList<>();
+        // compute net projected position
+        final Ledger ledger = new Ledger(facade.findAccounts(bank));
+        projectedTransfers.forEach(ledger::apply);
+
         return payOuts;
     }
 

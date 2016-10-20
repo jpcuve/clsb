@@ -1,5 +1,7 @@
 package com.messio.clsb;
 
+import com.messio.clsb.adapter.PositionAdapter;
+
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -9,6 +11,10 @@ import java.util.stream.Collectors;
  */
 public class Position extends HashMap<String, BigDecimal> {
     public static final Position ZERO = new Position();
+
+    public static Position parse(String s) {
+        return PositionAdapter.CONVERTER.unmarshal(s);
+    }
 
     public Position() {
     }
@@ -50,6 +56,14 @@ public class Position extends HashMap<String, BigDecimal> {
             }
         }
         return !isZero();
+    }
+
+    public Position applyVolatility(Position that){
+        return entrySet().stream().collect(Position::new, (p, e) -> {
+            final BigDecimal vm = that.getOrDefault(e.getKey(), BigDecimal.ZERO);
+            final BigDecimal am = e.getValue();
+            p.put(e.getKey(), am.signum() > 0 ? am.subtract(am.multiply(vm)): am.add(am.multiply(vm)));
+        }, Position::add);
     }
 
     public Position one(){
