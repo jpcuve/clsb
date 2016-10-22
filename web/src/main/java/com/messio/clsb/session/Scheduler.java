@@ -88,7 +88,7 @@ public class Scheduler {
         final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
         switch(event.getName()){
             case "opening":
-                LOGGER.info(String.format("Bank opening: %s", mirror.getPositionOrZero()));
+                LOGGER.info(String.format("Bank opening: %s", mirror.getPosition()));
                 break;
             case "sct":
                 final List<Settlement> settlements = this.bankModel.getInstructions().stream()
@@ -100,7 +100,7 @@ public class Scheduler {
                 settlementManager.settleUnconditionally(bank, event.getWhen(), queue);
                 break;
             case "closing":
-                LOGGER.info(String.format("Bank closing: %s", mirror.getPositionOrZero()));
+                LOGGER.info(String.format("Bank closing: %s", mirror.getPosition()));
                 break;
         }
     }
@@ -126,5 +126,9 @@ public class Scheduler {
             case "closing":
                 break;
         }
+    }
+
+    public BankModel getBankModel() {
+        return bankModel;
     }
 }

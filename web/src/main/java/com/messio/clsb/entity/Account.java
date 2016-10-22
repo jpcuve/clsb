@@ -5,6 +5,7 @@ import com.messio.clsb.adapter.PositionAdapter;
 import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  * Created by jpc on 22-09-16.
@@ -29,16 +30,11 @@ public class Account {
     @Column(name = "name")
     private String name;
     @Basic
-    @Column(name = "position")
+    @Column(name = "position", nullable = false)
     private String position;
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
-
-    @Transient
-    public Position getPositionOrZero(){
-        return getPosition() == null ? Position.ZERO : getPosition();
-    }
 
     public Long getId() {
         return id;
@@ -64,6 +60,7 @@ public class Account {
         this.position = PositionAdapter.CONVERTER.marshal(position);
     }
 
+    @XmlTransient
     public Bank getBank() {
         return bank;
     }

@@ -31,6 +31,7 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     }])
     .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", function($log, $scope, $routeParams, $location, res){
         "use strict";
+        $scope.title = "CLSB Sim";
     }])
 ;
 

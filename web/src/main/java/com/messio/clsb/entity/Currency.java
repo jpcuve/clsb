@@ -1,6 +1,7 @@
 package com.messio.clsb.entity;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalTime;
 
 /**
@@ -99,6 +100,7 @@ public class Currency {
         this.close = close;
     }
 
+    @XmlTransient
     public Bank getBank() {
         return bank;
     }

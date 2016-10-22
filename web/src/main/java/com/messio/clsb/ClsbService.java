@@ -1,7 +1,13 @@
 package com.messio.clsb;
 
 import com.messio.clsb.entity.Account;
+import com.messio.clsb.entity.Bank;
+import com.messio.clsb.entity.Currency;
+import com.messio.clsb.session.ClsbFacade;
+import com.messio.clsb.session.Scheduler;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -14,17 +20,29 @@ import java.util.logging.Logger;
  */
 @Path("/")
 @Produces({"application/json"})
-@Stateless
 public class ClsbService {
     private static final Logger LOGGER = Logger.getLogger(ClsbService.class.getCanonicalName());
+    @EJB
+    private ClsbFacade facade;
+    @EJB
+    private Scheduler scheduler;
 
-    @PersistenceContext(unitName = "example")
-    private EntityManager em;
+    @GET
+    @Path("/bank")
+    public Bank bank(){
+        return scheduler.getBankModel().getBank();
+    }
 
     @GET
     @Path("/accounts")
     public List<Account> accounts(){
-        return em.createNamedQuery(Account.ACCOUNT_ALL, Account.class).getResultList();
+        return facade.findAccounts(bank());
+    }
+
+    @GET
+    @Path("/currencies")
+    public List<Currency> currencies(){
+        return facade.findCurrencies(bank());
     }
 
 }

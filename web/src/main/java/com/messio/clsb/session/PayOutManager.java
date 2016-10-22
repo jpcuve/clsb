@@ -29,7 +29,7 @@ public class PayOutManager {
     public List<PayOut> computePayOuts(final Bank bank, String iso){
         final List<PayOut> payOuts = new ArrayList<>();
         for (final Account account: facade.findAccounts(bank)){
-            final Position longPosition = account.getPositionOrZero().xlong().filter(iso);
+            final Position longPosition = account.getPosition().xlong().filter(iso);
             if (longPosition.isLong()){
                 final PayOut payOut = new PayOut();
                 payOut.setReference(String.format("pay-out %s", iso));

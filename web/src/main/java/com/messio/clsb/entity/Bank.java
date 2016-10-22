@@ -30,7 +30,7 @@ public class Bank {
     @Column(name = "sct", nullable = false)
     private LocalTime settlementCompletionTarget = LocalTime.of(10, 0);
     @Basic
-    @Column(name = "position")
+    @Column(name = "minimum_pay_in", nullable = false)
     private String minimumPayIn;
 
 
