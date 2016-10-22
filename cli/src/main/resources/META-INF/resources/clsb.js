@@ -13,7 +13,7 @@ angular.module("clsb", ["ngResource", "ngRoute"])
             .when("/crew-members/:id", { templateUrl: "view-crew-member-item.html"})
             .when("/missions", { templateUrl: "view-mission-list.html"})
             .when("/crew-members", { templateUrl: "view-crew-member-list.html"})
-            .when("/", { templateUrl: "view-home.html"})
+            .when("/", { templateUrl: "view-day.html"})
             .otherwise({ redirectTo: "/"})
     }])
     .factory("endPoint", ["$log", "$location", function($log, $location){
@@ -26,7 +26,7 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     }])
     .factory("res", ["$resource", "endPoint", function($resource, endPoint){
         return {
-            clsbResource: $resource(endPoint("/missions/:id"))
+            currenciesResource: $resource(endPoint("/missions/:id"))
         }
     }])
     .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", function($log, $scope, $routeParams, $location, res){
