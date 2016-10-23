@@ -79,14 +79,15 @@ public class Scheduler {
             events.add(new CurrencyEvent(currency.getClosing(), "closing", currency));
         }
         events.sort((e1, e2) -> e1.getWhen().equals(e2.getWhen()) ? 0 : (e1.getWhen().isAfter(e2.getWhen()) ? 1 : -1));
-        for (final BaseEvent event: events){
-            LOGGER.info(String.format("Event: %s", event));
-        }
 
         try (final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/bank-01.json")){
             this.instructions = objectMapper.readValue(is, Instruction[].class);
         } catch(IOException e){
             LOGGER.severe("cannot read instructions, " + e.getMessage());
+        }
+
+        for (final BaseEvent event: events){
+            LOGGER.info(String.format("Event: %s", event));
         }
     }
 
