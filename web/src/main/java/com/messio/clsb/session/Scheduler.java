@@ -1,13 +1,11 @@
 package com.messio.clsb.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.*;
 import com.messio.clsb.event.BankEvent;
 import com.messio.clsb.event.BaseEvent;
 import com.messio.clsb.event.CurrencyEvent;
-import com.messio.clsb.model.BankModel;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -19,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -44,54 +43,63 @@ public class Scheduler {
     @Inject
     private SettlementManager settlementManager;
 
-    private BankModel bankModel;
-    private LocalTime localTime = LocalTime.MIN;
     private List<BaseEvent> events;
+    private Instruction[] instructions;
 
     @PostConstruct
     public void init() {
-        this.events = new ArrayList<>();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final JaxbAnnotationModule annotationModule = new JaxbAnnotationModule();
-        objectMapper.registerModule(annotationModule);
-        final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/bank-01.json");
-        try{
-            this.bankModel = objectMapper.readValue(is, BankModel.class);
-            final Bank bank = facade.build(bankModel);
-            events.add(new BankEvent(bank.getOpening(), "opening", bank));
-            events.add(new BankEvent(bank.getSettlementCompletionTarget(), "sct", bank));
-            events.add(new BankEvent(bank.getClosing(), "closing", bank));
-            for (final Currency currency: facade.findCurrencies(bank)){
-                events.add(new CurrencyEvent(currency.getOpening(), "opening", currency));
-                events.add(new CurrencyEvent(currency.getFundingCompletionTarget(), "fct", currency));
-                events.add(new CurrencyEvent(currency.getClose(), "close", currency));
-                events.add(new CurrencyEvent(currency.getClosing(), "closing", currency));
+        objectMapper.findAndRegisterModules();
+        if (facade.findBank() == null){
+            try (final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/initial.json")) {
+                final Bank bank = objectMapper.readValue(is, Bank.class);
+                for (Currency currency: bank.getCurrencies()){
+                    currency.setBank(bank);
+                    facade.create(currency);
+                }
+                for (Account account: bank.getAccounts()){
+                    account.setBank(bank);
+                    facade.create(account);
+                }
+                facade.create(bank);
+            } catch(IOException e){
+                LOGGER.severe(e.getMessage());
             }
-        } catch(IOException e){
-            LOGGER.severe("cannot read bank model, " + e.getMessage());
         }
-        final TimerConfig timerConfig = new TimerConfig();
-        timerConfig.setPersistent(false);
-        final Timer timer = timerService.createIntervalTimer(0, 100L, timerConfig);
-    }
 
-    @Timeout
-    public void timeout(){
-        final LocalTime to = localTime.plusMinutes(10);
-        events.stream().filter(e -> (localTime.isBefore(e.getWhen()) || localTime.equals(e.getWhen())) && e.getWhen().isBefore(to)).forEach(e -> emitter.fire(e));
-        localTime = to;
+        this.events = new ArrayList<>();
+        final Bank bank = facade.findBank();
+        events.add(new BankEvent(bank.getOpening(), "opening", bank));
+        events.add(new BankEvent(bank.getSettlementCompletionTarget(), "sct", bank));
+        events.add(new BankEvent(bank.getClosing(), "closing", bank));
+        for (final Currency currency: facade.findCurrencies(bank)){
+            events.add(new CurrencyEvent(currency.getOpening(), "opening", currency));
+            events.add(new CurrencyEvent(currency.getFundingCompletionTarget(), "fct", currency));
+            events.add(new CurrencyEvent(currency.getClose(), "close", currency));
+            events.add(new CurrencyEvent(currency.getClosing(), "closing", currency));
+        }
+        events.sort((e1, e2) -> e1.getWhen().equals(e2.getWhen()) ? 0 : (e1.getWhen().isAfter(e2.getWhen()) ? 1 : -1));
+        for (final BaseEvent event: events){
+            LOGGER.info(String.format("Event: %s", event));
+        }
+
+        try (final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/bank-01.json")){
+            this.instructions = objectMapper.readValue(is, Instruction[].class);
+        } catch(IOException e){
+            LOGGER.severe("cannot read instructions, " + e.getMessage());
+        }
     }
 
     public void onBankEvent(@Observes BankEvent event) {
         LOGGER.info(String.format("Bank event: %s", event));
-        final Bank bank = bankModel.getBank();
+        final Bank bank = facade.findBank();
         final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
         switch(event.getName()){
             case "opening":
                 LOGGER.info(String.format("Bank opening: %s", mirror.getPosition()));
                 break;
             case "sct":
-                final List<Settlement> settlements = this.bankModel.getInstructions().stream()
+                final List<Settlement> settlements = Arrays.stream(this.instructions)
                         .filter(i -> i instanceof Settlement && i.getWhen().isBefore(event.getWhen()))
                         .map(i -> (Settlement) i)
                         .collect(Collectors.toList());
@@ -108,12 +116,12 @@ public class Scheduler {
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
         LOGGER.info(String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
-        final Bank bank = bankModel.getBank();
+        final Bank bank = facade.findBank();
         switch(event.getName()){
             case "opening":
                 break;
             case "fct":
-                final List<PayIn> payIns = this.bankModel.getInstructions().stream()
+                final List<PayIn> payIns = Arrays.stream(this.instructions)
                         .filter(i -> i instanceof PayIn && i.getWhen().isBefore(event.getWhen()))
                         .map(i -> (PayIn) i)
                         .collect(Collectors.toList());
@@ -128,7 +136,4 @@ public class Scheduler {
         }
     }
 
-    public BankModel getBankModel() {
-        return bankModel;
-    }
 }

@@ -1,19 +1,25 @@
 package com.messio.clsb.entity;
 
+import com.messio.clsb.Position;
+import com.messio.clsb.adapter.PositionAdapter;
+
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.List;
 
 /**
  * Created by jpc on 01-10-16.
  */
 @Entity
 @NamedQueries({
-        @NamedQuery(name = Bank.BANK_BY_NAME, query = "select b from Bank b where b.name = :name")
+        @NamedQuery(name = Bank.BANK_BY_NAME, query = "select b from Bank b where b.name = :name"),
+        @NamedQuery(name = Bank.BANK_ALL, query = "select b from Bank b")
 })
 @Table(name = "banks", uniqueConstraints = {@UniqueConstraint(columnNames = {"name"})})
 public class Bank {
     public static final String DEFAULT_NAME = "clsb";
     public static final String BANK_BY_NAME = "bank.byName";
+    public static final String BANK_ALL = "bank.all";
     @Id
     @Column(name = "id", nullable = false)
     private long id;
@@ -32,6 +38,10 @@ public class Bank {
     @Basic
     @Column(name = "minimum_pay_in", nullable = false)
     private String minimumPayIn;
+    @OneToMany(mappedBy = "bank")
+    private List<Currency> currencies;
+    @OneToMany(mappedBy = "bank")
+    private List<Account> accounts;
 
 
     public long getId() {
@@ -74,11 +84,27 @@ public class Bank {
         this.settlementCompletionTarget = settlementCompletionTarget;
     }
 
-    public String getMinimumPayIn() {
-        return minimumPayIn;
+    public Position getMinimumPayIn() {
+        return PositionAdapter.CONVERTER.unmarshal(minimumPayIn);
     }
 
-    public void setMinimumPayIn(String minimumPayIn) {
-        this.minimumPayIn = minimumPayIn;
+    public void setMinimumPayIn(Position minimumPayIn) {
+        this.minimumPayIn = PositionAdapter.CONVERTER.marshal(minimumPayIn);
+    }
+
+    public List<Currency> getCurrencies() {
+        return currencies;
+    }
+
+    public void setCurrencies(List<Currency> currencies) {
+        this.currencies = currencies;
+    }
+
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 }

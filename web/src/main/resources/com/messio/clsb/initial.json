@@ -1,0 +1,19 @@
+{
+  "name": "TEST-01",
+  "opening": "00:15",
+  "closing": "23:00",
+  "settlementCompletionTarget": "10:00",
+  "minimumPayIn": "",
+  "currencies":[
+    { "iso": "EUR", "group": "EUROPE", "opening": "07:00", "fundingCompletionTarget": "09:00", "close": "17:30", "closing": "18:00"},
+    { "iso": "GBP", "group": "EUROPE", "opening": "06:00", "fundingCompletionTarget": "08:00", "close": "14:30", "closing": "15:00"},
+    { "iso": "USD", "group": "AMERICA", "opening": "06:30", "fundingCompletionTarget": "08:30", "close": "21:00", "closing": "21:30"},
+    { "iso": "JPY", "group": "ASIA", "opening": "03:00", "fundingCompletionTarget": "05:00", "close": "13:30", "closing": "14:00"}
+  ],
+  "accounts":[
+    { "name": "_MIRROR_", "position": ""},
+    { "name": "a", "position": ""},
+    { "name": "b", "position": ""},
+    { "name": "c", "position": ""}
+  ]
+}

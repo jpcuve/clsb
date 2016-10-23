@@ -24,13 +24,11 @@ public class ClsbService {
     private static final Logger LOGGER = Logger.getLogger(ClsbService.class.getCanonicalName());
     @EJB
     private ClsbFacade facade;
-    @EJB
-    private Scheduler scheduler;
 
     @GET
     @Path("/bank")
     public Bank bank(){
-        return scheduler.getBankModel().getBank();
+        return facade.findBank();
     }
 
     @GET

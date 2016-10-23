@@ -28,18 +28,12 @@ public class ClsbFacade {
     @PersistenceContext
     private EntityManager em;
 
-    public Bank build(BankModel bankModel){
-        final Bank bank = bankModel.getBank();
-        em.persist(bank);
-        for (final Currency currency: bankModel.getCurrencies()){
-            currency.setBank(bank);
-            em.persist(currency);
-        }
-        for (final Account account: bankModel.getAccounts()){
-            account.setBank(bank);
-            em.persist(account);
-        }
-        return bank;
+    public <E> void create(E e){
+        em.persist(e);
+    }
+
+    public Bank findBank(){
+        return em.createNamedQuery(Bank.BANK_ALL, Bank.class).getResultList().stream().findFirst().orElse(null);
     }
 
     public List<Currency> findCurrencies(final Bank bank){
