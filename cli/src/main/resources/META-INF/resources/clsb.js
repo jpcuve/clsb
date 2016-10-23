@@ -33,5 +33,12 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         "use strict";
         $scope.title = "CLSB Sim";
     }])
+    .directive("daySvg", function(){
+        return {
+            restrict: "E",
+            templateUrl: "day.svg"
+
+        };
+    })
 ;
 
