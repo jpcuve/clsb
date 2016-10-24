@@ -15,7 +15,8 @@ public class TestScript {
                 "'abc'",
                 "1234",
                 "sin('abc',2)",
-                " sin(3, cos(2, 4))"
+                " sin(3, cos(2, 4))",
+                "simple()"
         };
         for (String test: tests){
             System.out.println(Parser.toString(new Parser(test).parse()));
