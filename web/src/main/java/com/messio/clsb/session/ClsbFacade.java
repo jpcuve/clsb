@@ -6,14 +6,10 @@ import com.messio.clsb.entity.Account;
 import com.messio.clsb.entity.Bank;
 import com.messio.clsb.entity.Currency;
 import com.messio.clsb.entity.Movement;
-import com.messio.clsb.model.BankModel;
-
-import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.logging.Logger;
