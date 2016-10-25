@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
  */
 public enum TokenInfo {
     WHITESPACE("\\s+"),
+    NULL("@"),
     COMMA(","),
     PARENTHESIS_OPEN("\\("),
     PARENTHESIS_CLOSE("\\)"),

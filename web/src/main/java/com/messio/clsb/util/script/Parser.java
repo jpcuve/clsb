@@ -51,6 +51,9 @@ public class Parser {
                 final BigInteger bi = new BigInteger(lookAhead.getSequence());
                 accept(TokenInfo.NUMBER_DECIMAL_INTEGER);
                 return bi;
+            case NULL:
+                accept(TokenInfo.NULL);
+                return null;
             default:
                 throw new ParseException(String.format("Unexpected end of expression: %s", lookAhead.getSequence()), 0);
         }
@@ -60,6 +63,8 @@ public class Parser {
         if (o instanceof Call){
             final Call call = (Call) o;
             return String.format("%s(%s)", call.getFunction(), call.getArguments().stream().map(Parser::toString).collect(Collectors.joining(",")));
+        } else if (o == null){
+            return "@";
         } else if (o instanceof String){
             return String.format("'%s'", (String) o);
         } else {
