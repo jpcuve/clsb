@@ -49,14 +49,15 @@ public class ClsbService extends Environment {
     }
 
     @GET
-    @Path(("/command/{command}"))
-    public String command(@PathParam("command") String cmd){
+    @Path(("/command/{cmd}"))
+    public String command(@PathParam("cmd") String cmd){
         try{
             eval(cmd);
+            return "ok";
         } catch (ParseException e){
             LOGGER.severe(e.getMessage());
+            return e.getMessage();
         }
-        return "ok";
     }
 
 }
