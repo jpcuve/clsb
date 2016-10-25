@@ -49,7 +49,7 @@ public class ClsbService extends Environment {
     }
 
     @GET
-    @Path(("/command/{cmd}"))
+    @Path("/command/{cmd}")
     public String command(@PathParam("cmd") String cmd){
         try{
             eval(cmd);
