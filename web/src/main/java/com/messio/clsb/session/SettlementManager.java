@@ -50,7 +50,7 @@ public class SettlementManager {
     }
 
     public void settleUnconditionally(final Bank bank, final LocalTime when, final List<Transfer> transfers){
-        LOGGER.info(String.format("Booking settelements"));
+        LOGGER.info(String.format("Booking settlements"));
         facade.book(bank, when, transfers);
     }
 }
