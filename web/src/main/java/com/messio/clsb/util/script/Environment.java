@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 public abstract class Environment {
     public abstract Object call(String function, List<Object> arguments);
 
-    public void eval(String expression) throws ParseException {
-        eval(new Parser(expression).parse());
+    public Object eval(String expression) throws ParseException {
+        return eval(new Parser(expression).parse());
     }
 
     private Object eval(Object o){
