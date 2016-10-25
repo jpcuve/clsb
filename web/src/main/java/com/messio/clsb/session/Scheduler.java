@@ -30,8 +30,6 @@ import java.util.stream.Collectors;
 @Startup
 public class Scheduler {
     public static final Logger LOGGER = Logger.getLogger(Scheduler.class.getCanonicalName());
-    @Resource
-    private TimerService timerService;
     @Inject
     private ClsbFacade facade;
     @Inject
@@ -45,6 +43,7 @@ public class Scheduler {
 
     private List<BaseEvent> events;
     private Instruction[] instructions;
+    private int index;
 
     @PostConstruct
     public void init() {
@@ -80,7 +79,7 @@ public class Scheduler {
         }
         events.sort((e1, e2) -> e1.getWhen().equals(e2.getWhen()) ? 0 : (e1.getWhen().isAfter(e2.getWhen()) ? 1 : -1));
 
-        try (final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/bank-01.json")){
+        try (final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/scenario-01.json")){
             this.instructions = objectMapper.readValue(is, Instruction[].class);
         } catch(IOException e){
             LOGGER.severe("cannot read instructions, " + e.getMessage());
@@ -88,6 +87,19 @@ public class Scheduler {
 
         for (final BaseEvent event: events){
             LOGGER.info(String.format("Event: %s", event));
+        }
+    }
+
+    public void reset(){
+        LOGGER.info("Resetting simulator");
+        this.index = 0;
+    }
+
+    public void step(){
+        if (index < events.size() - 1){
+            this.index++;
+            emitter.fire(events.get(this.index));
+
         }
     }
 

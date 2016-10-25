@@ -20,18 +20,23 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         return function(ep){
             "use strict";
             var base = $location.port() >= 63342 ? ["http://", $location.host(), ":8080"] : [$location.protocol(), "://", $location.host(), ":", $location.port()];
-            base.push("/test/api", ep);
+            base.push("/clsb/api", ep);
             return base.join("");
         }
     }])
     .factory("res", ["$resource", "endPoint", function($resource, endPoint){
         return {
+            commandResource: $resource(endPoint("/command/:cmd")),
             currenciesResource: $resource(endPoint("/missions/:id"))
         }
     }])
     .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", function($log, $scope, $routeParams, $location, res){
         "use strict";
         $scope.title = "CLSB Sim";
+
+        $scope.command = function(cmd){
+            res.commandResource.get({cmd: cmd});
+        }
     }])
     .directive("daySvg", function(){
         return {

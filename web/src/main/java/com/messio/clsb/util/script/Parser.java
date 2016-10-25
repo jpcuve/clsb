@@ -1,5 +1,6 @@
 package com.messio.clsb.util.script;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -47,10 +48,14 @@ public class Parser {
                 final String s = lookAhead.getSequence().substring(1, lookAhead.getSequence().length() - 1);
                 accept(TokenInfo.STRING);
                 return s;
-            case NUMBER_DECIMAL_INTEGER:
+            case INTEGER:
                 final BigInteger bi = new BigInteger(lookAhead.getSequence());
-                accept(TokenInfo.NUMBER_DECIMAL_INTEGER);
+                accept(TokenInfo.INTEGER);
                 return bi;
+            case FLOAT:
+                final BigDecimal bd = new BigDecimal(lookAhead.getSequence());
+                accept(TokenInfo.FLOAT);
+                return bd;
             case NULL:
                 accept(TokenInfo.NULL);
                 return null;

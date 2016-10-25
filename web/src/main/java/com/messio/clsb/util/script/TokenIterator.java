@@ -19,25 +19,23 @@ public class TokenIterator implements Iterator<Token> {
     }
 
     private void advance(){
-        this.token = null;
+        this.token = new Token(TokenInfo.INVALID, input.substring(start));
         final String s = input.substring(start);
         for (final TokenInfo token: TokenInfo.values()){
-            final Matcher matcher = token.getPattern().matcher(s);
-            if (matcher.find()){
-                final String group = matcher.group();
-                this.token = new Token(token, group.trim());
-                start += group.length();
-                break;
+            if (token.getPattern() != null){
+                final Matcher matcher = token.getPattern().matcher(s);
+                if (matcher.find()){
+                    final String group = matcher.group();
+                    this.token = new Token(token, group.trim());
+                    start += group.length();
+                    break;
+                }
             }
         }
     }
 
     public boolean hasNext() {
-        return token != null;
-    }
-
-    public boolean isError(){
-        return !hasNext() && start != input.length();
+        return token.getTokenInfo() != TokenInfo.INVALID;
     }
 
     public Token next() {

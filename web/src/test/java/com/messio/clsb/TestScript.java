@@ -17,6 +17,14 @@ public class TestScript {
         final String[] tests = {
                 "'abc'",
                 "1234",
+                "-10",
+                "+15",
+                "12.3",
+                "10.",
+                ".1",
+                ".3e10",
+                "1.2e-12",
+                "-1.41e+12",
                 "sin('abc',2)",
                 " sin(3, cos(2, 4))",
                 "simple()",
@@ -24,7 +32,8 @@ public class TestScript {
                 "start(2,3,'coucou',@)"
         };
         for (String test: tests){
-            System.out.println(Parser.toString(new Parser(test).parse()));
+            Object parse = new Parser(test).parse();
+            System.out.printf("%s [%s]%n", Parser.toString(parse), parse.getClass().getName());
         }
     }
 

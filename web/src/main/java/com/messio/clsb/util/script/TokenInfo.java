@@ -12,8 +12,10 @@ public enum TokenInfo {
     PARENTHESIS_OPEN("\\("),
     PARENTHESIS_CLOSE("\\)"),
     STRING("\\'.+\\'"),
-    NUMBER_DECIMAL_INTEGER("[0-9]+"),
-    SYMBOL("[a-zA-Z][a-zA-Z0-9_]*")
+    FLOAT("[-+]?[0-9]*\\.[0-9]+([eE][-+]?[0-9]+)?"),
+    INTEGER("[-+]?[0-9]+"),
+    SYMBOL("[a-zA-Z][a-zA-Z0-9_]*"),
+    INVALID(null)
     ;
 
     private Pattern pattern;
