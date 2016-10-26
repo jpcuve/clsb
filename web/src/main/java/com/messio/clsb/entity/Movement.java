@@ -11,8 +11,14 @@ import java.time.LocalTime;
  * Created by jpc on 22-09-16.
  */
 @Entity
+@NamedQueries({
+        @NamedQuery(name = Movement.MOVEMENT_BY_ACCOUNT, query = "select m from Movement m where (m.orig = :account or m.dest = :account) order by m.when"),
+        @NamedQuery(name = Movement.MOVEMENT_DELETE, query = "delete from Movement")
+})
 @Table(name = "movements")
 public class Movement {
+    public static final String MOVEMENT_BY_ACCOUNT = "movement.byAccount";
+    public static final String MOVEMENT_DELETE = "movement.delete";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")

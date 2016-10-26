@@ -3,6 +3,7 @@ package com.messio.clsb;
 import com.messio.clsb.entity.Account;
 import com.messio.clsb.entity.Bank;
 import com.messio.clsb.entity.Currency;
+import com.messio.clsb.entity.Movement;
 import com.messio.clsb.session.ClsbFacade;
 import com.messio.clsb.session.Scheduler;
 import com.messio.clsb.util.script.Environment;
@@ -57,6 +58,12 @@ public class ClsbService extends Environment {
     @Path("/currencies")
     public List<Currency> currencies(){
         return facade.findCurrencies(bank());
+    }
+
+    @GET
+    @Path("/movements")
+    public List<Movement> movements(@QueryParam("accountId") Long accountId){
+        return facade.findMovements(facade.find(Account.class, accountId));
     }
 
     @GET

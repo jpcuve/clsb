@@ -28,6 +28,14 @@ public class ClsbFacade {
         em.persist(e);
     }
 
+    public <E> E update(E e){
+        return em.merge(e);
+    }
+
+    public <E, ID> E find(Class<E> aClass, ID id){
+        return em.find(aClass, id);
+    }
+
     public Bank findBank(){
         return em.createNamedQuery(Bank.BANK_ALL, Bank.class).getResultList().stream().findFirst().orElse(null);
     }
@@ -40,34 +48,19 @@ public class ClsbFacade {
         return em.createNamedQuery(Account.ACCOUNT_BY_BANK, Account.class).setParameter("bank", bank).getResultList();
     }
 
+    public List<Movement> findMovements(Account account) {
+        if (account == null){
+            return Collections.emptyList();
+        }
+        return em.createNamedQuery(Movement.MOVEMENT_BY_ACCOUNT, Movement.class).setParameter("account", account).getResultList();
+    }
+
     public Account findAccount(final Bank bank, final String name){
         return em.createNamedQuery(Account.ACCOUNT_BY_NAME_BY_BANK, Account.class).setParameter("name", name).setParameter("bank", bank).getResultList().stream().findFirst().orElseGet(() -> null);
     }
 
-    public List<Movement> book(Bank bank, LocalTime when, List<Transfer> transfers){
-        final List<Movement> list = new ArrayList<>();
-        final Map<String, Account> accountMap = new HashMap<>();
-        for (final Transfer transfer: transfers){
-            final Account origAccount = accountMap.computeIfAbsent(transfer.getOrig(), a -> findAccount(bank, a));
-            final Account destAccount = accountMap.computeIfAbsent(transfer.getDest(), a -> findAccount(bank, a));
-            if (origAccount != null && destAccount != null){
-                final Position amount = transfer.getAmount();
-                final Position origPosition = origAccount.getPosition();
-                final Position destPosition = destAccount.getPosition();
-                origAccount.setPosition(origPosition == null ? amount.negate() : origPosition.subtract(amount));
-                destAccount.setPosition(destPosition == null ? amount : destPosition.add(amount));
-                final Movement movement = new Movement();
-                movement.setInformation(transfer.getInformation());
-                movement.setWhen(when);
-                movement.setOrig(origAccount);
-                movement.setDest(destAccount);
-                movement.setAmount(amount);
-                LOGGER.info(String.format("Movement: %s", movement));
-                em.persist(movement);
-                list.add(movement);
-            }
-        }
-        accountMap.values().stream().filter(a -> a != null).forEach(a -> em.persist(a));
-        return list;
+
+    public int deleteMovements() {
+        return em.createNamedQuery(Movement.MOVEMENT_DELETE).executeUpdate();
     }
 }

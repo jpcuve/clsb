@@ -26,7 +26,8 @@ public class PayOutManager {
     @Inject
     private ClsbFacade facade;
 
-    public List<PayOut> computePayOuts(final Bank bank, String iso){
+    public List<Transfer> computePayOuts(String iso){
+        final Bank bank = facade.findBank();
         final List<PayOut> payOuts = new ArrayList<>();
         for (final Account account: facade.findAccounts(bank)){
             final Position longPosition = account.getPosition().xlong().filter(iso);
@@ -38,7 +39,9 @@ public class PayOutManager {
                 payOuts.add(payOut);
             }
         }
-        return payOuts;
+        return payOuts.stream()
+                .map(po -> new Transfer(String.format("pay-out: %s", po.getReference()), po.getAccount(), po.getAmount()))
+                .collect(Collectors.toList());
     }
 
     public List<PayOut> computePayOutsBuild1(final Bank bank, final List<Transfer> projectedTransfers){
@@ -48,14 +51,6 @@ public class PayOutManager {
         projectedTransfers.forEach(ledger::apply);
 
         return payOuts;
-    }
-
-    public void bookPayOuts(final Bank bank, final LocalTime when, final List<PayOut> payOuts){
-        LOGGER.info(String.format("Booking pay-outs"));
-        final List<Transfer> transfers = payOuts.stream()
-                .map(po -> new Transfer(String.format("pay-out: %s", po.getReference()), po.getAccount(), po.getAmount()))
-                .collect(Collectors.toList());
-        facade.book(bank, when, transfers);
     }
 
 }

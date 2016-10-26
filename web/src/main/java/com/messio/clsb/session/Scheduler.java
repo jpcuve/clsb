@@ -18,6 +18,7 @@ import java.io.InputStream;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -40,6 +41,8 @@ public class Scheduler {
     private PayOutManager payOutManager;
     @Inject
     private SettlementManager settlementManager;
+    @Inject
+    private AccountManager accountManager;
 
     private List<BaseEvent> events;
     private Instruction[] instructions;
@@ -96,9 +99,9 @@ public class Scheduler {
     }
 
     public void step(){
-        if (index < events.size() - 1){
-            this.index++;
+        if (index < events.size()){
             emitter.fire(events.get(this.index));
+            this.index++;
 
         }
     }
@@ -107,9 +110,11 @@ public class Scheduler {
         LOGGER.info(String.format("Bank event: %s", event));
         final Bank bank = facade.findBank();
         final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
+        List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
             case "opening":
                 LOGGER.info(String.format("Bank opening: %s", mirror.getPosition()));
+                accountManager.reset();
                 break;
             case "sct":
                 final List<Settlement> settlements = Arrays.stream(this.instructions)
@@ -118,18 +123,20 @@ public class Scheduler {
                         .collect(Collectors.toList());
                 final List<Transfer> queue = settlementManager.buildSettlementQueue(settlements);
                 LOGGER.info(String.format("Settlement queue size: %s", queue.size()));
-                settlementManager.settleUnconditionally(bank, event.getWhen(), queue);
+                transfers = settlementManager.settleUnconditionally(queue);
                 break;
             case "closing":
                 LOGGER.info(String.format("Bank closing: %s", mirror.getPosition()));
                 break;
         }
+        accountManager.book(event.getWhen(), transfers);
     }
 
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
         LOGGER.info(String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
         final Bank bank = facade.findBank();
+        List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
             case "opening":
                 break;
@@ -138,15 +145,15 @@ public class Scheduler {
                         .filter(i -> i instanceof PayIn && i.getWhen().isBefore(event.getWhen()))
                         .map(i -> (PayIn) i)
                         .collect(Collectors.toList());
-                payInManager.bookPayIns(bank, event.getWhen(), payIns, iso);
+                transfers = payInManager.bookPayIns(payIns, iso);
                 break;
             case "close":
-                final List<PayOut> payOuts = payOutManager.computePayOuts(bank, iso);
-                payOutManager.bookPayOuts(bank, event.getWhen(), payOuts);
+                transfers = payOutManager.computePayOuts(iso);
                 break;
             case "closing":
                 break;
         }
+        accountManager.book(event.getWhen(), transfers);
     }
 
 }
