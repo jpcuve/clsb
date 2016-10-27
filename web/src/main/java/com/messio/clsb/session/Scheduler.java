@@ -3,6 +3,7 @@ package com.messio.clsb.session;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.*;
+import com.messio.clsb.entity.Currency;
 import com.messio.clsb.event.BankEvent;
 import com.messio.clsb.event.BaseEvent;
 import com.messio.clsb.event.CurrencyEvent;
@@ -14,6 +15,9 @@ import javax.ejb.*;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.json.spi.JsonProvider;
+import javax.websocket.*;
+import javax.websocket.server.ServerEndpoint;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -21,10 +25,7 @@ import javax.ws.rs.Produces;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 @Startup
 @Path("/")
 @Produces({"application/json"})
+@ServerEndpoint("/scheduler")
 public class Scheduler extends Environment {
     public static final Logger LOGGER = Logger.getLogger(Scheduler.class.getCanonicalName());
     @Inject
@@ -57,6 +59,7 @@ public class Scheduler extends Environment {
 
     @PostConstruct
     public void init() {
+        final JsonProvider jsonProvider = JsonProvider.provider();
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
         if (facade.findBank() == null){
@@ -110,10 +113,44 @@ public class Scheduler extends Environment {
     @Path("/command/{cmd}")
     public String command(@PathParam("cmd") String cmd){
         try{
-            return Parser.toString(eval(cmd));
+            return String.format("\"%s\"", Parser.toString(eval(cmd)));
         } catch (ParseException e){
             LOGGER.severe(e.getMessage());
             return e.getMessage();
+        }
+    }
+
+    private Set<Session> sessions = new HashSet<>();
+
+    @OnOpen
+    public void open(Session session){
+        LOGGER.info(String.format("WS session opened: %s", session.getId()));
+        sessions.add(session);
+    }
+
+    @OnClose
+    public void close(Session session){
+        LOGGER.info(String.format("WS session closed: %s", session.getId()));
+        sessions.remove(session);
+    }
+
+    @OnError
+    public void error(Throwable t){
+        LOGGER.severe(String.format("WS error: %s", t.getMessage()));
+    }
+
+    @OnMessage
+    public void handleMessage(String message, Session session){
+        LOGGER.info(String.format("WS message received from session %s: %s", session.getId(), message));
+    }
+
+    public void sendMessage(String message){
+        for (Session session: sessions){
+            if (session.isOpen()) try {
+                session.getBasicRemote().sendText(message);
+            } catch (IOException e){
+                LOGGER.severe(e.getMessage());
+            }
         }
     }
 
@@ -142,7 +179,7 @@ public class Scheduler extends Environment {
     }
 
     public void onBankEvent(@Observes BankEvent event) {
-        LOGGER.info(String.format("Bank event: %s", event));
+        sendMessage(String.format("Bank event: %s", event));
         final Bank bank = bank();
         final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
         List<Transfer> transfers = Collections.emptyList();
@@ -168,7 +205,7 @@ public class Scheduler extends Environment {
     }
 
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
-        LOGGER.info(String.format("Currency event: %s", event));
+        sendMessage(String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
         final Bank bank = bank();
         List<Transfer> transfers = Collections.emptyList();

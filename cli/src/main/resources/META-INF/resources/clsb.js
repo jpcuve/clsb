@@ -36,7 +36,16 @@ angular.module("clsb", ["ngResource", "ngRoute"])
 
         $scope.command = function(cmd){
             res.commandResource.get({cmd: cmd});
+        };
+
+        var ws = new WebSocket("ws://localhost:8080/clsb/scheduler");
+        ws.onopen = function(event){
+            ws.send("coucou");
+        };
+        ws.onmessage = function(event){
+            $log.log("Event data: " + event.data);
         }
+
     }])
     .directive("daySvg", function(){
         return {
