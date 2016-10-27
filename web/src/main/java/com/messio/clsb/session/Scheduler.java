@@ -6,16 +6,21 @@ import com.messio.clsb.entity.*;
 import com.messio.clsb.event.BankEvent;
 import com.messio.clsb.event.BaseEvent;
 import com.messio.clsb.event.CurrencyEvent;
+import com.messio.clsb.util.script.Environment;
+import com.messio.clsb.util.script.Parser;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalTime;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,7 +34,9 @@ import java.util.stream.Collectors;
 @Singleton(name = "clsb/scheduler")
 @LocalBean
 @Startup
-public class Scheduler {
+@Path("/")
+@Produces({"application/json"})
+public class Scheduler extends Environment {
     public static final Logger LOGGER = Logger.getLogger(Scheduler.class.getCanonicalName());
     @Inject
     private ClsbFacade facade;
@@ -93,22 +100,50 @@ public class Scheduler {
         }
     }
 
-    public void reset(){
-        LOGGER.info("Resetting simulator");
-        this.index = 0;
+    @GET
+    @Path("/bank")
+    public Bank bank(){
+        return facade.findBank();
     }
 
-    public void step(){
-        if (index < events.size()){
-            emitter.fire(events.get(this.index));
-            this.index++;
-
+    @GET
+    @Path("/command/{cmd}")
+    public String command(@PathParam("cmd") String cmd){
+        try{
+            return Parser.toString(eval(cmd));
+        } catch (ParseException e){
+            LOGGER.severe(e.getMessage());
+            return e.getMessage();
         }
+    }
+
+    @Override
+    public Object call(String function, List<Object> arguments) {
+        LOGGER.info(String.format("%s(%s)", function, arguments.stream().map(Parser::toString).collect(Collectors.joining(","))));
+        switch(function){
+            case "reset":
+                LOGGER.info("Resetting simulator");
+                this.index = 0;
+                return null;
+            case "step":
+                if (index < events.size()){
+                    emitter.fire(events.get(this.index));
+                    this.index++;
+
+                }
+                return null;
+            case "all":
+                for (BaseEvent event: events){
+                    emitter.fire(event);
+                }
+                break;
+        }
+        return null;
     }
 
     public void onBankEvent(@Observes BankEvent event) {
         LOGGER.info(String.format("Bank event: %s", event));
-        final Bank bank = facade.findBank();
+        final Bank bank = bank();
         final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
@@ -135,7 +170,7 @@ public class Scheduler {
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
         LOGGER.info(String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
-        final Bank bank = facade.findBank();
+        final Bank bank = bank();
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
             case "opening":

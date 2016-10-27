@@ -4,11 +4,16 @@ import com.messio.clsb.Position;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.Account;
 import com.messio.clsb.entity.Bank;
+import com.messio.clsb.entity.Currency;
 import com.messio.clsb.entity.Movement;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +26,8 @@ import java.util.logging.Logger;
  */
 @Singleton(name = "clsb/account-manager")
 @LocalBean
+@Path("/")
+@Produces({"application/json"})
 public class AccountManager {
     public static final Logger LOGGER = Logger.getLogger(AccountManager.class.getCanonicalName());
     @Inject
@@ -62,5 +69,18 @@ public class AccountManager {
         accountMap.values().stream().filter(a -> a != null).forEach(a -> facade.update(a));
         return list;
     }
+
+    @GET
+    @Path("/accounts")
+    public List<Account> accounts(){
+        return facade.findAccounts(facade.findBank());
+    }
+
+    @GET
+    @Path("/movements")
+    public List<Movement> movements(@QueryParam("accountId") Long accountId){
+        return facade.findMovements(facade.find(Account.class, accountId));
+    }
+
 
 }
