@@ -39,12 +39,18 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         };
 
         var ws = new WebSocket("ws://localhost:8080/clsb/scheduler");
+
         ws.onopen = function(event){
             ws.send("coucou");
         };
+
         ws.onmessage = function(event){
             $log.log("Event data: " + event.data);
-        }
+            var data = JSON.parse(event.data);
+            if (data){
+                $scope.time = data.localTime;
+            }
+        };
 
     }])
     .directive("daySvg", function(){

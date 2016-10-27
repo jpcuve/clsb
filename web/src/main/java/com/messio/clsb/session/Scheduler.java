@@ -2,6 +2,7 @@ package com.messio.clsb.session;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.messio.clsb.Transfer;
+import com.messio.clsb.adapter.LocalTimeAdapter;
 import com.messio.clsb.entity.*;
 import com.messio.clsb.entity.Currency;
 import com.messio.clsb.event.BankEvent;
@@ -15,6 +16,7 @@ import javax.ejb.*;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.json.JsonObject;
 import javax.json.spi.JsonProvider;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
@@ -25,6 +27,7 @@ import javax.ws.rs.Produces;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -144,10 +147,15 @@ public class Scheduler extends Environment {
         LOGGER.info(String.format("WS message received from session %s: %s", session.getId(), message));
     }
 
-    public void sendMessage(String message){
+    public void sendMessage(LocalTime when, String message){
+        final JsonProvider provider = JsonProvider.provider();
+        final JsonObject o = provider.createObjectBuilder()
+                .add("localTime", LocalTimeAdapter.CONVERTER.marshal(when))
+                .add("message", message)
+                .build();
         for (Session session: sessions){
             if (session.isOpen()) try {
-                session.getBasicRemote().sendText(message);
+                session.getBasicRemote().sendText(o.toString());
             } catch (IOException e){
                 LOGGER.severe(e.getMessage());
             }
@@ -179,9 +187,8 @@ public class Scheduler extends Environment {
     }
 
     public void onBankEvent(@Observes BankEvent event) {
-        sendMessage(String.format("Bank event: %s", event));
-        final Bank bank = bank();
-        final Account mirror = facade.findAccount(bank, Account.MIRROR_NAME);
+        sendMessage(event.getWhen(), String.format("Bank event: %s", event));
+        final Account mirror = accountManager.getMirror();
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
             case "opening":
@@ -205,7 +212,7 @@ public class Scheduler extends Environment {
     }
 
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
-        sendMessage(String.format("Currency event: %s", event));
+        sendMessage(event.getWhen(), String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
         final Bank bank = bank();
         List<Transfer> transfers = Collections.emptyList();
