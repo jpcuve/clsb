@@ -23,9 +23,11 @@
     <button data-ng-click="command('reset()')">Reset</button>
     <button data-ng-click="command('step()')">Step</button>
     <button data-ng-click="command('all()')">All</button>
+    <br/>
+    <day-svg currencies="currencies"></day-svg>
+    <div data-ng-repeat="currency in currencies">{{currency.iso}}</div>
 
     <div data-ng-view=""></div>
-    <day-svg></day-svg>
 
 
 </div>

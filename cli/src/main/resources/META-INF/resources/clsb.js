@@ -27,12 +27,16 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     .factory("res", ["$resource", "endPoint", function($resource, endPoint){
         return {
             commandResource: $resource(endPoint("/command/:cmd")),
-            currenciesResource: $resource(endPoint("/missions/:id"))
+            currencyResource: $resource(endPoint("/currencies/:id"))
         }
     }])
     .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", function($log, $scope, $routeParams, $location, res){
         "use strict";
         $scope.title = "CLSB Sim";
+
+        $scope.currencies = res.currencyResource.query(function(cs){
+            $log.log("currencies retrieved: ", cs);
+        });
 
         $scope.command = function(cmd){
             res.commandResource.get({cmd: cmd});
@@ -56,8 +60,10 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     .directive("daySvg", function(){
         return {
             restrict: "E",
-            templateUrl: "day.svg"
-
+            templateUrl: "day.svg",
+            scope: {
+                currencies: "="
+            }
         };
     })
 ;

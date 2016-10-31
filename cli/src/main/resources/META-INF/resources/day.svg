@@ -1,6 +1,18 @@
-<svg viewBox = "0 0 1440 600" version = "1.1" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="1440" height="30" fill="yellow" stroke="black" stroke-width="1"/>
-    <line x1="360" y1="0" x2="360" y2="600" class="basic"/>
-    <line x1="720" y1="0" x2="720" y2="600" class="basic"/>
-    <line x1="1080" y1="0" x2="1080" y2="600" class="basic"/>
+<svg viewBox = "0 0 1440 50" version = "1.1" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        line {
+            stroke: black;
+            stroke-width: 1px;
+            vector-effect: non-scaling-stroke;
+        }
+        text {
+            font-family: sans-serif;
+            font-size: 10px;
+        }
+    </style>
+    <line x1="0" y1="0" x2="1440" y2="0"/>
+    <line x1="0" y1="0" x2="1440" data-ng-attr-y2="{{(currencies.length + 1) * 10}}"/>
+    <line data-ng-repeat="i in [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]" data-ng-attr-x1="{{i * 60}}" y1="0" data-ng-attr-x2="{{i * 60}}" y2="10"/>
+    <text x="0" y="10">Day</text>
+    <text data-ng-repeat="currency in currencies" x="0" data-ng-attr-y="{{($index + 2) * 10}}">{{currency.iso}}</text>
 </svg>
