@@ -24,8 +24,9 @@
     <button data-ng-click="command('step()')">Step</button>
     <button data-ng-click="command('all()')">All</button>
     <br/>
+    <a href="#/day">Day</a>
+    <a href="#/account">Account</a>
     <day-svg currencies="currencies"></day-svg>
-    <div data-ng-repeat="currency in currencies">{{currency.iso}}</div>
 
     <div data-ng-view=""></div>
 

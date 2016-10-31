@@ -9,9 +9,8 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     }])
     .config(["$routeProvider", function($routeProvider){
         $routeProvider
-            .when("/missions/:id", { templateUrl: "view-mission-item.html"})
-            .when("/crew-members/:id", { templateUrl: "view-crew-member-item.html"})
-            .when("/missions", { templateUrl: "view-mission-list.html"})
+            .when("/day", { templateUrl: "view-day.html"})
+            .when("/account", { templateUrl: "view-account.html"})
             .when("/crew-members", { templateUrl: "view-crew-member-list.html"})
             .when("/", { templateUrl: "view-day.html"})
             .otherwise({ redirectTo: "/"})
@@ -65,6 +64,27 @@ angular.module("clsb", ["ngResource", "ngRoute"])
                 currencies: "="
             }
         };
+    })
+    .directive("timeTracker", function(){
+        return {
+            restrict: "E",
+            template: "<span>Timetracker, id={{id}}</span>",
+            scope: {
+                id: "@"
+            },
+            controller: ["$scope", "$log", function($scope, $log){
+                "use strict";
+                var now = new Date().getTime();
+                $log.log("Now: " + now);
+
+                $scope.$on("$locationChangeStart", function(){
+                    var later = new Date().getTime();
+                    $log.log("Destroying controller, id:" + $scope.id + ", time: " + (later - now));
+                    now = later;
+                });
+            }]
+        }
+
     })
 ;
 
