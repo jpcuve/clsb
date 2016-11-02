@@ -70,7 +70,11 @@ angular.module("clsb", ["ngResource", "ngRoute"])
                         return parseInt(t.substring(0, colon)) * 60 + parseInt(t.substring(colon + 1));
                     }
                     return 0;
-                }
+                };
+
+                scope.hours = function(){
+                    return new Array(24);
+                };
             }
         };
     }])
