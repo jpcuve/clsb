@@ -56,35 +56,23 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         };
 
     }])
-    .directive("daySvg", function(){
+    .directive("dayOverview", ["$log", function($log){
         return {
             restrict: "E",
             templateUrl: "day.svg",
             scope: {
                 currencies: "="
+            },
+            link: function(scope){
+                scope.time = function(t){
+                    var colon = t.indexOf(":");
+                    if (colon >= 0){
+                        return parseInt(t.substring(0, colon)) * 60 + parseInt(t.substring(colon + 1));
+                    }
+                    return 0;
+                }
             }
         };
-    })
-    .directive("timeTracker", function(){
-        return {
-            restrict: "E",
-            template: "<span>Timetracker, id={{id}}</span>",
-            scope: {
-                id: "@"
-            },
-            controller: ["$scope", "$log", function($scope, $log){
-                "use strict";
-                var now = new Date().getTime();
-                $log.log("Now: " + now);
-
-                $scope.$on("$locationChangeStart", function(){
-                    var later = new Date().getTime();
-                    $log.log("Destroying controller, id:" + $scope.id + ", time: " + (later - now));
-                    now = later;
-                });
-            }]
-        }
-
-    })
+    }])
 ;
 
