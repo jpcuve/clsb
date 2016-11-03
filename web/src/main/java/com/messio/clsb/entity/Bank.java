@@ -4,6 +4,7 @@ import com.messio.clsb.Position;
 import com.messio.clsb.adapter.PositionAdapter;
 
 import javax.persistence.*;
+import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalTime;
 import java.util.List;
 

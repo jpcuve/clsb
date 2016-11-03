@@ -38,7 +38,9 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         });
 
         $scope.command = function(cmd){
-            res.commandResource.get({cmd: cmd});
+            res.commandResource.get({cmd: cmd}, function(now){
+                $scope.now = now;
+            });
         };
 
         var ws = new WebSocket("ws://localhost:8080/clsb/scheduler");

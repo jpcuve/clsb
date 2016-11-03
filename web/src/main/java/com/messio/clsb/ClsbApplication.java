@@ -1,6 +1,8 @@
 package com.messio.clsb;
 
+import com.messio.clsb.session.AccountManager;
 import com.messio.clsb.session.CurrencyManager;
+import com.messio.clsb.session.Scheduler;
 
 import javax.inject.Inject;
 import javax.ws.rs.ApplicationPath;
@@ -15,6 +17,11 @@ import java.util.Set;
 @ApplicationPath("/api")
 public class ClsbApplication extends Application {
     public Set<Class<?>> getClasses(){
-        return new HashSet<>(Arrays.asList(CORSFilter.class, CurrencyManager.class));
+        return new HashSet<>(Arrays.asList(
+                CORSFilter.class,
+                Scheduler.class,
+                CurrencyManager.class,
+                AccountManager.class
+        ));
     }
 }

@@ -59,6 +59,7 @@ public class Scheduler extends Environment {
     private List<BaseEvent> events;
     private Instruction[] instructions;
     private int index;
+    private LocalTime now;
 
     @PostConstruct
     public void init() {
@@ -106,6 +107,11 @@ public class Scheduler extends Environment {
         }
     }
 
+    private void fireEvent(BaseEvent event){
+        emitter.fire(event);
+        this.now = event.getWhen();
+    }
+
     @GET
     @Path("/bank")
     public Bank bank(){
@@ -114,13 +120,13 @@ public class Scheduler extends Environment {
 
     @GET
     @Path("/command/{cmd}")
-    public String command(@PathParam("cmd") String cmd){
+    public LocalTime command(@PathParam("cmd") String cmd){
         try{
-            return String.format("\"%s\"", Parser.toString(eval(cmd)));
+            eval(cmd);
         } catch (ParseException e){
             LOGGER.severe(e.getMessage());
-            return e.getMessage();
         }
+        return now;
     }
 
     private Set<Session> sessions = new HashSet<>();
@@ -167,23 +173,30 @@ public class Scheduler extends Environment {
         LOGGER.info(String.format("%s(%s)", function, arguments.stream().map(Parser::toString).collect(Collectors.joining(","))));
         switch(function){
             case "reset":
-                LOGGER.info("Resetting simulator");
+                fireEvent(new BaseEvent(LocalTime.MIN, "reset"));
                 this.index = 0;
-                return null;
+                break;
             case "step":
                 if (index < events.size()){
-                    emitter.fire(events.get(this.index));
+                    fireEvent(events.get(this.index));
                     this.index++;
-
                 }
-                return null;
+                break;
             case "all":
                 for (BaseEvent event: events){
-                    emitter.fire(event);
+                    fireEvent(event);
                 }
                 break;
         }
         return null;
+    }
+
+    public void onBaseEvent(@Observes BaseEvent event){
+        switch(event.getName()){
+            case "reset":
+                LOGGER.info("Resetting simulator");
+                break;
+        }
     }
 
     public void onBankEvent(@Observes BankEvent event) {
