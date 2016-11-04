@@ -195,6 +195,7 @@ public class Scheduler extends Environment {
         switch(event.getName()){
             case "reset":
                 LOGGER.info("Resetting simulator");
+                accountManager.reset();
                 break;
         }
     }
@@ -206,7 +207,6 @@ public class Scheduler extends Environment {
         switch(event.getName()){
             case "opening":
                 LOGGER.info(String.format("Bank opening: %s", mirror.getPosition()));
-                accountManager.reset();
                 break;
             case "sct":
                 final List<Settlement> settlements = Arrays.stream(this.instructions)

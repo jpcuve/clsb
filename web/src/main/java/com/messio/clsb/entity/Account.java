@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @NamedQueries({
         @NamedQuery(name = Account.ACCOUNT_ALL, query = "select a from Account a order by a.name"),
-        @NamedQuery(name = Account.ACCOUNT_BY_BANK, query = "select a from Account a where a.bank = :bank and a.name <> '_MIRROR_' order by a.name"),
+        @NamedQuery(name = Account.ACCOUNT_BY_BANK, query = "select a from Account a where a.bank = :bank order by a.name"),
         @NamedQuery(name = Account.ACCOUNT_BY_NAME_BY_BANK, query = "select a from Account a where a.name = :name and a.bank = :bank")
 })
 @Table(name = "accounts", uniqueConstraints = {@UniqueConstraint(columnNames = {"name", "bank_id"})})

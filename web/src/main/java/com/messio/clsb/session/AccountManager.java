@@ -46,6 +46,7 @@ public class AccountManager {
             account.setPosition(Position.ZERO);
             facade.update(account);
         }
+        final Account mirror = getMirror();
     }
 
     @GET

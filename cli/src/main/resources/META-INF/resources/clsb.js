@@ -32,15 +32,28 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     }])
     .controller("accountController", ["$log", "$scope", "res", function($log, $scope, res){
         "use strict";
-        $scope.accounts = res.accountResource.query();
+        function update(){
+            $scope.accounts = res.accountResource.query();
+        }
 
-    }])
-    .controller("dayController", ["$log", "$scope", "$resource", "endPoint", function($log, $scope, $resource, endPoint){
-        "use strict";
-        $scope.mirror = $resource(endPoint("/mirror")).get();
+        update();
 
         $scope.$on("now", function(event, now){
             $log.log("now event received" + angular.toJson(now));
+            update();
+        });
+    }])
+    .controller("dayController", ["$log", "$scope", "$resource", "endPoint", function($log, $scope, $resource, endPoint){
+        "use strict";
+        function update(){
+            $scope.mirror = $resource(endPoint("/mirror")).get();
+        }
+
+        update();
+
+        $scope.$on("now", function(event, now){
+            $log.log("now event received" + angular.toJson(now));
+            update();
         });
     }])
     .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", function($log, $scope, $routeParams, $location, res) {

@@ -19,7 +19,7 @@
         <text data-ng-attr-x="{{$index * 60 + 2}}" y="10" class="text-small">{{$index}}</text>
     </g>
     <g data-ng-repeat="currency in currencies" data-ng-attr-transform="{{'translate(0,' + ($index + 1) * 20 + ')'}}">
-        <rect data-ng-attr-x="{{time(currency.opening)}}" y="0" width="{{time(currency.closing) - time(currency.opening)}}" height="20" fill="pink"/>
+        <rect data-ng-attr-x="{{time(currency.opening)}}" y="0" width="{{time(currency.closing) - time(currency.opening)}}" height="20" fill="palegreen"/>
         <text data-ng-attr-x="{{time(currency.opening)}}" y="20">{{currency.iso}}</text>
     </g>
 </svg>
