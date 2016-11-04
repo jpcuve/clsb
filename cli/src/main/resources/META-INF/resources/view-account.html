@@ -1,3 +1,6 @@
-<div>
+<div data-ng-controller="accountController">
     ACCOUNT
+    <ul>
+        <li data-ng-repeat="account in accounts">{{account}}</li>
+    </ul>
 </div>

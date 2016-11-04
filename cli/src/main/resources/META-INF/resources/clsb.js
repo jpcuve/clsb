@@ -26,20 +26,33 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     .factory("res", ["$resource", "endPoint", function($resource, endPoint){
         return {
             commandResource: $resource(endPoint("/command/:cmd")),
-            currencyResource: $resource(endPoint("/currencies/:id"))
+            currencyResource: $resource(endPoint("/currencies/:id")),
+            accountResource: $resource(endPoint("/accounts/:id"))
         }
     }])
-    .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", function($log, $scope, $routeParams, $location, res){
+    .controller("accountController", ["$log", "$scope", "res", function($log, $scope, res){
+        "use strict";
+        $scope.accounts = res.accountResource.query();
+
+    }])
+    .controller("dayController", ["$log", "$scope", "$resource", "endPoint", function($log, $scope, $resource, endPoint){
+        "use strict";
+        $scope.mirror = $resource(endPoint("/mirror")).get();
+
+        $scope.$on("now", function(event, now){
+            $log.log("now event received" + angular.toJson(now));
+        });
+    }])
+    .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", function($log, $scope, $routeParams, $location, res) {
         "use strict";
         $scope.title = "CLSB Sim";
 
-        $scope.currencies = res.currencyResource.query(function(cs){
-            $log.log("currencies retrieved: ", cs);
-        });
+        $scope.currencies = res.currencyResource.query();
 
         $scope.command = function(cmd){
             res.commandResource.get({cmd: cmd}, function(now){
                 $scope.now = now;
+                $scope.$broadcast("now", now);
             });
         };
 

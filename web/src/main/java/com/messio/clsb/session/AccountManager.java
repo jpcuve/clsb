@@ -48,6 +48,8 @@ public class AccountManager {
         }
     }
 
+    @GET
+    @Path("/mirror")
     public Account getMirror(){
         return facade.findAccount(bank, Account.MIRROR_NAME);
     }
