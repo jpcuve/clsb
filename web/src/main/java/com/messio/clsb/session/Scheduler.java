@@ -85,6 +85,8 @@ public class Scheduler extends Environment {
         }
 
         this.events = new ArrayList<>();
+        events.add(new BaseEvent(LocalTime.MIN, "init"));
+        events.add(new BaseEvent(LocalTime.MAX, "done"));
         final Bank bank = facade.findBank();
         events.add(new BankEvent(bank.getOpening(), "opening", bank));
         events.add(new BankEvent(bank.getSettlementCompletionTarget(), "sct", bank));
@@ -174,9 +176,8 @@ public class Scheduler extends Environment {
         LOGGER.info(String.format("%s(%s)", function, arguments.stream().map(Parser::toString).collect(Collectors.joining(","))));
         switch(function){
             case "reset":
-                fireEvent(new BaseEvent(LocalTime.MIN, "reset"));
                 this.index = 0;
-                break;
+                return call("step", Collections.emptyList());
             case "step":
                 if (index < events.size()){
                     fireEvent(events.get(this.index));
@@ -194,15 +195,17 @@ public class Scheduler extends Environment {
 
     public void onBaseEvent(@Observes BaseEvent event){
         switch(event.getName()){
-            case "reset":
+            case "init":
                 LOGGER.info("Resetting simulator");
                 accountManager.reset();
                 break;
+            case "done":
+                break;
         }
+        sendMessage(event.getWhen(), String.format("Base event: %s", event));
     }
 
     public void onBankEvent(@Observes BankEvent event) {
-        sendMessage(event.getWhen(), String.format("Bank event: %s", event));
         final Account mirror = accountManager.getMirror();
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
@@ -223,10 +226,10 @@ public class Scheduler extends Environment {
                 break;
         }
         accountManager.book(event.getWhen(), transfers);
+        sendMessage(event.getWhen(), String.format("Bank event: %s", event));
     }
 
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
-        sendMessage(event.getWhen(), String.format("Currency event: %s", event));
         final String iso = event.getCurrency().getIso();
         final Bank bank = bank();
         List<Transfer> transfers = Collections.emptyList();
@@ -247,6 +250,7 @@ public class Scheduler extends Environment {
                 break;
         }
         accountManager.book(event.getWhen(), transfers);
+        sendMessage(event.getWhen(), String.format("Currency event: %s", event));
     }
 
 }
