@@ -8,6 +8,7 @@ import com.messio.clsb.entity.Currency;
 import com.messio.clsb.event.BankEvent;
 import com.messio.clsb.event.BaseEvent;
 import com.messio.clsb.event.CurrencyEvent;
+import com.messio.clsb.model.BankModel;
 import com.messio.clsb.util.script.Environment;
 import com.messio.clsb.util.script.Parser;
 
@@ -68,16 +69,16 @@ public class Scheduler extends Environment {
         objectMapper.findAndRegisterModules();
         if (facade.findBank() == null){
             try (final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/initial.json")) {
-                final Bank bank = objectMapper.readValue(is, Bank.class);
-                for (Currency currency: bank.getCurrencies()){
-                    currency.setBank(bank);
+                final BankModel bankModel = objectMapper.readValue(is, BankModel.class);
+                facade.create(bankModel.getBank());
+                for (Currency currency: bankModel.getCurrencies()){
+                    currency.setBank(bankModel.getBank());
                     facade.create(currency);
                 }
-                for (Account account: bank.getAccounts()){
-                    account.setBank(bank);
+                for (Account account: bankModel.getAccounts()){
+                    account.setBank(bankModel.getBank());
                     facade.create(account);
                 }
-                facade.create(bank);
             } catch(IOException e){
                 LOGGER.severe(e.getMessage());
             }

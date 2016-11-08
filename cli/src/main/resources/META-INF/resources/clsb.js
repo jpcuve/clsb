@@ -27,7 +27,8 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         return {
             commandResource: $resource(endPoint("/command/:cmd")),
             currencyResource: $resource(endPoint("/currencies/:id")),
-            accountResource: $resource(endPoint("/accounts/:id"))
+            accountResource: $resource(endPoint("/accounts/:id")),
+            bankResource: $resource(endPoint("/bank"))
         }
     }])
     .controller("accountController", ["$log", "$scope", "res", function($log, $scope, res){
@@ -61,6 +62,7 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         $scope.title = "CLSB Sim";
 
         $scope.currencies = res.currencyResource.query();
+        $scope.bank = res.bankResource.get();
 
         $scope.command = function(cmd){
             res.commandResource.get({cmd: cmd}, function(now){
@@ -89,13 +91,17 @@ angular.module("clsb", ["ngResource", "ngRoute"])
             restrict: "E",
             templateUrl: "day.svg",
             scope: {
+                now: "=",
+                bank: "=",
                 currencies: "="
             },
             link: function(scope){
                 scope.time = function(t){
-                    var colon = t.indexOf(":");
-                    if (colon >= 0){
-                        return parseInt(t.substring(0, colon)) * 60 + parseInt(t.substring(colon + 1));
+                    if (t){
+                        var colon = t.indexOf(":");
+                        if (colon >= 0){
+                            return parseInt(t.substring(0, colon)) * 60 + parseInt(t.substring(colon + 1));
+                        }
                     }
                     return 0;
                 };

@@ -39,11 +39,6 @@ public class Bank {
     @Basic
     @Column(name = "minimum_pay_in", nullable = false)
     private String minimumPayIn;
-    @OneToMany(mappedBy = "bank")
-    private List<Currency> currencies;
-    @OneToMany(mappedBy = "bank")
-    private List<Account> accounts;
-
 
     public long getId() {
         return id;
@@ -91,21 +86,5 @@ public class Bank {
 
     public void setMinimumPayIn(Position minimumPayIn) {
         this.minimumPayIn = PositionAdapter.CONVERTER.marshal(minimumPayIn);
-    }
-
-    public List<Currency> getCurrencies() {
-        return currencies;
-    }
-
-    public void setCurrencies(List<Currency> currencies) {
-        this.currencies = currencies;
-    }
-
-    public List<Account> getAccounts() {
-        return accounts;
-    }
-
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
     }
 }

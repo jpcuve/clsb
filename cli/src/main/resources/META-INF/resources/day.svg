@@ -1,4 +1,4 @@
-<svg  viewBox="0 0 1440 100" version = "1.1" xmlns="http://www.w3.org/2000/svg">
+<svg  viewBox="0 0 1440 120" version = "1.1" xmlns="http://www.w3.org/2000/svg">
     <style>
         line {
             stroke: black;
@@ -18,8 +18,15 @@
         <line data-ng-attr-x1="{{$index * 60}}" y1="0" data-ng-attr-x2="{{$index * 60}}" y2="20"/>
         <text data-ng-attr-x="{{$index * 60 + 2}}" y="10" class="text-small">{{$index}}</text>
     </g>
-    <g data-ng-repeat="currency in currencies" data-ng-attr-transform="{{'translate(0,' + ($index + 1) * 20 + ')'}}">
-        <rect data-ng-attr-x="{{time(currency.opening)}}" y="0" width="{{time(currency.closing) - time(currency.opening)}}" height="20" fill="palegreen"/>
-        <text data-ng-attr-x="{{time(currency.opening)}}" y="20">{{currency.iso}}</text>
+    <g transform="translate(0,20)">
+        <rect data-ng-attr-x="{{time(bank.opening)}}" y="0" data-ng-attr-width="{{time(bank.closing) - time(bank.opening)}}" height="20" fill="aquamarine"/>
+        <line data-ng-attr-x1="{{time(bank.settlementCompletionTarget)}}" y1="0" data-ng-attr-x2="{{time(bank.settlementCompletionTarget)}}" y2="20" style="stroke: green;"/>
     </g>
+    <g data-ng-repeat="currency in currencies" data-ng-attr-transform="{{'translate(0,' + ($index + 2) * 20 + ')'}}">
+        <rect data-ng-attr-x="{{time(currency.opening)}}" y="0" data-ng-attr-width="{{time(currency.closing) - time(currency.opening)}}" height="20" fill="pink"/>
+        <text data-ng-attr-x="{{time(currency.opening)}}" y="20">{{currency.iso}}</text>
+        <line data-ng-attr-x1="{{time(currency.fundingCompletionTarget)}}" y1="0" data-ng-attr-x2="{{time(currency.fundingCompletionTarget)}}" y2="20" style="stroke: blue;"/>
+        <line data-ng-attr-x1="{{time(currency.close)}}" y1="0" data-ng-attr-x2="{{time(currency.close)}}" y2="20" style="stroke: red;"/>
+    </g>
+    <line data-ng-attr-x1="{{time(now)}}" y1="0" data-ng-attr-x2="{{time(now)}}" y2="120" style="stroke-width: 5; stroke-dasharray:5;"/>
 </svg>

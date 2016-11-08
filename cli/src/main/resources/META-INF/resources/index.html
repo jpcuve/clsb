@@ -16,9 +16,11 @@
 </head>
 <body data-ng-app="clsb">
 <div data-ng-controller="clsbController">
-    CLSB... here comes the day overview: {{now}}
+    CLSB... here comes the day overview: {{time}}
     <br/>
     {{title}}
+    <br/>
+    {{bank}}
     <br/>
     <button data-ng-click="command('reset()')">Reset</button>
     <button data-ng-click="command('step()')">Step</button>
@@ -26,7 +28,7 @@
     <br/>
     <a href="#/day">Day</a>
     <a href="#/account">Account</a>
-    <day-overview currencies="currencies"></day-overview>
+    <day-overview now="time" bank="bank" currencies="currencies"></day-overview>
 
     <div data-ng-view=""></div>
 
