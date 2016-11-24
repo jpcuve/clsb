@@ -1,5 +1,8 @@
 <div data-ng-controller="dayController">
     DAY
     <br/>
-    {{mirror}}
+    <div data-ng-repeat="(name, position) in positions">
+        <span style="display: inline-block; width: 5em;">{{name}}</span>
+        <span style="display: inline-block; width: 10em;">{{position}}</span>
+    </div>
 </div>

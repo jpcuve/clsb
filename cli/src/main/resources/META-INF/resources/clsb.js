@@ -47,7 +47,7 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     .controller("dayController", ["$log", "$scope", "$resource", "endPoint", function($log, $scope, $resource, endPoint){
         "use strict";
         function update(){
-            $scope.mirror = $resource(endPoint("/mirror")).get();
+            $scope.positions = $resource(endPoint("/positions")).get();
         }
 
         update();
