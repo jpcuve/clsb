@@ -54,7 +54,7 @@ public class SettlementManager {
         return transfers;
     }
 
-    public List<Transfer> settleWithShortPositionLimit(final List<Transfer> transfers, Ledger ledger){
+    public List<Transfer> settleWithShortPositionLimit(final List<Transfer> transfers, Ledger positions, Ledger shortPositionLimits){
         return transfers;
     }
 }

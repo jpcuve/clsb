@@ -30,6 +30,9 @@ public class Account {
     @Column(name = "name")
     private String name;
     @Basic
+    @Column(name = "short_position_limit", nullable = false)
+    private String shortPositionLimit;
+    @Basic
     @Column(name = "position", nullable = false)
     private String position;
     @ManyToOne
@@ -50,6 +53,14 @@ public class Account {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Position getShortPositionLimit(){
+        return PositionAdapter.CONVERTER.unmarshal(shortPositionLimit);
+    }
+
+    public void setShortPositionLimit(Position position){
+        this.shortPositionLimit = PositionAdapter.CONVERTER.marshal(position);
     }
 
     public Position getPosition() {

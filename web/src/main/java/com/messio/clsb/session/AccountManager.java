@@ -55,9 +55,9 @@ public class AccountManager {
     }
 
     @GET
-    @Path("/ledger")
-    public Ledger getLedger(){
-        return new Ledger(facade.findAccounts(bank));
+    @Path("/positions")
+    public Ledger getPositions(){
+        return facade.findAccounts(bank).stream().collect(Collectors.toMap(Account::getName, Account::getPosition, Position::add, Ledger::new));
     }
 
     public List<Movement> book(LocalTime when, List<Transfer> transfers){
