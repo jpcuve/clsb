@@ -1,10 +1,10 @@
 package com.messio.clsb.session;
 
+import com.messio.clsb.Ledger;
 import com.messio.clsb.Position;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.Account;
 import com.messio.clsb.entity.Bank;
-import com.messio.clsb.entity.Currency;
 import com.messio.clsb.entity.Movement;
 
 import javax.annotation.PostConstruct;
@@ -46,18 +46,23 @@ public class AccountManager {
             account.setPosition(Position.ZERO);
             facade.update(account);
         }
-        final Account mirror = getMirror();
     }
 
     @GET
-    @Path("/mirror")
-    public Account getMirror(){
-        return facade.findAccount(bank, Account.MIRROR_NAME);
+    @Path("/account")
+    public Account getAccount(@QueryParam("name") final String name){
+        return facade.findAccount(bank, name);
+    }
+
+    @GET
+    @Path("/ledger")
+    public Ledger getLedger(){
+        return new Ledger(facade.findAccounts(bank));
     }
 
     public List<Movement> book(LocalTime when, List<Transfer> transfers){
         final List<Movement> list = new ArrayList<>();
-        final Map<String, Account> accountMap = accounts().stream().collect(Collectors.toMap(Account::getName, Function.identity()));
+        final Map<String, Account> accountMap = facade.findAccounts(bank).stream().collect(Collectors.toMap(Account::getName, Function.identity()));
         final Set<String> modified = new HashSet<>();
         for (final Transfer transfer: transfers){
             final Account origAccount = accountMap.get(transfer.getOrig());
@@ -86,14 +91,8 @@ public class AccountManager {
     }
 
     @GET
-    @Path("/accounts")
-    public List<Account> accounts(){
-        return facade.findAccounts(bank);
-    }
-
-    @GET
     @Path("/movements")
-    public List<Movement> movements(@QueryParam("accountId") Long accountId){
-        return facade.findMovements(facade.find(Account.class, accountId));
+    public List<Movement> movements(@QueryParam("name") String name){
+        return facade.findMovements(facade.findAccount(bank, name));
     }
 }

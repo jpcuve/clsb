@@ -206,7 +206,7 @@ public class Scheduler extends Environment {
     }
 
     public void onBankEvent(@Observes BankEvent event) {
-        final Account mirror = accountManager.getMirror();
+        final Account mirror = facade.findAccount(event.getBank(), Account.MIRROR_NAME);
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
             case "opening":

@@ -1,5 +1,6 @@
 package com.messio.clsb.session;
 
+import com.messio.clsb.Ledger;
 import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.Bank;
 import com.messio.clsb.entity.Settlement;
@@ -50,6 +51,10 @@ public class SettlementManager {
     }
 
     public List<Transfer> settleUnconditionally(final List<Transfer> transfers){
+        return transfers;
+    }
+
+    public List<Transfer> settleWithShortPositionLimit(final List<Transfer> transfers, Ledger ledger){
         return transfers;
     }
 }
