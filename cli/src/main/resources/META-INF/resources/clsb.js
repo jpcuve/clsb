@@ -10,7 +10,7 @@ angular.module("clsb", ["ngResource", "ngRoute"])
     .config(["$routeProvider", function($routeProvider){
         $routeProvider
             .when("/day", { templateUrl: "view-day.html"})
-            .when("/account", { templateUrl: "view-account.html"})
+            .when("/account/:name", { templateUrl: "view-account.html"})
             .when("/crew-members", { templateUrl: "view-crew-member-list.html"})
             .when("/", { templateUrl: "view-day.html"})
             .otherwise({ redirectTo: "/"})
@@ -27,14 +27,14 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         return {
             commandResource: $resource(endPoint("/command/:cmd")),
             currencyResource: $resource(endPoint("/currencies/:id")),
-            accountResource: $resource(endPoint("/accounts/:id")),
+            accountResource: $resource(endPoint("/accounts/:name")),
             bankResource: $resource(endPoint("/bank"))
         }
     }])
-    .controller("accountController", ["$log", "$scope", "res", function($log, $scope, res){
+    .controller("accountController", ["$log", "$scope", "$route", "res", function($log, $scope, $route, res){
         "use strict";
         function update(){
-            $scope.accounts = res.accountResource.query();
+            $scope.account = res.accountResource.get({name: $route.current.params.name});
         }
 
         update();

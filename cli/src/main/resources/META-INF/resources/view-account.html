@@ -1,6 +1,29 @@
 <div data-ng-controller="accountController">
     ACCOUNT
-    <ul>
-        <li data-ng-repeat="account in accounts">{{account}}</li>
-    </ul>
+    <br/>
+    {{account}}
+    <table>
+        <tr>
+            <td>Name</td>
+            <td>{{account.name}}</td>
+        </tr>
+        <tr>
+            <td>Current</td>
+            <td>
+                <position position="account.position"></position>
+            </td>
+        </tr>
+        <tr>
+            <td>SPL</td>
+            <td>
+                <position position="account.shortPositionLimit"></position>
+            </td>
+        </tr>
+        <tr>
+            <td>Movements</td>
+            <td>
+
+            </td>
+        </tr>
+    </table>
 </div>

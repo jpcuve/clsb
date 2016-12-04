@@ -2,7 +2,6 @@ package com.messio.clsb.entity;
 
 import com.messio.clsb.Position;
 import com.messio.clsb.adapter.PositionAdapter;
-import com.messio.clsb.util.FieldConverter;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -31,10 +30,10 @@ public class Account {
     private String name;
     @Basic
     @Column(name = "short_position_limit", nullable = false)
-    private String shortPositionLimit;
+    private String shortPositionLimitAsString;
     @Basic
     @Column(name = "position", nullable = false)
-    private String position;
+    private String positionAsString;
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
@@ -56,19 +55,19 @@ public class Account {
     }
 
     public Position getShortPositionLimit(){
-        return PositionAdapter.CONVERTER.unmarshal(shortPositionLimit);
+        return PositionAdapter.CONVERTER.unmarshal(shortPositionLimitAsString);
     }
 
     public void setShortPositionLimit(Position position){
-        this.shortPositionLimit = PositionAdapter.CONVERTER.marshal(position);
+        this.shortPositionLimitAsString = PositionAdapter.CONVERTER.marshal(position);
     }
 
     public Position getPosition() {
-        return PositionAdapter.CONVERTER.unmarshal(position);
+        return PositionAdapter.CONVERTER.unmarshal(positionAsString);
     }
 
     public void setPosition(Position position) {
-        this.position = PositionAdapter.CONVERTER.marshal(position);
+        this.positionAsString = PositionAdapter.CONVERTER.marshal(position);
     }
 
     @XmlTransient

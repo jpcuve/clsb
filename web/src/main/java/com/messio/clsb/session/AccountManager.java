@@ -11,10 +11,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.function.Function;
@@ -49,8 +46,8 @@ public class AccountManager {
     }
 
     @GET
-    @Path("/account")
-    public Account getAccount(@QueryParam("name") final String name){
+    @Path("/accounts/{name}")
+    public Account getAccount(@PathParam("name") final String name){
         return facade.findAccount(bank, name);
     }
 
@@ -91,8 +88,8 @@ public class AccountManager {
     }
 
     @GET
-    @Path("/movements")
-    public List<Movement> movements(@QueryParam("name") String name){
+    @Path("/movements/{name}")
+    public List<Movement> movements(@PathParam("name") String name){
         return facade.findMovements(facade.findAccount(bank, name));
     }
 }

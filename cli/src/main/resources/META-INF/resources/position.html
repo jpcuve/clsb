@@ -1,1 +1,4 @@
-<span>{{position}}</span>
+<span data-ng-repeat="(ccy,amount) in position">
+    <span style="font-size: small;">{{ccy}}</span>
+    <span>{{amount}}</span>
+</span>
