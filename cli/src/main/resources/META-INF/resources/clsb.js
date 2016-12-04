@@ -86,6 +86,18 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         };
 
     }])
+    .directive("position", ["$log", function($log){
+        return {
+            restrict: "E",
+            templateUrl: "position.html",
+            scope: {
+                position: "="
+            },
+            link: function(scope){
+
+            }
+        };
+    }])
     .directive("dayOverview", ["$log", function($log){
         return {
             restrict: "E",
