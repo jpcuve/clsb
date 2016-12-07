@@ -90,6 +90,9 @@ public class AccountManager {
     @GET
     @Path("/movements/{name}")
     public List<Movement> movements(@PathParam("name") String name){
-        return facade.findMovements(facade.findAccount(bank, name));
+        final List<Movement> movements = new ArrayList<>();
+        movements.addAll(facade.findMovements(facade.findAccount(bank, name), true));
+        movements.addAll(facade.findMovements(facade.findAccount(bank, name), false));
+        return movements;
     }
 }

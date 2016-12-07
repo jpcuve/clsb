@@ -48,11 +48,11 @@ public class ClsbFacade {
         return em.createNamedQuery(Account.ACCOUNT_BY_BANK, Account.class).setParameter("bank", bank).getResultList();
     }
 
-    public List<Movement> findMovements(Account account) {
+    public List<Movement> findMovements(Account account, boolean origin) {
         if (account == null){
             return Collections.emptyList();
         }
-        return em.createNamedQuery(Movement.MOVEMENT_BY_ACCOUNT, Movement.class).setParameter("account", account).getResultList();
+        return em.createNamedQuery(origin ? Movement.MOVEMENT_BY_ORIG_ACCOUNT : Movement.MOVEMENT_BY_DEST_ACCOUNT, Movement.class).setParameter("account", account).getResultList();
     }
 
     public Account findAccount(final Bank bank, final String name){

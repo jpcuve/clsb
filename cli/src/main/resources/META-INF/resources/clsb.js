@@ -28,13 +28,21 @@ angular.module("clsb", ["ngResource", "ngRoute"])
             commandResource: $resource(endPoint("/command/:cmd")),
             currencyResource: $resource(endPoint("/currencies/:id")),
             accountResource: $resource(endPoint("/accounts/:name")),
+            movementResource: $resource(endPoint("/movements/:name")),
             bankResource: $resource(endPoint("/bank"))
         }
     }])
     .controller("accountController", ["$log", "$scope", "$route", "res", function($log, $scope, $route, res){
         "use strict";
         function update(){
-            $scope.account = res.accountResource.get({name: $route.current.params.name});
+            var accountName = $route.current.params.name;
+            $scope.account = res.accountResource.get({name: accountName});
+            $scope.movements = res.movementResource.query({name: accountName}, function(movements){
+                movements.forEach(function(movement){
+                    movement.target = movement.dest.name === accountName;
+                })
+
+            });
         }
 
         update();

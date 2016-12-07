@@ -1,12 +1,9 @@
 package com.messio.clsb.entity;
 
 import com.messio.clsb.Position;
-import com.messio.clsb.adapter.PositionAdapter;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlTransient;
 import java.time.LocalTime;
-import java.util.List;
 
 /**
  * Created by jpc on 01-10-16.
@@ -81,10 +78,10 @@ public class Bank {
     }
 
     public Position getMinimumPayIn() {
-        return PositionAdapter.CONVERTER.unmarshal(minimumPayIn);
+        return Position.CONVERTER.unmarshal(minimumPayIn);
     }
 
     public void setMinimumPayIn(Position minimumPayIn) {
-        this.minimumPayIn = PositionAdapter.CONVERTER.marshal(minimumPayIn);
+        this.minimumPayIn = Position.CONVERTER.marshal(minimumPayIn);
     }
 }

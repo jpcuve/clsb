@@ -1,6 +1,6 @@
 package com.messio.clsb;
 
-import com.messio.clsb.adapter.PositionAdapter;
+import com.messio.clsb.util.Converter;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -11,9 +11,25 @@ import java.util.stream.Collectors;
  */
 public class Position extends HashMap<String, BigDecimal> {
     public static final Position ZERO = new Position();
+    public static final Converter<Position, String> CONVERTER = new Converter<Position, String>() {
+        @Override
+        public String marshal(Position position) {
+            return position == null ? null : position.entrySet().stream().map(e -> String.format("%s:%s", e.getKey(), e.getValue())).collect(Collectors.joining(";"));
+        }
+
+        @Override
+        public Position unmarshal(String s) {
+            if (s != null){
+                final Position position = new Position();
+                Arrays.stream(s.split(";")).filter(l -> l.contains(":")).forEach(l -> position.put(l.substring(0, l.indexOf(":")), new BigDecimal(l.substring(l.indexOf(":") + 1))));
+                return position;
+            }
+            return null;
+        }
+    };
 
     public static Position parse(String s) {
-        return PositionAdapter.CONVERTER.unmarshal(s);
+        return CONVERTER.unmarshal(s);
     }
 
     public Position() {
@@ -114,6 +130,6 @@ public class Position extends HashMap<String, BigDecimal> {
 
     @Override
     public String toString() {
-        return entrySet().stream().map(e -> String.format("%s:%s", e.getKey(), e.getValue())).collect(Collectors.joining(";"));
+        return CONVERTER.marshal(this);
     }
 }

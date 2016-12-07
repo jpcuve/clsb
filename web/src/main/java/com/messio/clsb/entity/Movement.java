@@ -2,7 +2,6 @@ package com.messio.clsb.entity;
 
 import com.messio.clsb.Position;
 import com.messio.clsb.adapter.LocalTimeAdapter;
-import com.messio.clsb.adapter.PositionAdapter;
 
 import javax.persistence.*;
 import java.time.LocalTime;
@@ -12,12 +11,14 @@ import java.time.LocalTime;
  */
 @Entity
 @NamedQueries({
-        @NamedQuery(name = Movement.MOVEMENT_BY_ACCOUNT, query = "select m from Movement m where (m.orig = :account or m.dest = :account) order by m.when"),
+        @NamedQuery(name = Movement.MOVEMENT_BY_DEST_ACCOUNT, query = "select m from Movement m where m.dest = :account order by m.when"),
+        @NamedQuery(name = Movement.MOVEMENT_BY_ORIG_ACCOUNT, query = "select m from Movement m where m.orig = :account order by m.when"),
         @NamedQuery(name = Movement.MOVEMENT_DELETE, query = "delete from Movement")
 })
 @Table(name = "movements")
 public class Movement {
-    public static final String MOVEMENT_BY_ACCOUNT = "movement.byAccount";
+    public static final String MOVEMENT_BY_DEST_ACCOUNT = "movement.byDestAccount";
+    public static final String MOVEMENT_BY_ORIG_ACCOUNT = "movement.byOrigAccount";
     public static final String MOVEMENT_DELETE = "movement.delete";
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -80,11 +81,11 @@ public class Movement {
     }
 
     public Position getAmount() {
-        return PositionAdapter.CONVERTER.unmarshal(amount);
+        return Position.CONVERTER.unmarshal(amount);
     }
 
     public void setAmount(Position amount) {
-        this.amount = PositionAdapter.CONVERTER.marshal(amount);
+        this.amount = Position.CONVERTER.marshal(amount);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.messio.clsb.entity;
 
 import com.messio.clsb.Position;
-import com.messio.clsb.adapter.PositionAdapter;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
@@ -55,19 +54,19 @@ public class Account {
     }
 
     public Position getShortPositionLimit(){
-        return PositionAdapter.CONVERTER.unmarshal(shortPositionLimitAsString);
+        return Position.CONVERTER.unmarshal(shortPositionLimitAsString);
     }
 
     public void setShortPositionLimit(Position position){
-        this.shortPositionLimitAsString = PositionAdapter.CONVERTER.marshal(position);
+        this.shortPositionLimitAsString = Position.CONVERTER.marshal(position);
     }
 
     public Position getPosition() {
-        return PositionAdapter.CONVERTER.unmarshal(positionAsString);
+        return Position.CONVERTER.unmarshal(positionAsString);
     }
 
     public void setPosition(Position position) {
-        this.positionAsString = PositionAdapter.CONVERTER.marshal(position);
+        this.positionAsString = Position.CONVERTER.marshal(position);
     }
 
     @XmlTransient
