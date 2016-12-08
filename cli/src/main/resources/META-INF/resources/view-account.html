@@ -22,14 +22,26 @@
         <tr>
             <td>Movements</td>
             <td>
-                <div data-ng-repeat="movement in movements">
-                    {{movement.id}}
-                    <br/>
-                    {{movement.orig.name}} -> {{movement.dest.name}} : {{movement.target}}
-                    <br/>
-                    {{movement.amount}}
-                </div>
-
+                <table>
+                    <tr>
+                        <th>Time</th>
+                        <th>Comment</th>
+                        <th>Counter party</th>
+                        <th>Amount</th>
+                    </tr>
+                    <tr data-ng-repeat="movement in movements">
+                        <td>{{movement.when}}</td>
+                        <td>{{movement.information}}</td>
+                        <td data-ng-if="account.name === movement.orig.name">{{movement.dest.name}}</td>
+                        <td data-ng-if="account.name === movement.dest.name">{{movement.orig.name}}</td>
+                        <td>
+                            <div data-ng-repeat="(ccy, amount) in movement.amount">
+                                <span>{{ccy}}</span>
+                                <span>{{amount}}</span>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>

@@ -3,6 +3,17 @@
  */
 angular.module("clsb", ["ngResource", "ngRoute"])
     .constant("constant", {
+        legs : function(position){
+            var a = [], ccy, o;
+            for (ccy in position) {
+                if (position.hasOwnProperty(ccy)){
+                    o = {};
+                    o[ccy] = position[ccy];
+                    a.push(o);
+                }
+            }
+            return a;
+        }
     })
     .config(["$resourceProvider", function($resourceProvider){
         $resourceProvider.defaults.stripTrailingSlashes = false;
@@ -51,6 +62,7 @@ angular.module("clsb", ["ngResource", "ngRoute"])
             $log.log("now event received" + angular.toJson(now));
             update();
         });
+
     }])
     .controller("dayController", ["$log", "$scope", "$resource", "endPoint", function($log, $scope, $resource, endPoint){
         "use strict";
@@ -65,12 +77,14 @@ angular.module("clsb", ["ngResource", "ngRoute"])
             update();
         });
     }])
-    .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", function($log, $scope, $routeParams, $location, res) {
+    .controller("clsbController", ["$log", "$scope", "$routeParams", "$location", "res", "constant", function($log, $scope, $routeParams, $location, res, constant) {
         "use strict";
         $scope.title = "CLSB Sim";
 
         $scope.currencies = res.currencyResource.query();
         $scope.bank = res.bankResource.get();
+
+        $scope.constant = constant;
 
         $scope.command = function(cmd){
             res.commandResource.get({cmd: cmd}, function(now){
