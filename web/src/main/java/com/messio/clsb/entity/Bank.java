@@ -33,9 +33,9 @@ public class Bank {
     @Basic
     @Column(name = "sct", nullable = false)
     private LocalTime settlementCompletionTarget = LocalTime.of(10, 0);
-    @Basic
+    @Convert(converter = PositionConverter.class)
     @Column(name = "minimum_pay_in", nullable = false)
-    private String minimumPayIn;
+    private Position minimumPayIn;
 
     public long getId() {
         return id;
@@ -78,10 +78,10 @@ public class Bank {
     }
 
     public Position getMinimumPayIn() {
-        return Position.CONVERTER.unmarshal(minimumPayIn);
+        return minimumPayIn;
     }
 
     public void setMinimumPayIn(Position minimumPayIn) {
-        this.minimumPayIn = Position.CONVERTER.marshal(minimumPayIn);
+        this.minimumPayIn = minimumPayIn;
     }
 }

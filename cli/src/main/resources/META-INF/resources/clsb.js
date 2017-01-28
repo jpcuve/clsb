@@ -58,8 +58,8 @@ angular.module("clsb", ["ngResource", "ngRoute"])
 
         update();
 
-        $scope.$on("now", function(event, now){
-            $log.log("now event received" + angular.toJson(now));
+        $scope.$on("now", function(event){
+            $log.log("now event received");
             update();
         });
 
@@ -72,8 +72,8 @@ angular.module("clsb", ["ngResource", "ngRoute"])
 
         update();
 
-        $scope.$on("now", function(event, now){
-            $log.log("now event received" + angular.toJson(now));
+        $scope.$on("now", function(event){
+            $log.log("now event received");
             update();
         });
     }])
@@ -89,7 +89,6 @@ angular.module("clsb", ["ngResource", "ngRoute"])
         $scope.command = function(cmd){
             res.commandResource.get({cmd: cmd}, function(now){
                 $scope.now = now;
-                $scope.$broadcast("now", now);
             });
         };
 
@@ -104,6 +103,7 @@ angular.module("clsb", ["ngResource", "ngRoute"])
             var data = JSON.parse(event.data);
             if (data){
                 $scope.time = data.localTime;
+                $scope.$broadcast("now");
             }
         };
 

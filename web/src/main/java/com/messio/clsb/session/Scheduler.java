@@ -159,7 +159,7 @@ public class Scheduler extends Environment {
     public void sendMessage(LocalTime when, String message){
         final JsonProvider provider = JsonProvider.provider();
         final JsonObject o = provider.createObjectBuilder()
-                .add("localTime", LocalTimeAdapter.CONVERTER.marshal(when))
+                .add("localTime", LocalTimeAdapter.CONVERTER.convertToDatabaseColumn(when))
                 .add("message", message)
                 .build();
         for (Session session: sessions){

@@ -26,7 +26,7 @@ public class Movement {
     private Long id;
     @Basic
     @Column(name = "when")
-    private String when;
+    private LocalTime when;
     @ManyToOne
     @JoinColumn(name = "orig_account_id")
     private Account orig;
@@ -36,9 +36,9 @@ public class Movement {
     @Basic
     @Column(name = "information")
     private String information;
-    @Basic
+    @Convert(converter = PositionConverter.class)
     @Column(name = "amount")
-    private String amount;
+    private Position amount;
 
     public Long getId() {
         return id;
@@ -49,11 +49,11 @@ public class Movement {
     }
 
     public LocalTime getWhen() {
-        return LocalTimeAdapter.CONVERTER.unmarshal(when);
+        return when;
     }
 
     public void setWhen(LocalTime when) {
-        this.when = LocalTimeAdapter.CONVERTER.marshal(when);
+        this.when = when;
     }
 
     public Account getOrig() {
@@ -81,11 +81,11 @@ public class Movement {
     }
 
     public Position getAmount() {
-        return Position.CONVERTER.unmarshal(amount);
+        return amount;
     }
 
     public void setAmount(Position amount) {
-        this.amount = Position.CONVERTER.marshal(amount);
+        this.amount = amount;
     }
 
     @Override

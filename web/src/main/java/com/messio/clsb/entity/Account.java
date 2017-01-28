@@ -27,12 +27,12 @@ public class Account {
     @Basic
     @Column(name = "name")
     private String name;
-    @Basic
+    @Convert(converter = PositionConverter.class)
     @Column(name = "short_position_limit", nullable = false)
-    private String shortPositionLimitAsString;
-    @Basic
+    private Position shortPositionLimit;
+    @Convert(converter = PositionConverter.class)
     @Column(name = "position", nullable = false)
-    private String positionAsString;
+    private Position position;
     @ManyToOne
     @JoinColumn(name = "bank_id")
     private Bank bank;
@@ -53,6 +53,23 @@ public class Account {
         this.name = name;
     }
 
+    public Position getShortPositionLimit() {
+        return shortPositionLimit;
+    }
+
+    public void setShortPositionLimit(Position shortPositionLimit) {
+        this.shortPositionLimit = shortPositionLimit;
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position;
+    }
+
+    /*
     public Position getShortPositionLimit(){
         return Position.CONVERTER.unmarshal(shortPositionLimitAsString);
     }
@@ -68,6 +85,7 @@ public class Account {
     public void setPosition(Position position) {
         this.positionAsString = Position.CONVERTER.marshal(position);
     }
+*/
 
     @XmlTransient
     public Bank getBank() {
