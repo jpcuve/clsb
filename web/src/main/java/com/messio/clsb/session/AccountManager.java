@@ -27,13 +27,15 @@ import java.util.stream.Collectors;
 @Produces({"application/json"})
 public class AccountManager {
     public static final Logger LOGGER = Logger.getLogger(AccountManager.class.getCanonicalName());
-    @Inject
     private ClsbFacade facade;
-
     private Bank bank;
 
-    @PostConstruct
-    public void init(){
+    public AccountManager() {
+    }
+
+    @Inject
+    public AccountManager(ClsbFacade facade) {
+        this.facade = facade;
         this.bank = facade.findBank();
     }
 

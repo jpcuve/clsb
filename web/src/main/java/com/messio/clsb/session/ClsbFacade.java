@@ -1,7 +1,5 @@
 package com.messio.clsb.session;
 
-import com.messio.clsb.Position;
-import com.messio.clsb.Transfer;
 import com.messio.clsb.entity.Account;
 import com.messio.clsb.entity.Bank;
 import com.messio.clsb.entity.Currency;
@@ -10,7 +8,6 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.logging.Logger;
 

@@ -20,6 +20,16 @@ public class Ledger extends TreeMap<String, Position> {
         }
     }
 
+    public Ledger(Ledger ledger){
+        this.putAll(ledger);
+    }
+
+    public Ledger project(List<Transfer> transfers){
+        final Ledger ledger = new Ledger(this);
+        transfers.forEach(t -> ledger.apply(t));
+        return ledger;
+    }
+
     public boolean apply(Transfer transfer){
         return apply(transfer, (t) -> true);
     }
