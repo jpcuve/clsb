@@ -196,7 +196,7 @@ public class Scheduler extends Environment {
                     fireEvent(event);
                 }
                 break;
-            case "mail":
+            case "mail-test":
                 try {
                     session.setDebug(true);
                     final MimeMessage message = new MimeMessage(session);

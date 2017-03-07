@@ -14,7 +14,7 @@ public enum TokenInfo {
     STRING("\\'.+\\'"),
     FLOAT("[-+]?[0-9]*\\.[0-9]+([eE][-+]?[0-9]+)?"),
     INTEGER("[-+]?[0-9]+"),
-    SYMBOL("[a-zA-Z][a-zA-Z0-9_]*"),
+    SYMBOL("[a-zA-Z][a-zA-Z0-9_-]*"),
     INVALID(null)
     ;
 
