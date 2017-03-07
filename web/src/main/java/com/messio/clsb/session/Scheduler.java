@@ -13,12 +13,18 @@ import com.messio.clsb.util.script.Environment;
 import com.messio.clsb.util.script.Parser;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ejb.*;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.json.spi.JsonProvider;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import javax.ws.rs.GET;
@@ -56,6 +62,8 @@ public class Scheduler extends Environment {
     private SettlementManager settlementManager;
     @Inject
     private AccountManager accountManager;
+    @Resource(lookup = "java:/mail/GmailMessio")
+    private javax.mail.Session session;
 
     private List<BaseEvent> events;
     private Instruction[] instructions;
@@ -64,7 +72,6 @@ public class Scheduler extends Environment {
 
     @PostConstruct
     public void init() {
-        final JsonProvider jsonProvider = JsonProvider.provider();
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.findAndRegisterModules();
         if (facade.findBank() == null){
@@ -189,6 +196,18 @@ public class Scheduler extends Environment {
                     fireEvent(event);
                 }
                 break;
+            case "mail":
+                try {
+                    session.setDebug(true);
+                    final MimeMessage message = new MimeMessage(session);
+                    message.addRecipient(Message.RecipientType.TO, new InternetAddress("jpcuvelliez@gmail.com"));
+                    message.setSubject("Test Email");
+                    message.setText("Some test text");
+                    Transport.send(message);
+                } catch (MessagingException e){
+                    LOGGER.severe(e.getMessage());
+                }
+                break;
         }
         return null;
     }
@@ -231,7 +250,6 @@ public class Scheduler extends Environment {
 
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
         final String iso = event.getCurrency().getIso();
-        final Bank bank = bank();
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
             case "opening":
