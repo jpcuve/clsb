@@ -8,6 +8,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -16,6 +17,7 @@ import java.util.logging.Logger;
  */
 @Stateless(name = "clsb/clsb-facade")
 @LocalBean
+@Transactional
 public class ClsbFacade {
     private static final Logger LOGGER = Logger.getLogger(ClsbFacade.class.getCanonicalName());
     @PersistenceContext
