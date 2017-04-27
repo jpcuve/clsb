@@ -213,6 +213,7 @@ public class Scheduler extends Environment {
     }
 
     public void onBaseEvent(@Observes BaseEvent event){
+        final String message = String.format("Base event: %s", event);
         switch(event.getName()){
             case "init":
                 LOGGER.info("Resetting simulator");
@@ -221,10 +222,12 @@ public class Scheduler extends Environment {
             case "done":
                 break;
         }
-        sendMessage(event.getWhen(), String.format("Base event: %s", event));
+        sendMessage(event.getWhen(), message);
     }
 
     public void onBankEvent(@Observes BankEvent event) {
+        final String message = String.format("Bank event: %s", event);
+        System.out.println(message);
         final Account mirror = facade.findAccount(event.getBank(), Account.MIRROR_NAME);
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
@@ -245,10 +248,12 @@ public class Scheduler extends Environment {
                 break;
         }
         accountManager.book(event.getWhen(), transfers);
-        sendMessage(event.getWhen(), String.format("Bank event: %s", event));
+        sendMessage(event.getWhen(), message);
     }
 
     public void onCurrencyEvent(@Observes CurrencyEvent event) {
+        final String message = String.format("Currency event: %s", event);
+        System.out.println(message);
         final String iso = event.getCurrency().getIso();
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
@@ -268,7 +273,7 @@ public class Scheduler extends Environment {
                 break;
         }
         accountManager.book(event.getWhen(), transfers);
-        sendMessage(event.getWhen(), String.format("Currency event: %s", event));
+        sendMessage(event.getWhen(), message);
     }
 
 }

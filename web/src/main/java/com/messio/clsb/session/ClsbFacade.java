@@ -6,6 +6,8 @@ import com.messio.clsb.entity.Currency;
 import com.messio.clsb.entity.Movement;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -43,6 +45,7 @@ public class ClsbFacade {
         return em.createNamedQuery(Currency.CURRENCY_BY_BANK, Currency.class).setParameter("bank", bank).getResultList();
     }
 
+    @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<Account> findAccounts(final Bank bank){
         return em.createNamedQuery(Account.ACCOUNT_BY_BANK, Account.class).setParameter("bank", bank).getResultList();
     }
