@@ -10,6 +10,7 @@
     <modules>
         <module>web</module>
 		<module>cli</module>
+		<module>clits</module>
     </modules>
 
 </project>
