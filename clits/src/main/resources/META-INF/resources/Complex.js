@@ -10,7 +10,7 @@ var Complex = (function () {
         return new Complex(this._re + c._re, this._im + c._im);
     };
     Complex.prototype.toString = function () {
-        return [this._re, "+i ", this._im].join("");
+        return [this._re, "+i ", this._im].join(",");
     };
     return Complex;
 }());
