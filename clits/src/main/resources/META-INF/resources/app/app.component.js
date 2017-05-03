@@ -8,14 +8,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var core_1 = require("@angular/core");
 var AppComponent = (function () {
     function AppComponent() {
-        this.name = 'Angular';
+        this.name = 'Jean-Pierre';
+        this.friends = ['Nicolas', 'Patrick', 'Philippe'];
+        this.clickMessage = '';
     }
+    AppComponent.prototype.pushed = function () {
+        console.debug("clicked");
+        this.clickMessage = "Hello!";
+    };
     return AppComponent;
 }());
 AppComponent = __decorate([
     core_1.Component({
         selector: 'my-app',
-        template: "<h1>Hello {{name}}</h1>",
+        template: "\n    <h1>Hello {{name}}</h1>\n    <p *ngIf=\"friends.length > 2\">There are many friends</p>\n    <ul>\n        <li *ngFor=\"let friend of friends\">{{friend}}</li>\n    </ul>\n    <button (click)=\"pushed()\">Click!</button>\n    <span>{{clickMessage}}</span>\n    "
     })
 ], AppComponent);
 exports.AppComponent = AppComponent;
