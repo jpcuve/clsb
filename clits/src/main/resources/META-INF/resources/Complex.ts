@@ -11,12 +11,12 @@ class Complex {
         this._im = im;
     }
 
-    add(c: Complex): Complex{
+    public add(c: Complex): Complex{
         return new Complex(this._re + c._re, this._im + c._im);
     }
 
-    toString(): string {
-        return [this._re, "+i ", this._im].join("");
+    public toString(): string {
+        return [this._re, "+i ", this._im].join(",");
     }
 }
 
