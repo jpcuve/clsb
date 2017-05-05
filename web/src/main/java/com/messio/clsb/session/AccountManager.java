@@ -10,6 +10,8 @@ import com.messio.clsb.entity.Movement;
 import javax.annotation.PostConstruct;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import java.time.LocalTime;

@@ -54,21 +54,14 @@ public class Scheduler extends Environment {
     private ClsbFacade facade;
     @Inject
     private Event<BaseEvent> emitter;
-    @Inject
-    private PayInManager payInManager;
-    @Inject
-    private PayOutManager payOutManager;
-    @Inject
-    private SettlementManager settlementManager;
-    @Inject
-    private AccountManager accountManager;
     @Resource(lookup = "java:/mail/GmailMessio")
     private javax.mail.Session session;
 
     private List<BaseEvent> events;
-    private Instruction[] instructions;
     private int index;
     private LocalTime now;
+    private Set<Session> sessions = new HashSet<>();
+
 
     @PostConstruct
     public void init() {
@@ -106,12 +99,6 @@ public class Scheduler extends Environment {
         }
         events.sort((e1, e2) -> e1.getWhen().equals(e2.getWhen()) ? 0 : (e1.getWhen().isAfter(e2.getWhen()) ? 1 : -1));
 
-        try (final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/scenario-01.json")){
-            this.instructions = objectMapper.readValue(is, Instruction[].class);
-        } catch(IOException e){
-            LOGGER.severe("cannot read instructions, " + e.getMessage());
-        }
-
         for (final BaseEvent event: events){
             LOGGER.info(String.format("Event: %s", event));
         }
@@ -139,7 +126,38 @@ public class Scheduler extends Environment {
         return now;
     }
 
-    private Set<Session> sessions = new HashSet<>();
+    @Override
+    public Object call(String function, List<Object> arguments) {
+        LOGGER.info(String.format("%s(%s)", function, arguments.stream().map(Parser::toString).collect(Collectors.joining(","))));
+        switch(function){
+            case "reset":
+                this.index = 0;
+                return call("step", Collections.emptyList());
+            case "step":
+                if (index < events.size()){
+                    fireEvent(events.get(this.index));
+                    this.index++;
+                }
+                break;
+            case "all":
+                events.forEach(this::fireEvent);
+                break;
+            case "mail-test":
+                try {
+                    session.setDebug(true);
+                    final MimeMessage message = new MimeMessage(session);
+                    message.addRecipient(Message.RecipientType.TO, new InternetAddress("jpcuvelliez@gmail.com"));
+                    message.setSubject("Test Email");
+                    message.setText("Some test text");
+                    Transport.send(message);
+                } catch (MessagingException e){
+                    LOGGER.severe(e.getMessage());
+                }
+                break;
+        }
+        sendMessage(now, "");
+        return null;
+    }
 
     @OnOpen
     public void open(Session session){
@@ -163,6 +181,7 @@ public class Scheduler extends Environment {
         LOGGER.info(String.format("WS message received from session %s: %s", session.getId(), message));
     }
 
+    @Asynchronous
     public void sendMessage(LocalTime when, String message){
         final JsonProvider provider = JsonProvider.provider();
         final JsonObject o = provider.createObjectBuilder()
@@ -178,102 +197,7 @@ public class Scheduler extends Environment {
         }
     }
 
-    @Override
-    public Object call(String function, List<Object> arguments) {
-        LOGGER.info(String.format("%s(%s)", function, arguments.stream().map(Parser::toString).collect(Collectors.joining(","))));
-        switch(function){
-            case "reset":
-                this.index = 0;
-                return call("step", Collections.emptyList());
-            case "step":
-                if (index < events.size()){
-                    fireEvent(events.get(this.index));
-                    this.index++;
-                }
-                break;
-            case "all":
-                for (BaseEvent event: events){
-                    fireEvent(event);
-                }
-                break;
-            case "mail-test":
-                try {
-                    session.setDebug(true);
-                    final MimeMessage message = new MimeMessage(session);
-                    message.addRecipient(Message.RecipientType.TO, new InternetAddress("jpcuvelliez@gmail.com"));
-                    message.setSubject("Test Email");
-                    message.setText("Some test text");
-                    Transport.send(message);
-                } catch (MessagingException e){
-                    LOGGER.severe(e.getMessage());
-                }
-                break;
-        }
-        return null;
-    }
 
-    public void onBaseEvent(@Observes BaseEvent event){
-        final String message = String.format("Base event: %s", event);
-        switch(event.getName()){
-            case "init":
-                LOGGER.info("Resetting simulator");
-                accountManager.reset();
-                break;
-            case "done":
-                break;
-        }
-        sendMessage(event.getWhen(), message);
-    }
 
-    public void onBankEvent(@Observes BankEvent event) {
-        final String message = String.format("Bank event: %s", event);
-        System.out.println(message);
-        final Account mirror = facade.findAccount(event.getBank(), Account.MIRROR_NAME);
-        List<Transfer> transfers = Collections.emptyList();
-        switch(event.getName()){
-            case "opening":
-                LOGGER.info(String.format("Bank opening: %s", mirror.getPosition()));
-                break;
-            case "sct":
-                final List<Settlement> settlements = Arrays.stream(this.instructions)
-                        .filter(i -> i instanceof Settlement && i.getWhen().isBefore(event.getWhen()))
-                        .map(i -> (Settlement) i)
-                        .collect(Collectors.toList());
-                final List<Transfer> queue = settlementManager.buildSettlementQueue(settlements);
-                LOGGER.info(String.format("Settlement queue size: %s", queue.size()));
-                transfers = settlementManager.settleUnconditionally(queue);
-                break;
-            case "closing":
-                LOGGER.info(String.format("Bank closing: %s", mirror.getPosition()));
-                break;
-        }
-        accountManager.book(event.getWhen(), transfers);
-        sendMessage(event.getWhen(), message);
-    }
-
-    public void onCurrencyEvent(@Observes CurrencyEvent event) {
-        final String message = String.format("Currency event: %s", event);
-        System.out.println(message);
-        final String iso = event.getCurrency().getIso();
-        List<Transfer> transfers = Collections.emptyList();
-        switch(event.getName()){
-            case "opening":
-                break;
-            case "fct":
-                final List<PayIn> payIns = Arrays.stream(this.instructions)
-                        .filter(i -> i instanceof PayIn && i.getWhen().isBefore(event.getWhen()))
-                        .map(i -> (PayIn) i)
-                        .collect(Collectors.toList());
-                transfers = payInManager.bookPayIns(payIns, iso);
-                break;
-            case "close":
-                transfers = payOutManager.computePayOuts(iso);
-                break;
-            case "closing":
-                break;
-        }
-        accountManager.book(event.getWhen(), transfers);
-        sendMessage(event.getWhen(), message);
-    }
 
 }
