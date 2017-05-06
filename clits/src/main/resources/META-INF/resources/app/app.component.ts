@@ -10,6 +10,11 @@ import {Component} from '@angular/core';
     </ul>
     <button (click)="pushed()">Click!</button>
     <span>{{clickMessage}}</span>
+    <nav>
+        <a routerLink="/day">Day</a>
+        <a routerLink="/account/dadada">Account</a>
+    </nav>
+    <router-outlet></router-outlet>
     `
 })
 export class AppComponent {
