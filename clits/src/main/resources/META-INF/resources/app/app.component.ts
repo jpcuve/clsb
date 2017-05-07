@@ -18,7 +18,7 @@ import {Component} from '@angular/core';
     `
 })
 export class AppComponent {
-    public name: string = 'Jean-Pierre';
+    public name: string = 'Jules';
     public friends: string[] = ['Nicolas', 'Patrick', 'Philippe'];
     public clickMessage: string = '';
 
