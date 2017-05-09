@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {SomeService} from "./some.service";
 
 @Component({
     selector: 'my-app',
@@ -11,8 +12,8 @@ import {Component} from '@angular/core';
     <button (click)="pushed()">Click!</button>
     <span>{{clickMessage}}</span>
     <nav>
-        <a routerLink="/day">Day</a>
-        <a routerLink="/account/dadada">Account</a>
+        <a routerLink="/day" routerLinkActive="active">Day</a>
+        <a routerLink="/account/dadada" routerLinkActive="active">Account</a>
     </nav>
     <router-outlet></router-outlet>
     `
@@ -22,8 +23,14 @@ export class AppComponent {
     public friends: string[] = ['Nicolas', 'Patrick', 'Philippe'];
     public clickMessage: string = '';
 
+    constructor(
+        private service: SomeService
+    ){
+    }
+
     public pushed(): void {
         console.debug("clicked");
         this.clickMessage = "Hello!";
+        this.service.print();
     }
 }
