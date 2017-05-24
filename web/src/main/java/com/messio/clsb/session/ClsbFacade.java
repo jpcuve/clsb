@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 @Transactional
 public class ClsbFacade {
     private static final Logger LOGGER = Logger.getLogger(ClsbFacade.class.getCanonicalName());
-    @PersistenceContext
+    @PersistenceContext(unitName = "clsb")
     private EntityManager em;
 
     public <E> void create(E e){
