@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
-    <persistence-unit name="any" transaction-type="JTA">
+    <persistence-unit name="clsb" transaction-type="JTA">
         <description>example persistence unit</description>
+        <jta-data-source>ClsbDS</jta-data-source>
+        <non-jta-data-source>ClsbDS</non-jta-data-source>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" />
             <property name="hibernate.max_fetch_depth" value="3" />
