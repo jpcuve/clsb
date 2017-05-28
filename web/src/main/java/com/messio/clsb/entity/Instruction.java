@@ -10,6 +10,7 @@ import java.time.LocalTime;
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY, property="@class")
 public class Instruction {
     private LocalTime when;
+    private LocalTime transferred = null;
     private String account;
     private String reference;
     private Position amount;
@@ -20,6 +21,14 @@ public class Instruction {
 
     public void setWhen(LocalTime when) {
         this.when = when;
+    }
+
+    public LocalTime getTransferred() {
+        return transferred;
+    }
+
+    public void setTransferred(LocalTime transferred) {
+        this.transferred = transferred;
     }
 
     public String getAccount() {

@@ -49,7 +49,7 @@ public class SettlementManager {
                 for (int j = i + 1; j < settlements.size(); j++){
                     final Settlement a = settlements.get(i);
                     final Settlement b = settlements.get(j);
-                    if (a.getWhen().isBefore(now) && b.getWhen().isBefore(now)){
+                    if (a.getTransferred() == null && b.getTransferred() == null && a.getWhen().isBefore(now) && b.getWhen().isBefore(now)){
                         boolean match = a.getCounterParty().equals(b.getAccount()) && a.getAccount().equals(b.getCounterParty()) && a.getAmount().equals(b.getAmount().negate());
                         if (match){
                             LOGGER.info(String.format("Matched: %s %s", a, b));

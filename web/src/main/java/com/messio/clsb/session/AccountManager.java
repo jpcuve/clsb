@@ -61,7 +61,7 @@ public class AccountManager {
         return facade.findAccounts(bank).stream().collect(Collectors.toMap(Account::getName, Account::getPosition, Position::add, Ledger::new));
     }
 
-    public List<Movement> book(LocalTime when, List<Transfer> transfers){
+    public List<Movement> book(final LocalTime when, List<Transfer> transfers){
         final List<Movement> list = new ArrayList<>();
         final Map<String, Account> accountMap = facade.findAccounts(bank).stream().collect(Collectors.toMap(Account::getName, Function.identity()));
         final Set<String> modified = new HashSet<>();
@@ -85,6 +85,7 @@ public class AccountManager {
                 LOGGER.info(String.format("Movement: %s", movement));
                 facade.create(movement);
                 list.add(movement);
+                Arrays.stream(transfer.getSources()).forEach(s -> s.setTransferred(when));
             }
         }
         accountMap.values().stream().filter(a -> a != null && modified.contains(a.getName())).forEach(a -> facade.update(a));

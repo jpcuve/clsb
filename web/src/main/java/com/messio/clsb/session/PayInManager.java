@@ -35,7 +35,7 @@ public class PayInManager {
     public List<Transfer> bookPayIns(final LocalTime now, final String iso){
         LOGGER.info(String.format("Booking pay-ins for %s", iso));
         return payIns.stream()
-                .filter(pi -> pi.getWhen().isBefore(now) && pi.getAmount().containsKey(iso))
+                .filter(pi -> pi.getTransferred() == null && pi.getWhen().isBefore(now) && pi.getAmount().containsKey(iso))
                 .map(Transfer::new)
                 .collect(Collectors.toList());
     }
