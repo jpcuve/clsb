@@ -37,28 +37,25 @@ import java.util.stream.Collectors;
 @Transactional
 public class Dispatcher {
     public static final Logger LOGGER = Logger.getLogger(Dispatcher.class.getCanonicalName());
-    @Inject
     private AccountManager accountManager;
-    @Inject
-    private ClsbFacade facade;
-    @Inject
     private PayInManager payInManager;
-    @Inject
     private PayOutManager payOutManager;
-    @Inject
     private SettlementManager settlementManager;
 
-    private Instruction[] instructions;
+    public Dispatcher() {
+    }
 
-    @PostConstruct
-    public void init(){
-        final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-        try (final InputStream is = getClass().getClassLoader().getResourceAsStream("com/messio/clsb/scenario-01.json")){
-            this.instructions = objectMapper.readValue(is, Instruction[].class);
-        } catch(IOException e){
-            LOGGER.severe("cannot read instructions, " + e.getMessage());
-        }
+    @Inject
+    public Dispatcher(
+            final AccountManager accountManager,
+            final PayInManager payInManager,
+            final PayOutManager payOutManager,
+            final SettlementManager settlementManager
+    ){
+        this.accountManager = accountManager;
+        this.payInManager = payInManager;
+        this.payOutManager = payOutManager;
+        this.settlementManager = settlementManager;
     }
 
     public void onBaseEvent(@Observes BaseEvent event){
@@ -73,23 +70,16 @@ public class Dispatcher {
     }
 
     public void onBankEvent(@Observes BankEvent event) {
-        final Account mirror = facade.findAccount(event.getBank(), Account.MIRROR_NAME);
         List<Transfer> transfers = Collections.emptyList();
         switch(event.getName()){
             case "opening":
-                LOGGER.info(String.format("Bank opening: %s", mirror.getPosition()));
                 break;
             case "sct":
-                final List<Settlement> settlements = Arrays.stream(this.instructions)
-                        .filter(i -> i instanceof Settlement && i.getWhen().isBefore(event.getWhen()))
-                        .map(i -> (Settlement) i)
-                        .collect(Collectors.toList());
-                final List<Transfer> queue = settlementManager.buildSettlementQueue(settlements);
+                final List<Transfer> queue = settlementManager.buildSettlementQueue(event.getWhen());
                 LOGGER.info(String.format("Settlement queue size: %s", queue.size()));
                 transfers = settlementManager.settleUnconditionally(queue);
                 break;
             case "closing":
-                LOGGER.info(String.format("Bank closing: %s", mirror.getPosition()));
                 break;
         }
         accountManager.book(event.getWhen(), transfers);
@@ -102,11 +92,7 @@ public class Dispatcher {
             case "opening":
                 break;
             case "fct":
-                final List<PayIn> payIns = Arrays.stream(this.instructions)
-                        .filter(i -> i instanceof PayIn && i.getWhen().isBefore(event.getWhen()))
-                        .map(i -> (PayIn) i)
-                        .collect(Collectors.toList());
-                transfers = payInManager.bookPayIns(payIns, iso);
+                transfers = payInManager.bookPayIns(event.getWhen(), iso);
                 break;
             case "close":
                 transfers = payOutManager.computePayOuts(iso);

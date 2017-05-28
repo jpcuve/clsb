@@ -10,7 +10,6 @@ import com.messio.clsb.entity.PayOut;
 import javax.ejb.LocalBean;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -40,16 +39,14 @@ public class PayOutManager {
             }
         }
         return payOuts.stream()
-                .map(po -> new Transfer(String.format("pay-out: %s", po.getReference()), po.getAccount(), po.getAmount()))
+                .map(Transfer::new)
                 .collect(Collectors.toList());
     }
 
     public List<PayOut> computePayOutsBuild1(final Bank bank, final List<Transfer> projectedTransfers){
         final List<PayOut> payOuts = new ArrayList<>();
         // compute net projected position
-        final Ledger ledger = new Ledger(facade.findAccounts(bank));
-        projectedTransfers.forEach(ledger::apply);
-
+        final Ledger ledger = new Ledger(facade.findAccounts(bank), projectedTransfers);
         return payOuts;
     }
 

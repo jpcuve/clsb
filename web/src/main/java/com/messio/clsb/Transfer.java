@@ -2,6 +2,9 @@ package com.messio.clsb;
 
 
 import com.messio.clsb.entity.Account;
+import com.messio.clsb.entity.PayIn;
+import com.messio.clsb.entity.PayOut;
+import com.messio.clsb.entity.Settlement;
 
 /**
  * Created by jpc on 9/22/16.
@@ -12,29 +15,23 @@ public class Transfer {
     private final Position amount;
     private final String dest;
 
-    public Transfer(String information, String orig, Position amount, String dest) {
+    private Transfer(String information, String orig, Position amount, String dest) {
         this.information = information;
         this.orig = orig;
         this.amount = amount;
         this.dest = dest;
     }
 
-    // pay-out
-    public Transfer(String information, String orig, Position amount){
-        this(information, orig, amount, Account.MIRROR_NAME);
+    public Transfer(PayIn payIn){
+        this(payIn.toString(), Account.MIRROR_NAME, payIn.getAmount(), payIn.getAccount());
     }
 
-    // pay-in
-    public Transfer(String information, Position amount, String dest){
-        this(information, Account.MIRROR_NAME, amount, dest);
+    public Transfer(PayOut payOut){
+        this(payOut.toString(), payOut.getAccount(), payOut.getAmount(), Account.MIRROR_NAME);
     }
 
-    public boolean isPayIn(){
-        return Account.MIRROR_NAME.equals(orig);
-    }
-
-    public boolean isPayOut(){
-        return Account.MIRROR_NAME.equals(dest);
+    public Transfer(Settlement db, Settlement cr){
+        this(String.format("%s,%s", db, cr), db.getAccount(), db.getAmount(), cr.getAccount());
     }
 
     public String getInformation() {

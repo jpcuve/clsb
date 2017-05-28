@@ -3,7 +3,9 @@ package com.messio.clsb;
 import com.messio.clsb.entity.Account;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 
 /**
@@ -14,20 +16,15 @@ public class Ledger extends TreeMap<String, Position> {
     public Ledger() {
     }
 
-    public Ledger(List<Account> accounts) {
+    public Ledger(List<Account> accounts, List<Transfer> transfers) {
         for (final Account account: accounts){
             this.put(account.getName(), account.getPosition());
         }
+        transfers.forEach(this::apply);
     }
 
     public Ledger(Ledger ledger){
         this.putAll(ledger);
-    }
-
-    public Ledger project(List<Transfer> transfers){
-        final Ledger ledger = new Ledger(this);
-        transfers.forEach(t -> ledger.apply(t));
-        return ledger;
     }
 
     public boolean apply(Transfer transfer){
