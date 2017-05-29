@@ -3,7 +3,7 @@
  */
 import {Injectable} from "@angular/core";
 import {Observable} from "rxjs/Observable";
-import {Http} from "@angular/http";
+import {Http, Response} from "@angular/http";
 
 @Injectable()
 export class ClsbService {
@@ -17,7 +17,7 @@ export class ClsbService {
         console.info('message', this.data);
     }
 
-    getPositions(): Observable<any> {
+    getPositions(): Observable<Response> {
         return this.http.get("http://localhost:8080/clsb/api/positions")
 
     }

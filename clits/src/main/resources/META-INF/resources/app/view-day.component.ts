@@ -3,13 +3,17 @@ import {ClsbService} from "./clsb.service";
 
 @Component({
     template: `
-    <h2>View day</h2>
-    <pre>{{res}}</pre>
-    `
+<h2>View day</h2>
+<pre>{{data}}</pre>
+<ul>
+    <li *ngFor="let a of accounts">{{a}}</li>
+</ul>
+`
 })
 export class ViewDayComponent implements OnInit {
     errorMessage: string;
-    res: any;
+    data: Map<string, any>;
+    accounts: string[];
 
     constructor(private clsbService: ClsbService){
     }
@@ -20,7 +24,10 @@ export class ViewDayComponent implements OnInit {
 
     getPositions(): void {
         this.clsbService.getPositions().subscribe(
-            data => this.res = JSON.stringify(data.json()),
+            response => {
+                this.data = response.json();
+                this.accounts = Object.keys(this.data);
+            },
             error => this.errorMessage = error
         );
     }
