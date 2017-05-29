@@ -24,8 +24,8 @@ export class ViewDayComponent implements OnInit {
 
     getPositions(): void {
         this.clsbService.getPositions().subscribe(
-            response => {
-                this.data = response.json();
+            o => {
+                this.data = o;
                 this.accounts = Object.keys(this.data);
             },
             error => this.errorMessage = error
