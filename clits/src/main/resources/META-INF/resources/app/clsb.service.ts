@@ -20,7 +20,7 @@ export class ClsbService {
     }
 
     getPositions(): Observable<Map<string, any>> {
-        return this.http.get("http://localhost:8080/clsb/api/positions").map(r => <Map<string, any>>r.json());
+        return this.http.get("http://localhost:8080/clsb/api/positions").map(r => <Map<string, Pos>>r.json());
 
     }
 }

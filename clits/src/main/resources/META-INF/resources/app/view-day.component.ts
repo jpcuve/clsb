@@ -6,13 +6,13 @@ import {ClsbService} from "./clsb.service";
 <h2>View day</h2>
 <pre>{{data}}</pre>
 <ul>
-    <li *ngFor="let a of accounts">{{a}}</li>
+    <li *ngFor="let a of accounts">{{a}}: {{data[a]}}</li>
 </ul>
 `
 })
 export class ViewDayComponent implements OnInit {
     errorMessage: string;
-    data: Map<string, any>;
+    data: Map<string, Pos>;
     accounts: string[];
 
     constructor(private clsbService: ClsbService){
