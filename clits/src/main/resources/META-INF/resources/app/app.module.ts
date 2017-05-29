@@ -6,6 +6,8 @@ import { AppComponent }  from './app.component';
 import {ViewDayComponent} from "./view-day.component";
 import {ViewAccountComponent} from "./view-account.component";
 import {SomeService} from "./some.service";
+import {HttpModule, JsonpModule} from "@angular/http";
+import {ClsbService} from "./clsb.service";
 
 const routes: Routes = [
     { path: 'day', component: ViewDayComponent },
@@ -14,9 +16,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-    imports: [BrowserModule, RouterModule.forRoot(routes)],
+    imports: [BrowserModule, RouterModule.forRoot(routes), HttpModule, JsonpModule],
     declarations: [AppComponent, ViewDayComponent, ViewAccountComponent],
-    providers: [SomeService],
+    providers: [SomeService, ClsbService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
