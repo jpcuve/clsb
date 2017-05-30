@@ -26,7 +26,7 @@ import {ClsbService} from "./clsb.service";
         'line { stroke: black; stroke-width: 1px; vector-effect: non-scaling-stroke; }',
         'text { font-family: sans-serif; font-size: 20px; }',
         '.text-small { font-size: 10px; }',
-        '.sct { stroke: green; }',
+        '.sct { stroke: black; }',
         '.fct { stroke: blue; }',
         '.cc { stroke: red; }'
     ]
@@ -62,6 +62,7 @@ export class OverviewComponent implements OnInit {
         );
         this.service.getBank().subscribe(
             o => {
+                console.info('bank', JSON.stringify(o));
                 this.bank = o;
             }
         );
