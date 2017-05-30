@@ -13,8 +13,8 @@ import {SomeService} from "./some.service";
     <span>{{clickMessage}}</span>
     <overview></overview>
     <nav>
-        <a routerLink="/day" routerLinkActive="active">Day</a>
-        <a routerLink="/account/dadada" routerLinkActive="active">Account</a>
+        <a routerLink="day" routerLinkActive="active">Day</a>
+        <a routerLink="account/dadada" routerLinkActive="active">Account</a>
     </nav>
     <router-outlet></router-outlet>
     `

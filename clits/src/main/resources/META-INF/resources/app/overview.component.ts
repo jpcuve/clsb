@@ -4,7 +4,7 @@ import {ClsbService} from "./clsb.service";
 @Component({
     selector: 'overview',
     template: `
-<svg  viewBox="0 0 1440 120" version = "1.1" xmlns="http://www.w3.org/2000/svg">
+<svg [attr.viewBox]="['0 0 1440 ', (currencies.length + 2) * hu].join('')" version = "1.1" xmlns="http://www.w3.org/2000/svg">
     <line x1="0" y1="0" [attr.x2]="24 * wu" y2="0"/>
     <g *ngFor="let h of hours; let i = index">
         <line [attr.x1]="i * wu" y1="0" [attr.x2]="i * wu" [attr.y2]="hu"/>
@@ -20,6 +20,8 @@ import {ClsbService} from "./clsb.service";
         <line [attr.x1]="time(c.fundingCompletionTarget)" y1="0" [attr.x2]="time(c.fundingCompletionTarget)" [attr.y2]="hu" class="fct"/>
         <line [attr.x1]="time(c.close)" y1="0" [attr.x2]="time(c.close)" [attr.y2]="hu" class="cc"/>
     </g>
+    <line [attr.x1]="time(now)" y1="0" [attr.x2]="time(now)" [attr.y2]="(currencies.length + 2) * hu" class="current"/>
+
 </svg>
 `,
     styles:[
@@ -28,15 +30,17 @@ import {ClsbService} from "./clsb.service";
         '.text-small { font-size: 10px; }',
         '.sct { stroke: black; }',
         '.fct { stroke: blue; }',
-        '.cc { stroke: red; }'
+        '.cc { stroke: red; }',
+        '.current { stroke-width: 5; stroke-dasharray: 5; }'
     ]
 })
 export class OverviewComponent implements OnInit {
     wu: number = 60;
     hu: number = 20;
     hours: number[] = [];
-    currencies: Currency[];
+    currencies: Currency[] = [];
     bank: Bank;
+    now: string = '10:15';
 
     constructor(private service: ClsbService){
         for (let i = 0; i < 24; i++){
