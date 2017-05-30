@@ -3,19 +3,22 @@ import {ClsbService} from "./clsb.service";
 
 @Component({
     template: `
-<h2>View day</h2>
-<pre>{{data}}</pre>
-<ul>
-    <li *ngFor="let a of accounts">{{a}}: {{data[a]}}</li>
-</ul>
-`
+        <h2>View day</h2>
+        <pre>{{data}}</pre>
+        
+        <ul>
+            <li *ngFor="let a of accounts">{{a}}:
+                <position [value]="data[a]"></position>
+            </li>
+        </ul>
+    `
 })
 export class ViewDayComponent implements OnInit {
     errorMessage: string;
     data: Map<string, Pos>;
     accounts: string[];
 
-    constructor(private clsbService: ClsbService){
+    constructor(private clsbService: ClsbService) {
     }
 
     ngOnInit(): void {

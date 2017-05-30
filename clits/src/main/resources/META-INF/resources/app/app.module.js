@@ -14,6 +14,7 @@ var view_account_component_1 = require("./view-account.component");
 var some_service_1 = require("./some.service");
 var http_1 = require("@angular/http");
 var clsb_service_1 = require("./clsb.service");
+var position_component_1 = require("./position.component");
 var routes = [
     { path: 'day', component: view_day_component_1.ViewDayComponent },
     { path: 'account/:name', component: view_account_component_1.ViewAccountComponent },
@@ -27,7 +28,7 @@ var AppModule = (function () {
 AppModule = __decorate([
     core_1.NgModule({
         imports: [platform_browser_1.BrowserModule, router_1.RouterModule.forRoot(routes), http_1.HttpModule, http_1.JsonpModule],
-        declarations: [app_component_1.AppComponent, view_day_component_1.ViewDayComponent, view_account_component_1.ViewAccountComponent],
+        declarations: [app_component_1.AppComponent, view_day_component_1.ViewDayComponent, view_account_component_1.ViewAccountComponent, position_component_1.PositionComponent],
         providers: [some_service_1.SomeService, clsb_service_1.ClsbService],
         bootstrap: [app_component_1.AppComponent]
     })
