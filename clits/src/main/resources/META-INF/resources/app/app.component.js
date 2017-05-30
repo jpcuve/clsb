@@ -27,7 +27,7 @@ var AppComponent = (function () {
 AppComponent = __decorate([
     core_1.Component({
         selector: 'my-app',
-        template: "\n    <h1>Hello {{name}}</h1>\n    <p *ngIf=\"friends.length > 2\">There are many friends</p>\n    <ul>\n        <li *ngFor=\"let friend of friends\">{{friend}}</li>\n    </ul>\n    <button (click)=\"pushed()\">Click!</button>\n    <span>{{clickMessage}}</span>\n    <nav>\n        <a routerLink=\"/day\" routerLinkActive=\"active\">Day</a>\n        <a routerLink=\"/account/dadada\" routerLinkActive=\"active\">Account</a>\n    </nav>\n    <router-outlet></router-outlet>\n    "
+        template: "\n    <h1>Hello {{name}}</h1>\n    <p *ngIf=\"friends.length > 2\">There are many friends</p>\n    <ul>\n        <li *ngFor=\"let friend of friends\">{{friend}}</li>\n    </ul>\n    <button (click)=\"pushed()\">Click!</button>\n    <span>{{clickMessage}}</span>\n    <overview></overview>\n    <nav>\n        <a routerLink=\"/day\" routerLinkActive=\"active\">Day</a>\n        <a routerLink=\"/account/dadada\" routerLinkActive=\"active\">Account</a>\n    </nav>\n    <router-outlet></router-outlet>\n    "
     }),
     __metadata("design:paramtypes", [some_service_1.SomeService])
 ], AppComponent);

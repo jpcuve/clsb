@@ -11,6 +11,7 @@ import {SomeService} from "./some.service";
     </ul>
     <button (click)="pushed()">Click!</button>
     <span>{{clickMessage}}</span>
+    <overview></overview>
     <nav>
         <a routerLink="/day" routerLinkActive="active">Day</a>
         <a routerLink="/account/dadada" routerLinkActive="active">Account</a>

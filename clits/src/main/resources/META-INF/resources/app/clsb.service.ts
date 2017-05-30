@@ -19,8 +19,17 @@ export class ClsbService {
         console.info('message', this.data);
     }
 
-    getPositions(): Observable<Map<string, any>> {
+    getPositions(): Observable<Map<string, Pos>> {
         return this.http.get("http://localhost:8080/clsb/api/positions").map(r => <Map<string, Pos>>r.json());
-
     }
+
+    getCurrencies(): Observable<Currency[]> {
+        return this.http.get("http://localhost:8080/clsb/api/currencies").map(r => <Currency[]>r.json());
+    }
+
+    getBank(): Observable<Bank> {
+        return this.http.get("http://localhost:8080/clsb/api/bank").map(r => <Bank>r.json());
+    }
+
+
 }

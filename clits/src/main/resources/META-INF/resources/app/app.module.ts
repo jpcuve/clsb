@@ -9,6 +9,7 @@ import {SomeService} from "./some.service";
 import {HttpModule, JsonpModule} from "@angular/http";
 import {ClsbService} from "./clsb.service";
 import {PositionComponent} from "./position.component";
+import {OverviewComponent} from "./overview.component";
 
 const routes: Routes = [
     { path: 'day', component: ViewDayComponent },
@@ -18,7 +19,7 @@ const routes: Routes = [
 
 @NgModule({
     imports: [BrowserModule, RouterModule.forRoot(routes), HttpModule, JsonpModule],
-    declarations: [AppComponent, ViewDayComponent, ViewAccountComponent, PositionComponent],
+    declarations: [AppComponent, ViewDayComponent, ViewAccountComponent, PositionComponent, OverviewComponent],
     providers: [SomeService, ClsbService],
     bootstrap: [AppComponent]
 })
