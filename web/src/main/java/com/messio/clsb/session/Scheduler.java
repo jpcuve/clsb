@@ -117,13 +117,13 @@ public class Scheduler extends Environment {
 
     @GET
     @Path("/command/{cmd}")
-    public LocalTime command(@PathParam("cmd") String cmd){
+    public String command(@PathParam("cmd") String cmd){
         try{
             eval(cmd);
         } catch (ParseException e){
             LOGGER.severe(e.getMessage());
         }
-        return now;
+        return String.format("\"%02d:%02d\"", now.getHour(), now.getMinute());
     }
 
     @Override

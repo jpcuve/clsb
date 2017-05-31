@@ -1,17 +1,13 @@
 import {Component} from '@angular/core';
-import {SomeService} from "./some.service";
+import {ClsbService} from "./clsb.service";
 
 @Component({
     selector: 'my-app',
     template: `
-    <h1>Hello {{name}}</h1>
-    <p *ngIf="friends.length > 2">There are many friends</p>
-    <ul>
-        <li *ngFor="let friend of friends">{{friend}}</li>
-    </ul>
-    <button (click)="pushed()">Click!</button>
-    <span>{{clickMessage}}</span>
-    <overview></overview>
+    <button (click)="command('reset()')">Reset</button>
+    <button (click)="command('step()')">Step</button>
+    <button (click)="command('all()')">All</button>
+    <overview [current]="now"></overview>
     <nav>
         <a routerLink="day" routerLinkActive="active">Day</a>
         <a routerLink="account/dadada" routerLinkActive="active">Account</a>
@@ -20,18 +16,15 @@ import {SomeService} from "./some.service";
     `
 })
 export class AppComponent {
-    public name: string = 'Jules';
-    public friends: string[] = ['Nicolas', 'Patrick', 'Philippe'];
-    public clickMessage: string = '';
+    now: string = '00:00';
 
     constructor(
-        private service: SomeService
+        private service: ClsbService
     ){
     }
 
-    public pushed(): void {
-        console.debug("clicked");
-        this.clickMessage = "Hello!";
-        this.service.print();
+    command(cmd: string): void {
+        this.service.sendCommand(cmd).subscribe(t => this.now = t);
     }
+
 }

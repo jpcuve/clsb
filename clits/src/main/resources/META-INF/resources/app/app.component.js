@@ -9,27 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require("@angular/core");
-var some_service_1 = require("./some.service");
+var clsb_service_1 = require("./clsb.service");
 var AppComponent = (function () {
     function AppComponent(service) {
         this.service = service;
-        this.name = 'Jules';
-        this.friends = ['Nicolas', 'Patrick', 'Philippe'];
-        this.clickMessage = '';
+        this.now = '00:00';
     }
-    AppComponent.prototype.pushed = function () {
-        console.debug("clicked");
-        this.clickMessage = "Hello!";
-        this.service.print();
+    AppComponent.prototype.command = function (cmd) {
+        var _this = this;
+        this.service.sendCommand(cmd).subscribe(function (t) { return _this.now = t; });
     };
     return AppComponent;
 }());
 AppComponent = __decorate([
     core_1.Component({
         selector: 'my-app',
-        template: "\n    <h1>Hello {{name}}</h1>\n    <p *ngIf=\"friends.length > 2\">There are many friends</p>\n    <ul>\n        <li *ngFor=\"let friend of friends\">{{friend}}</li>\n    </ul>\n    <button (click)=\"pushed()\">Click!</button>\n    <span>{{clickMessage}}</span>\n    <overview></overview>\n    <nav>\n        <a routerLink=\"day\" routerLinkActive=\"active\">Day</a>\n        <a routerLink=\"account/dadada\" routerLinkActive=\"active\">Account</a>\n    </nav>\n    <router-outlet></router-outlet>\n    "
+        template: "\n    <button (click)=\"command('reset()')\">Reset</button>\n    <button (click)=\"command('step()')\">Step</button>\n    <button (click)=\"command('all()')\">All</button>\n    <overview [current]=\"now\"></overview>\n    <nav>\n        <a routerLink=\"day\" routerLinkActive=\"active\">Day</a>\n        <a routerLink=\"account/dadada\" routerLinkActive=\"active\">Account</a>\n    </nav>\n    <router-outlet></router-outlet>\n    "
     }),
-    __metadata("design:paramtypes", [some_service_1.SomeService])
+    __metadata("design:paramtypes", [clsb_service_1.ClsbService])
 ], AppComponent);
 exports.AppComponent = AppComponent;
 //# sourceMappingURL=app.component.js.map

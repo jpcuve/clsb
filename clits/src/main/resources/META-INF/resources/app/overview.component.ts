@@ -1,4 +1,4 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, Input, OnInit} from "@angular/core";
 import {ClsbService} from "./clsb.service";
 import {Observable} from "rxjs/Rx";
 
@@ -13,23 +13,22 @@ import {Observable} from "rxjs/Rx";
     </g>
     <g *ngIf="bank" [attr.transform]="['translate(0,', hu,')'].join('')">
         <rect [attr.x]="time(bank.opening)" y="0" [attr.width]="time(bank.closing) - time(bank.opening)" [attr.height]="hu" fill="aquamarine"/>
-        <line [attr.x1]="time(bank.settlementCompletionTarget)" y1="0" [attr.x2]="time(bank.settlementCompletionTarget)" [attr.y2]="hu" class="sct"/>
     </g>
     <g *ngFor="let c of currencies; let i = index;" [attr.transform]="['translate(0,', (i + 2) * hu,')'].join('')">
-        <rect [attr.x]="time(c.opening)" y="0" [attr.width]="time(c.closing) - time(c.opening)" [attr.height]="hu" fill="pink"/>
-        <text [attr.x]="time(c.opening)" [attr.y]="hu">{{c.iso}}</text>
+        <rect [attr.x]="time(c.opening)" y="0" [attr.width]="time(c.closing) - time(c.opening)" [attr.height]="hu" fill="lightsteelblue"/>
+        <text [attr.x]="time(c.opening)" [attr.y]="hu" class="text-small">{{c.iso}}</text>
         <line [attr.x1]="time(c.fundingCompletionTarget)" y1="0" [attr.x2]="time(c.fundingCompletionTarget)" [attr.y2]="hu" class="fct"/>
         <line [attr.x1]="time(c.close)" y1="0" [attr.x2]="time(c.close)" [attr.y2]="hu" class="cc"/>
     </g>
-    <line [attr.x1]="time(now)" y1="0" [attr.x2]="time(now)" [attr.y2]="(currencies.length + 2) * hu" class="current"/>
-
+    <line [attr.x1]="time(current)" y1="0" [attr.x2]="time(current)" [attr.y2]="(currencies.length + 2) * hu" class="current"/>
+    <line *ngIf="bank" [attr.x1]="time(bank.settlementCompletionTarget)" [attr.y1]="hu" [attr.x2]="time(bank.settlementCompletionTarget)" [attr.y2]="(currencies.length + 2) * hu" class="sct"/>
 </svg>
 `,
     styles:[
         'line { stroke: black; stroke-width: 1px; vector-effect: non-scaling-stroke; }',
         'text { font-family: sans-serif; font-size: 20px; }',
         '.text-small { font-size: 10px; }',
-        '.sct { stroke: black; }',
+        '.sct { stroke: green; }',
         '.fct { stroke: blue; }',
         '.cc { stroke: red; }',
         '.current { stroke-width: 5; stroke-dasharray: 5; }'
@@ -41,7 +40,8 @@ export class OverviewComponent implements OnInit {
     hours: number[] = [];
     currencies: Currency[] = [];
     bank: Bank;
-    now: string = '10:15';
+    @Input()
+    current: string;
 
     constructor(private service: ClsbService){
         for (let i = 0; i < 24; i++){

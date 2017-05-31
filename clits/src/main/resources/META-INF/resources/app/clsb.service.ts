@@ -21,15 +21,19 @@ export class ClsbService {
     }
 
     getPositions(): Observable<Map<string, Pos>> {
-        return this.http.get(this.base + "/positions").map(r => <Map<string, Pos>>r.json());
+        return this.http.get(this.base + "/positions").map(r => <Map<string, Pos>> r.json());
     }
 
     getCurrencies(): Observable<Currency[]> {
-        return this.http.get(this.base + "/currencies").map(r => <Currency[]>r.json());
+        return this.http.get(this.base + "/currencies").map(r => <Currency[]> r.json());
     }
 
     getBank(): Observable<Bank> {
-        return this.http.get(this.base + "/bank").map(r => <Bank>r.json());
+        return this.http.get(this.base + "/bank").map(r => <Bank> r.json());
+    }
+
+    sendCommand(cmd: string): Observable<string> {
+        return this.http.get(this.base + "/command/" + cmd).map(r => <string> r.json());
     }
 
 
