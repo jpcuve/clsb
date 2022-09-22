@@ -1,0 +1,9 @@
+spring:
+  mail:
+    host: tilleuls
+    port: 25
+    username: jpc
+    password: jp33ere
+    properties:
+      mail:
+        debug: true

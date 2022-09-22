@@ -1,0 +1,33 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:clsb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+  h2:
+    console:
+      enabled: true
+  mail:
+    host: tilleuls.messio.com
+    port: 22225
+    username: jpc
+    password: jp33ere
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+logging:
+  level:
+    com.messio.gate: DEBUG
+app:
+  client-id: clsb
+  issuer: https://www.messio.com
+  asymmetric-cipher: RSA
+  public-key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAl10GzX2T4ZmMkf2OlsS1XAiTu/flKYAzyHowKgg6436FUlZZ0jV9HH635+oMjSC3tu1xMUF6UnUebCU9k1kkZxS+q3p2NPSaWkpKC67ZCAidi2w/iIXkIrcpuRE5vF6N1crzdWH4EDySuiG4nIfag2uEMGjms5YlMX+ONJKvy6NKpK27CTwUv6F0h0P2LSrqZXwxhyGxDdeuO+qACB+nvfVyiEL0KMYeLECp0gYKm+dJL8Hfa+X5vpVzE8lz1GOYlJg2z2U6n4w9RDaFd2cxlJhIkqdJUwj90hdCm20BWY5Xex0S/R0RyShjA8eiFeTvpezWbhYjyvja11/3kB6VrQIDAQAB
+
