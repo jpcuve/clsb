@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository
 @Component
 class Facade(
     val bankRepository: BankRepository,
+    val currencyRepository: CurrencyRepository,
     val accountRepository: AccountRepository,
 )
 
@@ -15,6 +16,13 @@ class Facade(
 interface BankRepository: CrudRepository<Bank, Long> {
     fun findTopByDenomination(denomination: String): Bank?
 }
+
+@Repository
+interface CurrencyRepository: CrudRepository<Currency, Long> {
+    fun findTopByIso(iso: String): Currency?
+}
+
+
 
 @Repository
 interface AccountRepository: CrudRepository<Account, Long> {
