@@ -20,6 +20,7 @@ interface BankRepository: CrudRepository<Bank, Long> {
 @Repository
 interface CurrencyRepository: CrudRepository<Currency, Long> {
     fun findTopByIso(iso: String): Currency?
+    fun findByBank(bank: Bank): Iterable<Currency>
 }
 
 
