@@ -1,5 +1,6 @@
 package com.messio.clsb
 
+import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
@@ -19,7 +20,7 @@ interface BankRepository: CrudRepository<Bank, Long> {
 
 @Repository
 interface CurrencyRepository: CrudRepository<Currency, Long> {
-    fun findTopByIso(iso: String): Currency?
+    fun findTopByBankAndIso(bank: Bank, iso: String): Currency?
     fun findByBank(bank: Bank): Iterable<Currency>
 }
 
@@ -27,7 +28,9 @@ interface CurrencyRepository: CrudRepository<Currency, Long> {
 
 @Repository
 interface AccountRepository: CrudRepository<Account, Long> {
-    fun findTopByDenomination(denomination: String): Account?
+    @Query("select a from Account a where a.bank = ?1 and a.denomination = ''")
+    fun findMirror(bank: Bank): Account?
+    fun findTopByBankAndDenomination(bank: Bank, denomination: String): Account?
     fun findByBank(bank: Bank): Iterable<Account>
 }
 
