@@ -18,6 +18,7 @@ class Bank(
     @Column(name = "opening", nullable = false) var opening: LocalTime = LocalTime.of(8, 0),
     @Column(name = "closing", nullable = false) var closing: LocalTime = LocalTime.of(17, 0),
     @Column(name = "settlement_completion_target", nullable = false) var settlementCompletionTarget: LocalTime = LocalTime.of(10, 0),
+    @Convert(converter = PositionConverter::class) @Column(name = "mirror", nullable = false) var mirror: Position = Position.ZERO,
     @Convert(converter = PositionConverter::class) @Column(name = "minimum_pay_in", nullable = false) var minimumPayIn: Position = Position.ZERO,
 )
 
