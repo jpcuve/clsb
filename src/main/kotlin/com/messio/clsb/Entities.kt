@@ -1,5 +1,6 @@
 package com.messio.clsb
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalTime
 import javax.persistence.*
 
@@ -29,27 +30,33 @@ enum class CurrencyGroup {
 
 @Entity
 @Table(name = "currencies")
+@JsonIgnoreProperties("bank")
 class Currency(
-    @ManyToOne @JoinColumn(name = "bank_id") private var bank: Bank,
-    @Enumerated(EnumType.STRING) @Column(name = "currency_group", nullable = false) var currencyGroup: CurrencyGroup,
+    @Enumerated(EnumType.STRING) @Column(name = "currency_group", nullable = false) var currencyGroup: CurrencyGroup = CurrencyGroup.EUROPE,
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0L,
+    @Column(name = "bank_id", insertable = false, updatable = false, nullable = false) var bankId: Long = 0L,
     @Column(name = "iso", nullable = false, unique = true) var iso: String = "",
     @Column(name = "opening", nullable = false) var opening: LocalTime = LocalTime.of(1, 0),
     @Column(name = "closing", nullable = false) var closing: LocalTime = LocalTime.of(23, 0),
     @Column(name = "funding_completion_target", nullable = false) var fundingCompletionTarget: LocalTime = LocalTime.of(6, 0),
     @Column(name = "close", nullable = false) var close: LocalTime = LocalTime.of(23, 59),
-)
-
+){
+    @ManyToOne @JoinColumn(name = "bank_id") lateinit var bank: Bank
+}
 
 
 @Entity
 @Table(name = "accounts")
+@JsonIgnoreProperties("bank")
 class Account(
-    @ManyToOne @JoinColumn(name = "bank_id") private var bank: Bank,
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0L,
+    @Column(name = "bank_id", insertable = false, updatable = false, nullable = false) var bankId: Long = 0L,
     @Column(name = "denomination", nullable = false, unique = true) var denomination: String = "",
     @Column(name = "eligible", nullable = false) var eligible: Boolean = true,
     @Column(name = "suspended", nullable = false) var suspended: Boolean = true,
     @Convert(converter = PositionConverter::class) @Column(name = "short_limit", nullable = false) var shortLimit: Position = Position.ZERO,
     @Convert(converter = PositionConverter::class) @Column(name = "collateral", nullable = false) var collateral: Position = Position.ZERO,
-)
+){
+    @ManyToOne @JoinColumn(name = "bank_id") lateinit var bank: Bank
+
+}

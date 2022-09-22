@@ -9,8 +9,8 @@ class SchedulerService(
     val facade: Facade,
     val publisher: ApplicationEventPublisher,
 ) {
-    fun events(): List<BaseEvent> {
-        val events = mutableListOf<BaseEvent>()
+    private final val events = mutableListOf<BaseEvent>()
+    init {
         events.addAll(
             listOf(
                 BaseEvent(LocalTime.MIN, "init"),
@@ -30,13 +30,13 @@ class SchedulerService(
                     listOf(
                         CurrencyEvent(currency, currency.opening, "${bank.denomination} ${currency.iso} opening"),
                         CurrencyEvent(currency, currency.fundingCompletionTarget, "${bank.denomination} ${currency.iso} fct"),
-                        CurrencyEvent(currency, currency.closing, "${bank.denomination} ${currency.iso} closing"),
                         CurrencyEvent(currency, currency.close, "${bank.denomination} ${currency.iso} close"),
+                        CurrencyEvent(currency, currency.closing, "${bank.denomination} ${currency.iso} closing"),
                     )
                 )
             }
         }
         events.sortBy { it.moment }
-        return events
+        events.forEach { println(it.name) }
     }
 }
