@@ -3,8 +3,13 @@ package com.messio.clsb
 import org.springframework.context.ApplicationEvent
 import java.time.LocalTime
 
-open class BaseEvent(val moment: LocalTime, val name: String): ApplicationEvent("clsb")
+enum class EventNature {
+    OPENING, CLOSING,
+    SCT, FCT, CLOSE
+}
 
-class BankEvent(val bank: Bank, moment: LocalTime, name: String): BaseEvent(moment, name)
+open class BaseEvent(val moment: LocalTime, val nature: EventNature): ApplicationEvent("clsb")
 
-class CurrencyEvent(val currency: Currency, moment: LocalTime, name: String): BaseEvent(moment, name)
+class BankEvent(val bank: Bank, moment: LocalTime, nature: EventNature): BaseEvent(moment, nature)
+
+class CurrencyEvent(val currency: Currency, moment: LocalTime, nature: EventNature): BaseEvent(moment, nature)
