@@ -3,7 +3,7 @@ package com.messio.clsb
 import org.springframework.context.ApplicationListener
 import java.time.LocalTime
 
-abstract class BankModel: ApplicationListener<BaseEvent> {
+open class BankModel: ApplicationListener<BaseEvent> {
     override fun onApplicationEvent(event: BaseEvent) {
         when (event){
             is CurrencyEvent -> when (event.nature){
@@ -27,13 +27,13 @@ abstract class BankModel: ApplicationListener<BaseEvent> {
         }
     }
 
-    abstract fun opening(moment: LocalTime)
-    abstract fun closing(moment: LocalTime)
-    abstract fun bankOpening(moment: LocalTime, bank: Bank)
-    abstract fun bankSct(moment: LocalTime, bank: Bank)
-    abstract fun bankClosing(moment: LocalTime, bank: Bank)
-    abstract fun currencyOpening(moment: LocalTime, currency: Currency)
-    abstract fun currencyFct(moment: LocalTime, currency: Currency)
-    abstract fun currencyClose(moment: LocalTime, currency: Currency)
-    abstract fun currencyClosing(moment: LocalTime, currency: Currency)
+    open fun opening(moment: LocalTime){}
+    open fun closing(moment: LocalTime){}
+    open fun bankOpening(moment: LocalTime, bank: Bank){}
+    open fun bankSct(moment: LocalTime, bank: Bank){}
+    open fun bankClosing(moment: LocalTime, bank: Bank){}
+    open fun currencyOpening(moment: LocalTime, currency: Currency){}
+    open fun currencyFct(moment: LocalTime, currency: Currency){}
+    open fun currencyClose(moment: LocalTime, currency: Currency){}
+    open fun currencyClosing(moment: LocalTime, currency: Currency){}
 }
