@@ -17,9 +17,9 @@ class PositionConverter: AttributeConverter<Position, String>{
 class Bank(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0L,
     @Column(name = "denomination", nullable = false, unique = true) var denomination: String = "",
-    @Column(name = "opening", nullable = false) var opening: LocalTime = LocalTime.of(8, 0),
-    @Column(name = "closing", nullable = false) var closing: LocalTime = LocalTime.of(17, 0),
-    @Column(name = "settlement_completion_target", nullable = false) var settlementCompletionTarget: LocalTime = LocalTime.of(10, 0),
+    @Column(name = "when_opening", nullable = false) var opening: LocalTime = LocalTime.of(8, 0),
+    @Column(name = "when_closing", nullable = false) var closing: LocalTime = LocalTime.of(17, 0),
+    @Column(name = "when_settlement_completion_target", nullable = false) var settlementCompletionTarget: LocalTime = LocalTime.of(10, 0),
     @Convert(converter = PositionConverter::class) @Column(name = "minimum_pay_in", nullable = false) var minimumPayIn: Position = Position.ZERO,
 )
 
@@ -35,10 +35,10 @@ class Currency(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0L,
     @Column(name = "bank_id", insertable = false, updatable = false, nullable = false) var bankId: Long = 0L,
     @Column(name = "iso", nullable = false, unique = true) var iso: String = "",
-    @Column(name = "opening", nullable = false) var opening: LocalTime = LocalTime.of(1, 0),
-    @Column(name = "closing", nullable = false) var closing: LocalTime = LocalTime.of(23, 0),
-    @Column(name = "funding_completion_target", nullable = false) var fundingCompletionTarget: LocalTime = LocalTime.of(6, 0),
-    @Column(name = "close", nullable = false) var close: LocalTime = LocalTime.of(23, 59),
+    @Column(name = "when_opening", nullable = false) var opening: LocalTime = LocalTime.of(1, 0),
+    @Column(name = "when_closing", nullable = false) var closing: LocalTime = LocalTime.of(23, 0),
+    @Column(name = "when_funding_completion_target", nullable = false) var fundingCompletionTarget: LocalTime = LocalTime.of(6, 0),
+    @Column(name = "when_close", nullable = false) var close: LocalTime = LocalTime.of(23, 59),
 ){
     @ManyToOne @JoinColumn(name = "bank_id") lateinit var bank: Bank
 }
