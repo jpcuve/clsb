@@ -13,30 +13,30 @@ class SchedulerService(
     init {
         events.addAll(
             listOf(
-                BaseEvent(LocalTime.MIN, "init"),
-                BaseEvent(LocalTime.MAX, "done"),
+                BaseEvent(LocalTime.MIN, EventNature.OPENING),
+                BaseEvent(LocalTime.MAX, EventNature.CLOSING),
             )
         )
         facade.bankRepository.findAll().forEach { bank ->
             events.addAll(
                 listOf(
-                    BankEvent(bank, bank.opening, "${bank.denomination} opening"),
-                    BankEvent(bank, bank.settlementCompletionTarget, "${bank.denomination} sct"),
-                    BankEvent(bank, bank.closing, "${bank.denomination} closing"),
+                    BankEvent(bank, bank.opening, EventNature.OPENING),
+                    BankEvent(bank, bank.settlementCompletionTarget, EventNature.SCT),
+                    BankEvent(bank, bank.closing, EventNature.CLOSING),
                 )
             )
             facade.currencyRepository.findByBank(bank).forEach { currency ->
                 events.addAll(
                     listOf(
-                        CurrencyEvent(currency, currency.opening, "${bank.denomination} ${currency.iso} opening"),
-                        CurrencyEvent(currency, currency.fundingCompletionTarget, "${bank.denomination} ${currency.iso} fct"),
-                        CurrencyEvent(currency, currency.close, "${bank.denomination} ${currency.iso} close"),
-                        CurrencyEvent(currency, currency.closing, "${bank.denomination} ${currency.iso} closing"),
+                        CurrencyEvent(currency, currency.opening, EventNature.OPENING),
+                        CurrencyEvent(currency, currency.fundingCompletionTarget, EventNature.FCT),
+                        CurrencyEvent(currency, currency.close, EventNature.CLOSE),
+                        CurrencyEvent(currency, currency.closing, EventNature.CLOSING),
                     )
                 )
             }
         }
         events.sortBy { it.moment }
-        events.forEach { println(it.name) }
+        events.forEach { publisher.publishEvent(it) }
     }
 }
