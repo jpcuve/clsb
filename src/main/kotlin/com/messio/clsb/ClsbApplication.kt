@@ -13,7 +13,8 @@ import javax.xml.parsers.SAXParserFactory
 @SpringBootApplication
 class ClsbApplication(
 	val facade: Facade,
-	@Value("classpath:init.xml") initResource: Resource
+	@Value("classpath:init.xml") initResource: Resource,
+	@Value("\${mirror-name}") val mirrorName: String,
 ) {
 	init {
 		if (facade.bankRepository.count() == 0L) {
@@ -26,11 +27,18 @@ class ClsbApplication(
 				override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
 					when (qName) {
 						"bank" -> {
-							currentBank = facade.bankRepository.save(
+							val bank = facade.bankRepository.save(
 								Bank(
 									denomination = attributes.getValue("name"),
 								)
 							)
+							facade.accountRepository.save(
+								Account(
+									bank = bank,
+									denomination = mirrorName
+								)
+							)
+							currentBank = bank
 						}
 
 						"currency" -> {
@@ -60,7 +68,6 @@ class ClsbApplication(
 								)
 							}
 						}
-						/*
 						"instruction" -> {
 							accountMap[attributes.getValue("db")]?.let { db ->
 								accountMap[attributes.getValue("cr")]?.let { cr ->
@@ -77,7 +84,6 @@ class ClsbApplication(
 								}
 							}
 						}
-*/
 						else -> {
 						}
 					}

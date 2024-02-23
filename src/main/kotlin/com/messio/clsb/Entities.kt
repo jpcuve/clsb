@@ -56,3 +56,25 @@ class Account(
     @Convert(converter = PositionConverter::class) @Column(name = "short_limit", nullable = false) var shortLimit: Position = Position.ZERO,
     @Convert(converter = PositionConverter::class) @Column(name = "collateral", nullable = false) var collateral: Position = Position.ZERO,
 )
+
+enum class InstructionType {
+    PAY, PAY_IN, PAY_OUT, SETTLEMENT
+}
+
+@Entity
+@Table(name = "instructions")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@JsonIgnoreProperties("db", "cr")
+class Instruction(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
+    @Column(name = "moment", nullable = false) var moment: LocalTime = LocalTime.MIN,
+    @Column(name = "book_id", nullable = true) var bookId: Long? = null,
+    @Column(name = "when_booked", nullable = true) var booked: LocalTime? = null,
+    @Enumerated(EnumType.STRING) @Column(name = "instruction_type", nullable = false) var type: InstructionType = InstructionType.PAY,
+    @Column(name = "reference", nullable = false) var reference: String = "",
+    @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) var amount: Position = Position.ZERO,
+    @ManyToOne @JoinColumn(name = "db_id", nullable = false) var db: Account,
+    @Column(name = "db_id", insertable = false, updatable = false) var dbId: Long = 0L,
+    @ManyToOne @JoinColumn(name = "cr_id", nullable = false) var cr: Account,
+    @Column(name = "cr_id", insertable = false, updatable = false) var crId: Long = 0L,
+)

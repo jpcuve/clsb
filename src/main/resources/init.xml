@@ -34,14 +34,12 @@ insert into instructions(id, db_id, cr_id, moment, instruction_type, reference, 
     <currency-group name="AMERICA" priority="3"/>
     <bank name="DEFAULT">
         <currency iso="EUR" group="EUROPE" opening="06:00" funding-completion-target="12:00" closing="23:30" close="23:59"/>
-        <account name="__MIRROR__" short-limit="{}"/>
     </bank>
     <bank name="CLS">
         <currency iso="EUR" group="EUROPE" opening="07:00" funding-completion-target="09:00" closing="17:30" close="18:00"/>
         <currency iso="GBP" group="EUROPE" opening="06:00" funding-completion-target="08:00" closing="14:30" close="15:00"/>
         <currency iso="USD" group="AMERICA" opening="06:30" funding-completion-target="08:30" closing="21:00" close="21:30"/>
         <currency iso="JPY" group="ASIA" opening="03:00" funding-completion-target="05:00" closing="13:30" close="13:00"/>
-        <account name="__MIRROR__" short-limit="{}"/>
         <account name="a" short-limit="{}"/>
         <account name="b" short-limit="{}"/>
         <account name="c" short-limit="{}"/>
