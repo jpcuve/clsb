@@ -14,7 +14,7 @@ import javax.xml.parsers.SAXParserFactory
 class ClsbApplication(
 	val facade: Facade,
 	@Value("classpath:init.xml") initResource: Resource,
-	@Value("\${mirror-name}") val mirrorName: String,
+	@Value("\${app.mirror-name}") val mirrorName: String,
 ) {
 	init {
 		if (facade.bankRepository.count() == 0L) {
@@ -75,7 +75,7 @@ class ClsbApplication(
 										Instruction(
 											db = db,
 											cr = cr,
-											moment = LocalTime.parse(attributes.getValue("moment")),
+											execution = LocalTime.parse(attributes.getValue("moment")),
 											type = InstructionType.valueOf(attributes.getValue("type")),
 											reference = attributes.getValue("reference"),
 											amount = Position.parse(attributes.getValue("amount")) ?: Position.ZERO,

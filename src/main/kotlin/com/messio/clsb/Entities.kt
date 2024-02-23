@@ -67,7 +67,7 @@ enum class InstructionType {
 @JsonIgnoreProperties("db", "cr")
 class Instruction(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
-    @Column(name = "moment", nullable = false) var moment: LocalTime = LocalTime.MIN,
+    @Column(name = "when_execution", nullable = false) var execution: LocalTime = LocalTime.MIN,
     @Column(name = "book_id", nullable = true) var bookId: Long? = null,
     @Column(name = "when_booked", nullable = true) var booked: LocalTime? = null,
     @Enumerated(EnumType.STRING) @Column(name = "instruction_type", nullable = false) var type: InstructionType = InstructionType.PAY,

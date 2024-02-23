@@ -21,6 +21,9 @@ spring:
           auth: true
           starttls:
             enable: true
+server:
+  servlet:
+    context-path: /clsb
 logging:
   level:
     com.messio.gate: DEBUG
