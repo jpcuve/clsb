@@ -8,7 +8,7 @@ open class BankModel: ApplicationListener<BaseEvent> {
         when (event) {
             is CurrencyEvent -> when (event.nature) {
                 EventNature.OPENING -> currencyOpening(event.moment, event.currency)
-                EventNature.FCT -> currencyFct(event.moment, event.currency)
+                EventNature.FCT -> currencyFundingCompletionTarget(event.moment, event.currency)
                 EventNature.CLOSE -> currencyClose(event.moment, event.currency)
                 EventNature.CLOSING -> currencyClosing(event.moment, event.currency)
                 else -> throw RuntimeException()
@@ -16,7 +16,7 @@ open class BankModel: ApplicationListener<BaseEvent> {
 
             is BankEvent -> when (event.nature) {
                 EventNature.OPENING -> bankOpening(event.moment, event.bank)
-                EventNature.SCT -> bankSct(event.moment, event.bank)
+                EventNature.SCT -> bankSettlementCompletionTarget(event.moment, event.bank)
                 EventNature.CLOSING -> bankClosing(event.moment, event.bank)
                 else -> throw RuntimeException()
             }
@@ -32,10 +32,10 @@ open class BankModel: ApplicationListener<BaseEvent> {
     open fun opening(moment: LocalTime) {}
     open fun closing(moment: LocalTime) {}
     open fun bankOpening(moment: LocalTime, bank: Bank) {}
-    open fun bankSct(moment: LocalTime, bank: Bank) {}
+    open fun bankSettlementCompletionTarget(moment: LocalTime, bank: Bank) {}
     open fun bankClosing(moment: LocalTime, bank: Bank) {}
     open fun currencyOpening(moment: LocalTime, currency: Currency) {}
-    open fun currencyFct(moment: LocalTime, currency: Currency) {}
+    open fun currencyFundingCompletionTarget(moment: LocalTime, currency: Currency) {}
     open fun currencyClose(moment: LocalTime, currency: Currency) {}
     open fun currencyClosing(moment: LocalTime, currency: Currency) {}
 }

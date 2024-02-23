@@ -19,7 +19,7 @@ class BuildOneModel(
             .forEach { facade.book(it, moment) }
     }
 
-    override fun bankSct(moment: LocalTime, bank: Bank) {
+    override fun bankSettlementCompletionTarget(moment: LocalTime, bank: Bank) {
         logger.debug("Booking pay-ins")
         val balance = Balance()
         facade.instructionRepository.findAll()
