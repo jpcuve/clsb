@@ -2,9 +2,23 @@ package com.messio.clsb
 
 import java.math.BigDecimal
 
-class Position: HashMap<String, BigDecimal>() {
+class Position: HashMap<String, BigDecimal> {
+    constructor(): super()
 
-    fun putLeg(iso: String, amount: BigDecimal): Position {
+    constructor(map: Map<String, BigDecimal>) : super(map)
+
+    constructor(vararg amounts: Map.Entry<String, BigDecimal>){
+        amounts.forEach { put(it.key, it.value) }
+        normalize()
+    }
+
+    constructor(vararg amounts: Pair<String, BigDecimal>) {
+        amounts.forEach { put(it.first, it.second) }
+        normalize()
+    }
+
+
+    private fun putLeg(iso: String, amount: BigDecimal): Position {
         this[iso] = amount
         return this
     }
@@ -15,7 +29,15 @@ class Position: HashMap<String, BigDecimal>() {
 
     fun negate() = entries.fold(Position()){ p, e -> p.putLeg(e.key, e.value.negate())}
 
+    fun xlong() = Position(filter { it.value.signum() > 0})
+
+    fun xshort() = Position(filter { it.value.signum() < 0})
+
     fun isZero() = normalize().isEmpty()
+
+    fun isLong(): Boolean = normalize().values.all { it.signum() > 0}
+
+    fun isShort(): Boolean = normalize().values.all { it.signum() < 0 }
 
     fun normalize() = entries.filter { it.value.signum() != 0 }.fold(Position()){ p, e -> p.putLeg(e.key, e.value) }
 

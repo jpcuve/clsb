@@ -32,12 +32,12 @@ create table currencies
     primary key (id)
 );
 alter table accounts
-    add unique (denomination);
+    add constraint uk_account_bank_denomination unique (bank_id, denomination);
 alter table banks
-    add unique (denomination);
+    add constraint uk_account_denomination unique (denomination);
 alter table currencies
-    add unique (iso);
+    add constraint uk_currency_bank_iso unique (bank_id, iso);
 alter table accounts
-    add foreign key (bank_id) references banks (id);
+    add constraint fk_account_bank foreign key (bank_id) references banks (id);
 alter table currencies
-    add foreign key (bank_id) references banks (id);
+    add constraint fk_currency_bank foreign key (bank_id) references banks (id);

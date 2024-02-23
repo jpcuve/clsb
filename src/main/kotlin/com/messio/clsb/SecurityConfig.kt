@@ -1,86 +1,196 @@
 package com.messio.clsb
 
 import com.auth0.jwt.JWT
+import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
-
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.http.SessionCreationPolicy
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter
 import org.springframework.web.filter.OncePerRequestFilter
-import java.lang.Exception
-import java.security.KeyFactory
+import java.io.ByteArrayInputStream
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 import java.security.interfaces.RSAPublicKey
-import java.security.spec.X509EncodedKeySpec
+import java.time.Duration
 import java.util.*
-import javax.servlet.FilterChain
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import javax.naming.ldap.LdapName
+import jakarta.servlet.FilterChain
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
+import org.springframework.core.annotation.Order
+import org.springframework.core.env.Environment
+import org.springframework.security.config.Customizer
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
+import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.web.util.matcher.AnyRequestMatcher
+import java.security.KeyPairGenerator
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
-    @Value("\${app.client-id}") val clientId: String,
-    @Value("\${app.issuer}") val issuer: String,
-    @Value("\${app.public-key}") val publicKeyAsString: String,
-    @Value("\${app.asymmetric-cipher}") val asymmetricCipher: String,
+    val env: Environment,
+    @Value("\${app.identity.client-id}") val clientId: String,
 ) {
-    private val keyFactory: KeyFactory = KeyFactory.getInstance(asymmetricCipher)
-    private val publicKey = keyFactory.generatePublic(X509EncodedKeySpec(Base64.getDecoder().decode(publicKeyAsString))) as RSAPublicKey
-    private val algorithm = Algorithm.RSA256(publicKey, null)
+    @Bean
+    fun jwtVerifier(
+        jsonNodeBodyHandler: HttpResponse.BodyHandler<JsonNode>,
+        @Value("\${app.identity.jwk-set-url}") jwkSetUrl: String,
+    ): JWTVerifier {
+        if (env.activeProfiles.contains("standalone")){
+            val keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair()
+            val algorithm = Algorithm.RSA256(keyPair.public as RSAPublicKey, null)
+            return JWT.require(algorithm).withIssuer("test").build()
+        } else {
+            val httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .connectTimeout(Duration.ofSeconds(2L))
+                .build()
+            val req = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create(jwkSetUrl))
+                .header("Accept", "application/json")
+                .build()
+            val res = httpClient.send(req, jsonNodeBodyHandler)
+            val key0 = res.body()["keys"][0] as ObjectNode
+            val certificateChain = key0.get("x5c") as ArrayNode
+            val decodedCertificate = Base64.getDecoder().decode(certificateChain[0].asText())
+            ByteArrayInputStream(decodedCertificate).use { inputStream ->
+                val certificateFactory = CertificateFactory.getInstance("X.509")
+                val certificate = certificateFactory.generateCertificate(inputStream) as X509Certificate
+                val principal = LdapName(certificate.issuerX500Principal.name)
+                val issuer = principal.rdns.firstOrNull { it.type == "CN" }?.value?.toString() ?: ""
+                val publicKey = certificate.publicKey as RSAPublicKey
+                val algorithm = Algorithm.RSA256(publicKey, null)
+                return JWT.require(algorithm).withIssuer(issuer).build()
+            }
+        }
+    }
 
     @Bean
-    fun filterChain(http: HttpSecurity): SecurityFilterChain {
+    @Order(1)
+    fun apiFilterChain(http: HttpSecurity, verifier: JWTVerifier): SecurityFilterChain {
         http
-            .httpBasic().disable()
-            .formLogin().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and()
-            .addFilterAfter(securityFilter(), BasicAuthenticationFilter::class.java)
-            .csrf().disable() // not for production
-            .headers().frameOptions().disable().and() // not for production, necessary for H2 console
-            .authorizeRequests()
-            .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-            .antMatchers("/h2-console/**").permitAll()
-            .anyRequest().authenticated()
+            .securityMatcher("/api/**")
+            .csrf {
+                it.disable()
+            }
+            .cors(Customizer.withDefaults())
+            .sessionManagement {
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .headers {
+                it.frameOptions { it2 ->
+                    it2.disable()
+                }
+                it.httpStrictTransportSecurity { it2 ->
+                    it2.disable()
+                }
+            }
+            .addFilterAfter(securityFilter(verifier), BasicAuthenticationFilter::class.java)
+            .authorizeHttpRequests {
+                it.anyRequest().authenticated()
+            }
         return http.build()
     }
 
     @Bean
-    fun securityFilter() = object: OncePerRequestFilter() {
-        override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
-            logger.debug("URI: ${req.method} ${req.requestURI}")
-            SecurityContextHolder.getContext().authentication = null
-            req.getHeader("Authorization")?.let { authorization ->
-                if (authorization.lowercase().startsWith("bearer ")){
-                    val idToken = authorization.substring(7).trim()
-                    try {
-                        val decodedIdToken = JWT.require(algorithm).withIssuer(issuer).build().verify(idToken)
-                        if (decodedIdToken.audience.contains(clientId)) {
-                            val email = decodedIdToken.getClaim("email").asString()
-                            val roles = decodedIdToken.getClaim("roles").asString()
-                            logger.debug("Authenticated: ${req.requestURI} $email ($roles)")
-                            SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-                                email,
-                                idToken,  // the token is available in the password field
-                                roles.split("\\s+".toRegex()).map { SimpleGrantedAuthority("ROLE_${it.uppercase()}") }
-                            )
-                        }
-                    } catch (e: Exception){
-                        logger.error(e.message, e)
-                    }
+    @Order(2)
+    fun h2ConsoleFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher(PathRequest.toH2Console())
+            .csrf {
+                it.disable()
+            }
+            .headers { headers ->
+                headers.frameOptions {
+                    it.sameOrigin()
                 }
             }
+            .authorizeHttpRequests {
+                it.anyRequest().permitAll()
+            }
+        return http.build()
+    }
+
+    /*
+        @Bean
+        @Order(3)
+        fun graphqlFilterChain(http: HttpSecurity): SecurityFilterChain {
+            http
+                .securityMatcher("/graphiql")
+                .authorizeHttpRequests {
+                    it.anyRequest().permitAll()
+                }
+            return http.build()
+        }
+    */
+
+    @Bean
+    fun webFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher(AnyRequestMatcher.INSTANCE)
+            .csrf {
+                it.disable()
+            }
+            .sessionManagement {
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .authorizeHttpRequests {
+                it.anyRequest().permitAll()
+            }
+        return http.build()
+    }
+
+    @Bean
+    fun securityFilter(verifier: JWTVerifier) = object: OncePerRequestFilter() {
+        override fun doFilterInternal(req: HttpServletRequest, res: HttpServletResponse, chain: FilterChain) {
+            SecurityContextHolder.getContext().authentication = null
+            var email = ""
+            val idTokens = mutableListOf<String?>()
+            idTokens.add(req.getBearerToken())
+            idTokens.add(req.getParameter("id-token"))
+            idTokens.firstNotNullOfOrNull {it}?.let { idToken ->
+                try {
+                    val decodedIdToken = verifier.verify(idToken)
+                    val accountId = decodedIdToken.subject.toLong()
+                    email = decodedIdToken.getClaim("email").asString()
+                    val roles = decodedIdToken.getClaim("roles").asArray(String::class.java)
+                    val features = decodedIdToken.getClaim("features").asArray(String::class.java)
+                    val aspects = decodedIdToken.getClaim("aspects").asArray(String::class.java)
+                    if (decodedIdToken.audience.contains(clientId)) {
+                        SecurityContextHolder.getContext().authentication = GateAuthenticationToken(
+                            accountId,
+                            idToken,
+                            email,
+                            roles,
+                            features,
+                            aspects,
+                        )
+                    } else {
+                        SecurityConfig.logger.error("Client id not found in audience (${decodedIdToken.audience.joinToString(" ")}): $clientId")
+                    }
+                } catch (e: Exception){
+                    SecurityConfig.logger.error(e.message, e)
+                }
+
+            }
+            SecurityConfig.logger.debug("URI: ${req.method} ${req.requestURI} - ${email}")
             chain.doFilter(req, res)
         }
     }
@@ -89,3 +199,4 @@ class SecurityConfig(
         private val logger = LoggerFactory.getLogger(SecurityConfig::class.java)
     }
 }
+

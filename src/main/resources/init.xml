@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!--
+insert into banks(id, name, opening, closing, settlement_completion_target, minimum_pay_in) values
+(1, 'DEFAULT', '00:00', '23:59', '12:00', '{}'),
+(2, 'CLS', '00:15', '23:00', '10:00', '{}');
+insert into currency_groups(id, name, priority) values
+(1, 'ASIA', 1),
+(2, 'EUROPE', 2),
+(3, 'AMERICA', 3);
+insert into currencies(id, bank_id, coin, currency_group_id, opening, funding_completion_target, closing, close) values
+(1, 1, 'EUR', 2, '06:00', '12:00', '23:30', '23:59'),
+(2, 2, 'EUR', 2, '07:00', '09:00', '17:30', '18:00'),
+(3, 2, 'GBP', 2, '06:00', '08:00', '14:30', '15:00'),
+(4, 2, 'USD', 3, '06:30', '08:30', '21:00', '21:30'),
+(5, 2, 'JPY', 1, '03:00', '05:00', '13:30', '13:00');
+insert into accounts(id, bank_id, name, short_position_limit) values
+(1, 1, '__MIRROR__', '{}'),
+(2, 2, '__MIRROR__', '{}'),
+(3, 2, 'a', '{}'),
+(4, 2, 'b', '{}'),
+(5, 2, 'c', '{}');
+insert into users(id, account_id, firebase_uid, anonymous, email, display_name, roles) values
+(2, 2, null, false, 'jpcuvelliez@gmail.com', 'Jean-Pierre Cuvelliez', 'DEVELOPER');
+insert into instructions(id, db_id, cr_id, moment, instruction_type, reference, amount) values
+(1, 3, 4, '08:00', 'PAY', 'TEST', '{}'),
+(2, 4, 3, '09:30', 'SETTLEMENT', 'Settlement 1', '{EUR=70,USD=90}'),
+(3, 3, 4, '09:30', 'SETTLEMENT', 'Settlement 2', '{EUR=80,USD=100}'),
+(4, 2, 3, '09:30', 'PAY_IN', 'Pay-in 1', '{EUR=100,USD=200}');
+
+-->
+<init>
+    <currency-group name="ASIA" priority="1"/>
+    <currency-group name="EUROPE" priority="2"/>
+    <currency-group name="AMERICA" priority="3"/>
+    <bank name="DEFAULT">
+        <currency iso="EUR" group="EUROPE" opening="06:00" funding-completion-target="12:00" closing="23:30" close="23:59"/>
+        <account name="__MIRROR__" short-limit="{}"/>
+    </bank>
+    <bank name="CLS">
+        <currency iso="EUR" group="EUROPE" opening="07:00" funding-completion-target="09:00" closing="17:30" close="18:00"/>
+        <currency iso="GBP" group="EUROPE" opening="06:00" funding-completion-target="08:00" closing="14:30" close="15:00"/>
+        <currency iso="USD" group="AMERICA" opening="06:30" funding-completion-target="08:30" closing="21:00" close="21:30"/>
+        <currency iso="JPY" group="ASIA" opening="03:00" funding-completion-target="05:00" closing="13:30" close="13:00"/>
+        <account name="__MIRROR__" short-limit="{}"/>
+        <account name="a" short-limit="{}"/>
+        <account name="b" short-limit="{}"/>
+        <account name="c" short-limit="{}"/>
+        <instruction db="a" cr="b" moment="08:00" type="PAY" reference="Test" amount="{}"/>
+        <instruction db="a" cr="b" moment="09:30" type="SETTLEMENT" reference="Settlement 1" amount="{EUR=70,USD=90}"/>
+        <instruction db="a" cr="b" moment="09:30" type="SETTLEMENT" reference="Settlement 2" amount="{EUR=80,USD=100}"/>
+        <instruction db="a" cr="b" moment="09:30" type="PAY_IN" reference="Pay-in 1" amount="{EUR=100,USD=200}"/>
+    </bank>
+</init>
