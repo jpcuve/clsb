@@ -12,21 +12,21 @@ class BuildOneModel(
     val facade: Facade,
     @Value("\${mirror-name}") val mirrorName: String,
 ): BankModel() {
-    override fun currencyClosing(time: LocalTime, currency: Currency) {
+    override fun currencyClosing(moment: LocalTime, currency: Currency) {
         logger.debug("Closing currency: ${currency.iso}")
         facade.instructionRepository.findAll()
-            .filter { !it.moment.isAfter(time) && it.type == InstructionType.PAY_OUT && it.amount.containsKey(currency.iso) && it.booked == null}
-            .forEach { facade.book(it, time) }
+            .filter { !it.moment.isAfter(moment) && it.type == InstructionType.PAY_OUT && it.amount.containsKey(currency.iso) && it.booked == null}
+            .forEach { facade.book(it, moment) }
     }
 
-    override fun bankSct(time: LocalTime, bank: Bank) {
+    override fun bankSct(moment: LocalTime, bank: Bank) {
         logger.debug("Booking pay-ins")
         val balance = Balance()
         facade.instructionRepository.findAll()
-            .filter { !it.moment.isAfter(time) && it.type == InstructionType.PAY_IN && it.booked == null }
+            .filter { !it.moment.isAfter(moment) && it.type == InstructionType.PAY_IN && it.booked == null }
             .forEach {
                 logger.debug("Booking: {}", it)
-                facade.book(it, time)
+                facade.book(it, moment)
                 balance.transfer(it.db, it.cr, it.amount)
             }
         logger.debug("Settling sequentially")
@@ -35,9 +35,9 @@ class BuildOneModel(
             settledCount.set(0)
             // simplest stuff, run once and only allow if sufficient provision on account
             facade.instructionRepository.findAll()
-                .filter { !it.moment.isAfter(time) && it.type == InstructionType.SETTLEMENT && it.booked == null && balance.isProvisioned(it.db, it.amount) }
+                .filter { !it.moment.isAfter(moment) && it.type == InstructionType.SETTLEMENT && it.booked == null && balance.isProvisioned(it.db, it.amount) }
                 .forEach {
-                    facade.book(it, time)
+                    facade.book(it, moment)
                     balance.transfer(it.db, it.cr, it.amount)
                     settledCount.incrementAndGet()
                 }
@@ -53,7 +53,7 @@ class BuildOneModel(
                             val payout = Instruction(
                                 db = db,
                                 cr = mirror,
-                                moment = time,
+                                moment = moment,
                                 type = InstructionType.PAY_OUT,
                                 amount = Position(it),
                                 reference = "Pay-out ${it.key} to ${e.key}"
