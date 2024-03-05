@@ -1,6 +1,7 @@
 package com.messio.clsb
 
 import org.springframework.context.ApplicationListener
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 open class BankModel: ApplicationListener<BaseEvent> {
@@ -29,14 +30,14 @@ open class BankModel: ApplicationListener<BaseEvent> {
         }
     }
 
-    open fun opening(moment: LocalTime) {}
-    open fun closing(moment: LocalTime) {}
-    open fun bankOpening(moment: LocalTime, bank: Bank) {}
-    open fun bankSettlementCompletionTarget(moment: LocalTime, bank: Bank) {}
-    open fun bankClosing(moment: LocalTime, bank: Bank) {}
-    open fun currencyOpening(moment: LocalTime, currency: Currency) {}
-    open fun currencyFundingCompletionTarget(moment: LocalTime, currency: Currency) {}
-    open fun currencyClose(moment: LocalTime, currency: Currency) {}
-    open fun currencyClosing(moment: LocalTime, currency: Currency) {}
+    open fun opening(moment: LocalDateTime) {}
+    open fun closing(moment: LocalDateTime) {}
+    open fun bankOpening(moment: LocalDateTime, bank: Bank) {}
+    open fun bankSettlementCompletionTarget(moment: LocalDateTime, bank: Bank) {}
+    open fun bankClosing(moment: LocalDateTime, bank: Bank) {}
+    open fun currencyOpening(moment: LocalDateTime, currency: Currency) {}
+    open fun currencyFundingCompletionTarget(moment: LocalDateTime, currency: Currency) {}
+    open fun currencyClose(moment: LocalDateTime, currency: Currency) {}
+    open fun currencyClosing(moment: LocalDateTime, currency: Currency) {}
 }
 

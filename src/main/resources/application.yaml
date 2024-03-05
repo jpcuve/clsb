@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:clsb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:clsb;MODE=MariaDB;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -29,6 +29,8 @@ logging:
     com.messio.gate: DEBUG
 app:
   mirror-name: __MIRROR__
+  start-date: 1970-01-01
+  simulation-duration-in-days: 10
   identity:
     jwk-set-url: https://gate.messio.com/auth/keys
     base-url: https://gate.messio.com

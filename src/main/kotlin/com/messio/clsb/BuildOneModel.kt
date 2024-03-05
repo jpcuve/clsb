@@ -4,6 +4,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -12,14 +13,14 @@ class BuildOneModel(
     val facade: Facade,
     @Value("\${app.mirror-name}") val mirrorName: String,
 ): BankModel() {
-    override fun currencyClosing(moment: LocalTime, currency: Currency) {
+    override fun currencyClosing(moment: LocalDateTime, currency: Currency) {
         logger.debug("Closing currency: ${currency.iso}")
         facade.instructionRepository.findAll()
             .filter { !it.execution.isAfter(moment) && it.type == InstructionType.PAY_OUT && it.amount.containsKey(currency.iso) && it.booked == null}
             .forEach { facade.book(it, moment) }
     }
 
-    override fun bankSettlementCompletionTarget(moment: LocalTime, bank: Bank) {
+    override fun bankSettlementCompletionTarget(moment: LocalDateTime, bank: Bank) {
         logger.debug("Booking pay-ins")
         val balance = Balance()
         facade.instructionRepository.findAll()

@@ -13,9 +13,9 @@ create table banks
 (
     id                                bigint       not null auto_increment,
     denomination                      varchar(255) not null,
-    when_opening                      time         not null,
-    when_settlement_completion_target time         not null,
-    when_closing                      time         not null,
+    when_opening                      varchar(8)   not null,
+    when_settlement_completion_target varchar(8)   not null,
+    when_closing                      varchar(8)   not null,
     minimum_pay_in                    varchar(255) not null,
     primary key (id)
 );
@@ -24,18 +24,18 @@ create table currencies
     id                             bigint       not null auto_increment,
     iso                            varchar(255) not null,
     currency_group                 varchar(191) not null,
-    when_opening                   time         not null,
-    when_funding_completion_target time         not null,
-    when_close                     time         not null,
-    when_closing                   time         not null,
+    when_opening                   varchar(8)   not null,
+    when_funding_completion_target varchar(8)   not null,
+    when_close                     varchar(8)   not null,
+    when_closing                   varchar(8)   not null,
     bank_id                        bigint       not null,
     primary key (id)
 );
 create table instructions
 (
     id               bigint       not null auto_increment,
-    when_execution   time         not null,
-    when_booked      time,
+    when_execution   varchar(26)  not null,
+    when_booked      varchar(26),
     book_id          bigint,
     cr_id            bigint       not null,
     db_id            bigint       not null,

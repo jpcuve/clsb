@@ -2,12 +2,11 @@ package com.messio.clsb
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
-import java.time.LocalTime
+import java.time.LocalDateTime
 
 
 @Component
@@ -17,12 +16,12 @@ class Facade(
     val accountRepository: AccountRepository,
     val instructionRepository: InstructionRepository,
 ) {
-    fun book(instruction: Instruction, time: LocalTime) {
+    fun book(instruction: Instruction, moment: LocalDateTime) {
         val maxBookId = instructionRepository.findMaxBookId() ?: 0L
         instructionRepository.findById(instruction.id).ifPresent {
-            logger.debug("Booking @ {}: {}", time, instruction)
+            logger.debug("Booking @ {}: {}", moment, instruction)
             it.bookId = maxBookId + 1
-            it.booked = time
+            it.booked = moment
             instructionRepository.save(it)
         }
     }

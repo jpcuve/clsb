@@ -3,6 +3,7 @@ package com.messio.clsb
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalTime
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 
 @Converter
@@ -10,7 +11,6 @@ class PositionConverter: AttributeConverter<Position, String>{
     override fun convertToDatabaseColumn(attribute: Position?): String? = attribute?.toString()
     override fun convertToEntityAttribute(dbData: String?): Position? = dbData?.let { Position.parse(dbData) }
 }
-
 
 @Entity
 @Table(name = "banks")
@@ -67,9 +67,9 @@ enum class InstructionType {
 @JsonIgnoreProperties("db", "cr")
 class Instruction(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
-    @Column(name = "when_execution", nullable = false) var execution: LocalTime = LocalTime.MIN,
+    @Column(name = "when_execution", nullable = false) var execution: LocalDateTime = LocalDateTime.MIN,
     @Column(name = "book_id", nullable = true) var bookId: Long? = null,
-    @Column(name = "when_booked", nullable = true) var booked: LocalTime? = null,
+    @Column(name = "when_booked", nullable = true) var booked: LocalDateTime? = null,
     @Enumerated(EnumType.STRING) @Column(name = "instruction_type", nullable = false) var type: InstructionType = InstructionType.PAY,
     @Column(name = "reference", nullable = false) var reference: String = "",
     @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) var amount: Position = Position.ZERO,

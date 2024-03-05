@@ -43,9 +43,9 @@ insert into instructions(id, db_id, cr_id, moment, instruction_type, reference, 
         <account name="a" short-limit="{}"/>
         <account name="b" short-limit="{}"/>
         <account name="c" short-limit="{}"/>
-        <instruction db="a" cr="b" moment="08:00" type="PAY" reference="Test" amount="{}"/>
-        <instruction db="a" cr="b" moment="09:30" type="SETTLEMENT" reference="Settlement 1" amount="{EUR=70,USD=90}"/>
-        <instruction db="a" cr="b" moment="09:30" type="SETTLEMENT" reference="Settlement 2" amount="{EUR=80,USD=100}"/>
-        <instruction db="a" cr="b" moment="09:30" type="PAY_IN" reference="Pay-in 1" amount="{EUR=100,USD=200}"/>
+        <instruction db="a" cr="b" moment="1970-01-01T08:00" type="PAY" reference="Test" amount="{}"/>
+        <instruction db="a" cr="b" moment="1970-01-01T09:30" type="SETTLEMENT" reference="Settlement 1" amount="{EUR=70,USD=90}"/>
+        <instruction db="a" cr="b" moment="1970-01-01T09:30" type="SETTLEMENT" reference="Settlement 2" amount="{EUR=80,USD=100}"/>
+        <instruction db="a" cr="b" moment="1970-01-01T09:30" type="PAY_IN" reference="Pay-in 1" amount="{EUR=100,USD=200}"/>
     </bank>
 </init>

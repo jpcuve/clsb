@@ -7,6 +7,7 @@ import org.springframework.boot.runApplication
 import org.springframework.core.io.Resource
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
+import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.xml.parsers.SAXParserFactory
 
@@ -75,7 +76,7 @@ class ClsbApplication(
 										Instruction(
 											db = db,
 											cr = cr,
-											execution = LocalTime.parse(attributes.getValue("moment")),
+											execution = LocalDateTime.parse(attributes.getValue("moment")),
 											type = InstructionType.valueOf(attributes.getValue("type")),
 											reference = attributes.getValue("reference"),
 											amount = Position.parse(attributes.getValue("amount")) ?: Position.ZERO,
