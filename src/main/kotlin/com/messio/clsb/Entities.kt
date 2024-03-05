@@ -63,7 +63,6 @@ enum class InstructionType {
 
 @Entity
 @Table(name = "instructions")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @JsonIgnoreProperties("db", "cr")
 class Instruction(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
