@@ -95,6 +95,7 @@ public class Queue extends Trs {
 		}
 	}
 	
+/*
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, DBIOException{
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -111,5 +112,6 @@ public class Queue extends Trs {
 		q.getColumnDefinition("Status").setConstraintEqual("SM");
 		for(Enumeration e = q.transactions(); e.hasMoreElements();) System.out.println(e.nextElement());
 	}
-		
+*/
+
 }

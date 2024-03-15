@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 public class Settlement{
 	
+/*
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, DBIOException{
 		if(args.length < 2){
 			System.out.println("Error: please specify ODBC DB name & action");
@@ -47,4 +48,5 @@ public class Settlement{
 			at.printAll();
 		}
 	}
+*/
 }

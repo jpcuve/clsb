@@ -165,6 +165,7 @@ public class Currencies extends DBCachedTable {
 	
 	// miscellaneous
 	
+/*
 	public static void main(String args[]) throws ClassNotFoundException, SQLException, DBIOException, IllegalCurrencyException {
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -190,5 +191,6 @@ public class Currencies extends DBCachedTable {
 			System.out.println((Currency)e.nextElement());
 		}
 	}
+*/
 
 }

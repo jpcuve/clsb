@@ -113,6 +113,7 @@ public class Balances extends DBCachedTable{
 		super.save();
 	}
 				
+/*
 	public static void main(String args[]) throws ClassNotFoundException, SQLException, DBIOException, IllegalCurrencyException {
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -130,5 +131,6 @@ public class Balances extends DBCachedTable{
 			a.printAll();
 		}
 	}
-	
+*/
+
 }

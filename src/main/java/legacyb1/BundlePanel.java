@@ -108,6 +108,7 @@ public class BundlePanel extends JPanel{
 		return new Dimension(200, 200);
 	}
 	
+/*
 	public static void main(String[] args) throws IllegalAccountException, IllegalCurrencyException{
 		Account a = new Account("a");
 		Account b = new Account("b");
@@ -129,5 +130,6 @@ public class BundlePanel extends JPanel{
 		f.pack();
         f.setVisible(true);
 	}
+*/
 
 }

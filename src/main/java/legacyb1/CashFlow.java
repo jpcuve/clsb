@@ -60,6 +60,7 @@ public class CashFlow{
 		return s.toString();
 	}
 		
+/*
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, IllegalAccountException, IllegalCurrencyException {
 		CashFlow now = new CashFlow();
 		now.addFlow(new TimeOfDay(10, 35), 1200);
@@ -70,4 +71,5 @@ public class CashFlow{
 		System.out.println("Cumulated amount at 10:42 AM=" + now.getCumulatedAmount(new TimeOfDay(10, 42)));
 		System.out.println("Cumulated amount at 10:52 AM=" + now.getCumulatedAmount(new TimeOfDay(10, 52)));
 	}
+*/
 }

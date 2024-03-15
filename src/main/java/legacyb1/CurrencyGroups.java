@@ -52,6 +52,7 @@ public class CurrencyGroups extends DBCachedTable{
 	
 	// miscellaneous
 	
+/*
 	public static void main(String args[]) throws ClassNotFoundException, SQLException, DBIOException, IllegalCurrencyGroupException{
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -66,5 +67,6 @@ public class CurrencyGroups extends DBCachedTable{
 		}
 		System.out.println(cgt);
 	}
-	
+*/
+
 }

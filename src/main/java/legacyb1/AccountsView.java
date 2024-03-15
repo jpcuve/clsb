@@ -49,6 +49,7 @@ public class AccountsView extends JSplitPane implements TreeSelectionListener{
 		setRightComponent(dtable);
 	}
 	
+/*
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, DBIOException {
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -73,4 +74,5 @@ public class AccountsView extends JSplitPane implements TreeSelectionListener{
 		f.pack();
 		f.setVisible(true);
 	}
+*/
 }

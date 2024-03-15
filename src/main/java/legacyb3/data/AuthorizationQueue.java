@@ -206,6 +206,7 @@ public class AuthorizationQueue extends Inputs{
 							
 	// main
 	
+/*
 	public static void main(String[] args) throws ClassNotFoundException, SQLException{
 		Class.forName ("com.ms.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:test");
@@ -237,6 +238,7 @@ public class AuthorizationQueue extends Inputs{
 		iqo.processAutomaticAuthorisation(iqo.loadAuthorisationQueueInMemory(), false);
 		
 	}
+*/
 
 			
 		

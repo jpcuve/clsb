@@ -73,6 +73,7 @@ public class PayOuts extends DBTable {
 	
 	// miscellaneous
 	
+/*
 	public static void main(String args[]) throws ClassNotFoundException, SQLException, DBIOException{
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -90,6 +91,7 @@ public class PayOuts extends DBTable {
 			System.out.println(p);
 		}
 	}
-	
+*/
+
 }
 	

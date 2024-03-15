@@ -103,6 +103,7 @@ public class Accounts extends DBCachedTable{
 	
 	// debug
 	
+/*
 	public static void main(String args[]) throws ClassNotFoundException, SQLException, DBIOException{
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -116,5 +117,6 @@ public class Accounts extends DBCachedTable{
 		for(Enumeration e1 = at.accounts(); e1.hasMoreElements();) System.out.println(e1.nextElement());
 		System.out.println(at);
 	}
+*/
 
 }

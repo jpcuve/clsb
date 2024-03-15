@@ -75,6 +75,7 @@ public class UMBalances extends Server {
 		return records(dbf);
 	}
 	
+/*
 	public static void main(String[] args) throws ClassNotFoundException, SQLException{
 		Class.forName ("com.ms.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:test");
@@ -95,4 +96,5 @@ public class UMBalances extends Server {
 			System.out.println(umBal);
 		}
 	}
+*/
 }

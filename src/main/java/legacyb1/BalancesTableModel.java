@@ -44,6 +44,7 @@ public class BalancesTableModel extends DefaultTableModel{
 		return name;
 	}
 	
+/*
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, DBIOException, IllegalAccountException{
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -63,4 +64,5 @@ public class BalancesTableModel extends DefaultTableModel{
 		f.pack();
         f.setVisible(true);
 	}
+*/
 }

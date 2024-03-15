@@ -40,6 +40,7 @@ public class CombinatorialIterator implements Enumeration{
 		return s.toString();
 	}
 	
+/*
 	public static void main(String[] args){
 		int i = 1;
 		for(Enumeration e = new CombinatorialIterator(7, 3); e.hasMoreElements();){
@@ -47,6 +48,7 @@ public class CombinatorialIterator implements Enumeration{
 			System.out.println(" " + i++ + ": "+ e);
 		}
 	}
+*/
 
 }
 	

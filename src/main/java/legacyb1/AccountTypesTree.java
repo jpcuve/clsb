@@ -29,6 +29,7 @@ public class AccountTypesTree extends JPanel{
 		add(new JScrollPane(tree), BorderLayout.CENTER);
 	}
 	
+/*
 	public static void main(String[] args) throws ClassNotFoundException, SQLException, DBIOException{
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
@@ -43,6 +44,7 @@ public class AccountTypesTree extends JPanel{
 		f.pack();
         f.setVisible(true);
 	}
+*/
 }
 
 		

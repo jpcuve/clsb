@@ -48,11 +48,13 @@ public class AccountTypes extends DBCachedTable {
 	
 	// miscellaneous
 	
+/*
 	public static void main(String args[]) throws ClassNotFoundException, SQLException, DBIOException, IllegalCurrencyException {
 		Class.forName ("sun.jdbc.odbc.JdbcOdbcDriver");
 		Connection con = DriverManager.getConnection("jdbc:odbc:cls");
 		AccountTypes att = new AccountTypes(con);
 		System.out.println(att);
 	}
-	
+*/
+
 }
