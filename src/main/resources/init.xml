@@ -4,7 +4,10 @@
     <currency-group name="EUROPE" priority="2"/>
     <currency-group name="AMERICA" priority="3"/>
     <bank name="DEFAULT" base-iso="EUR">
-        <currency iso="EUR" base-rate="1" scale="2" volatility-margin="0.01" group="EUROPE" opening="06:00" funding-completion-target="12:00" closing="23:30" close="23:59"/>
+        <currency iso="EUR" base-rate="1" scale="2" volatility-margin="0.01" group="EUROPE" opening="06:00" funding-completion-target="12:00" closing="23:30" close="23:59">
+            <real-time-gross-settlement-period init="08:00" done="12:00"/>
+            <real-time-gross-settlement-period init="14:00" done="22:00"/>
+        </currency>
     </bank>
     <bank name="CLS" base-iso="EUR">
         <currency iso="EUR" base-rate="1" scale="2" volatility-margin="0.01" group="EUROPE" opening="07:00" funding-completion-target="09:00" closing="17:30" close="18:00"/>

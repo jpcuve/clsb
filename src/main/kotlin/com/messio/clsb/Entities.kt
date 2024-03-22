@@ -45,8 +45,16 @@ class Currency(
     @Column(name = "volatility_margin", nullable = false) var volatilityMargin: BigDecimal = BigDecimal.ZERO,
     @Column(name = "base_rate", nullable = false) var baseRate: BigDecimal = BigDecimal.ZERO,
     @Column(name = "scale", nullable = false) var scale: Int = 0,
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "currency_rtgs_periods", joinColumns = [JoinColumn(name = "currency_id", nullable = false)])
+    var realTimeGrossSettlementPeriods: MutableSet<RealTimeGrossSettlementPeriod> = mutableSetOf()
 )
 
+@Embeddable
+class RealTimeGrossSettlementPeriod(
+    @Column(name = "when_init") var init: LocalTime = LocalTime.MIN,
+    @Column(name = "when_done") var done: LocalTime = LocalTime.MAX,
+)
 
 @Entity
 @Table(name = "accounts", uniqueConstraints = [UniqueConstraint(columnNames = ["bank_id", "denomination"])])

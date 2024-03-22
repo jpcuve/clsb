@@ -35,6 +35,12 @@ create table currencies
     bank_id                        bigint         not null,
     primary key (id)
 );
+create table currency_rtgs_periods
+(
+    currency_id bigint     not null,
+    when_init   varchar(8) not null,
+    when_done   varchar(8) not null
+);
 create table instructions
 (
     id               bigint       not null auto_increment,
@@ -62,3 +68,5 @@ alter table instructions
     add constraint fk_instruction_account_db foreign key (db_id) references accounts (id);
 alter table instructions
     add constraint fk_instruction_account_cr foreign key (cr_id) references accounts (id);
+alter table currency_rtgs_periods
+    add constraint fk_rtgs_period_currency foreign key (currency_id) references currencies (id);

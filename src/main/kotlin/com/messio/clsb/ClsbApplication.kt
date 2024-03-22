@@ -24,6 +24,7 @@ class ClsbApplication(
 			val parser = SAXParserFactory.newInstance().newSAXParser()
 			parser.parse(initResource.inputStream, object : DefaultHandler() {
 				var currentBank: Bank? = null
+				var currentCurrency: Currency? = null
 				var currencyMap = mutableMapOf<String, Currency>()
 				var accountMap = mutableMapOf<String, Account>()
 
@@ -47,7 +48,7 @@ class ClsbApplication(
 
 						"currency" -> {
 							currentBank?.let { bank ->
-								currencyMap[attributes.getValue("iso")] = facade.currencyRepository.save(
+								val currency = facade.currencyRepository.save(
 									Currency(
 										bank = bank,
 										currencyGroup = CurrencyGroup.valueOf(attributes.getValue("group")),
@@ -61,7 +62,16 @@ class ClsbApplication(
 										scale = attributes.getValue("scale").toInt(),
 									)
 								)
+								currencyMap[attributes.getValue("iso")] = currency
+								currentCurrency = currency
 							}
+						}
+
+						"real-time-gross-settlement-period" -> {
+							currentCurrency?.realTimeGrossSettlementPeriods?.add(RealTimeGrossSettlementPeriod(
+								init = LocalTime.parse(attributes.getValue("init")),
+								done = LocalTime.parse(attributes.getValue("done")),
+							))
 						}
 
 						"account" -> {
@@ -99,6 +109,10 @@ class ClsbApplication(
 				override fun endElement(uri: String, localName: String, qName: String) {
 					when (qName) {
 						"bank" -> currentBank = null
+						"currency" -> {
+							currentCurrency?.let { facade.currencyRepository.save(it) }
+							currentCurrency = null
+						}
 						else -> {}
 					}
 				}
