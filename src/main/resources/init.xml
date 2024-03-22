@@ -7,6 +7,9 @@
         <currency iso="EUR" base-rate="1" scale="2" volatility-margin="0.01" group="EUROPE" opening="06:00" funding-completion-target="12:00" closing="23:30" close="23:59">
             <real-time-gross-settlement-period init="08:00" done="12:00"/>
             <real-time-gross-settlement-period init="14:00" done="22:00"/>
+            <pay-in-schedule scheduled="07:00" proportion="1"/>
+            <pay-in-schedule scheduled="08:00" proportion="3"/>
+            <pay-in-schedule scheduled="09:00" proportion="2"/>
         </currency>
     </bank>
     <bank name="CLS" base-iso="EUR">

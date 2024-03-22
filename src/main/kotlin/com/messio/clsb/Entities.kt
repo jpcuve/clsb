@@ -47,7 +47,10 @@ class Currency(
     @Column(name = "scale", nullable = false) var scale: Int = 0,
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "currency_rtgs_periods", joinColumns = [JoinColumn(name = "currency_id", nullable = false)])
-    var realTimeGrossSettlementPeriods: MutableSet<RealTimeGrossSettlementPeriod> = mutableSetOf()
+    var realTimeGrossSettlementPeriods: MutableSet<RealTimeGrossSettlementPeriod> = mutableSetOf(),
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "currency_pay_in_schedules", joinColumns = [JoinColumn(name = "currency_id", nullable = false)])
+    @MapKeyColumn(name = "when_scheduled") @Column(name = "proportion") var payInSchedules: MutableMap<LocalTime, Int> = mutableMapOf(),
 )
 
 @Embeddable

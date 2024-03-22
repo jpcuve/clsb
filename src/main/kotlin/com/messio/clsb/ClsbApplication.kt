@@ -74,6 +74,10 @@ class ClsbApplication(
 							))
 						}
 
+						"pay-in-schedule" -> {
+							currentCurrency?.payInSchedules?.put(LocalTime.parse(attributes.getValue("scheduled")), attributes.getValue("proportion").toInt())
+						}
+
 						"account" -> {
 							currentBank?.let { bank ->
 								accountMap[attributes.getValue("name")] = facade.accountRepository.save(

@@ -41,6 +41,12 @@ create table currency_rtgs_periods
     when_init   varchar(8) not null,
     when_done   varchar(8) not null
 );
+create table currency_pay_in_schedules
+(
+    currency_id bigint not null,
+    when_scheduled varchar(8) not null,
+    proportion int not null
+);
 create table instructions
 (
     id               bigint       not null auto_increment,
@@ -70,3 +76,5 @@ alter table instructions
     add constraint fk_instruction_account_cr foreign key (cr_id) references accounts (id);
 alter table currency_rtgs_periods
     add constraint fk_rtgs_period_currency foreign key (currency_id) references currencies (id);
+alter table currency_pay_in_schedules
+    add constraint fk_pay_in_schedule_currency foreign key (currency_id) references currencies (id);
