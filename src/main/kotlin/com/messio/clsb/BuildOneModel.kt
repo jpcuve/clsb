@@ -31,19 +31,19 @@ class BuildOneModel(
                 balance.transfer(it.db, it.cr, it.amount)
             }
         logger.debug("Settling sequentially")
-        val settledCount = AtomicInteger()
+        var settledCount: Int
         do {
-            settledCount.set(0)
+            settledCount = 0
             // simplest stuff, run once and only allow if sufficient provision on account
             facade.instructionRepository.findAll()
                 .filter { !it.execution.isAfter(moment) && it.type == InstructionType.SETTLEMENT && it.booked == null && balance.isProvisioned(it.db, it.amount) }
                 .forEach {
                     facade.book(it, moment)
                     balance.transfer(it.db, it.cr, it.amount)
-                    settledCount.incrementAndGet()
+                    settledCount++
                 }
             logger.debug("Count of instructions settled: {}", settledCount)
-        } while (settledCount.get() > 0)
+        } while (settledCount > 0)
         logger.debug("Generating pay-outs")
         facade.accountRepository.findTopByBankAndDenomination(bank, mirrorName)?.let { mirror ->
             balance
