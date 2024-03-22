@@ -17,18 +17,22 @@ create table banks
     when_settlement_completion_target varchar(8)   not null,
     when_closing                      varchar(8)   not null,
     minimum_pay_in                    varchar(255) not null,
+    base_iso                          varchar(3)   not null,
     primary key (id)
 );
 create table currencies
 (
-    id                             bigint       not null auto_increment,
-    iso                            varchar(255) not null,
-    currency_group                 varchar(191) not null,
-    when_opening                   varchar(8)   not null,
-    when_funding_completion_target varchar(8)   not null,
-    when_close                     varchar(8)   not null,
-    when_closing                   varchar(8)   not null,
-    bank_id                        bigint       not null,
+    id                             bigint         not null auto_increment,
+    iso                            varchar(255)   not null,
+    currency_group                 varchar(191)   not null,
+    when_opening                   varchar(8)     not null,
+    when_funding_completion_target varchar(8)     not null,
+    when_close                     varchar(8)     not null,
+    when_closing                   varchar(8)     not null,
+    volatility_margin              decimal(6, 3)  not null,
+    base_rate                      decimal(10, 5) not null,
+    scale                          int            not null,
+    bank_id                        bigint         not null,
     primary key (id)
 );
 create table instructions

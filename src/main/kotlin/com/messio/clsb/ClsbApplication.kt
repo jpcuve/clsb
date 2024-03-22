@@ -7,6 +7,7 @@ import org.springframework.boot.runApplication
 import org.springframework.core.io.Resource
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.xml.parsers.SAXParserFactory
@@ -14,6 +15,7 @@ import javax.xml.parsers.SAXParserFactory
 @SpringBootApplication
 class ClsbApplication(
 	val facade: Facade,
+	val rateService: RateService,
 	@Value("classpath:init.xml") initResource: Resource,
 	@Value("\${app.mirror-name}") val mirrorName: String,
 ) {
@@ -31,6 +33,7 @@ class ClsbApplication(
 							val bank = facade.bankRepository.save(
 								Bank(
 									denomination = attributes.getValue("name"),
+									baseIso = attributes.getValue("base-iso"),
 								)
 							)
 							facade.accountRepository.save(
@@ -52,7 +55,10 @@ class ClsbApplication(
 										opening = LocalTime.parse(attributes.getValue("opening")),
 										fundingCompletionTarget = LocalTime.parse(attributes.getValue("funding-completion-target")),
 										closing = LocalTime.parse(attributes.getValue("closing")),
-										close = LocalTime.parse(attributes.getValue("close"))
+										close = LocalTime.parse(attributes.getValue("close")),
+										volatilityMargin = BigDecimal(attributes.getValue("volatility-margin")),
+										baseRate = BigDecimal(attributes.getValue("base-rate")),
+										scale = attributes.getValue("scale").toInt(),
 									)
 								)
 							}
@@ -98,7 +104,12 @@ class ClsbApplication(
 				}
 			})
 		}
-
+		println("Hello")
+		facade.bankRepository.findTopByDenomination("CLS")?.let { bank ->
+			val position = Position.parse("{EUR=2,USD=1,JPY=100}")
+			println(rateService.getPositionValue(bank, position))
+			println(rateService.getPositionValue(bank, position, true))
+		}
 	}
 }
 

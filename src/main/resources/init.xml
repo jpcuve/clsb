@@ -3,14 +3,14 @@
     <currency-group name="ASIA" priority="1"/>
     <currency-group name="EUROPE" priority="2"/>
     <currency-group name="AMERICA" priority="3"/>
-    <bank name="DEFAULT">
-        <currency iso="EUR" group="EUROPE" opening="06:00" funding-completion-target="12:00" closing="23:30" close="23:59"/>
+    <bank name="DEFAULT" base-iso="EUR">
+        <currency iso="EUR" base-rate="1" scale="2" volatility-margin="0.01" group="EUROPE" opening="06:00" funding-completion-target="12:00" closing="23:30" close="23:59"/>
     </bank>
-    <bank name="CLS">
-        <currency iso="EUR" group="EUROPE" opening="07:00" funding-completion-target="09:00" closing="17:30" close="18:00"/>
-        <currency iso="GBP" group="EUROPE" opening="06:00" funding-completion-target="08:00" closing="14:30" close="15:00"/>
-        <currency iso="USD" group="AMERICA" opening="06:30" funding-completion-target="08:30" closing="21:00" close="21:30"/>
-        <currency iso="JPY" group="ASIA" opening="03:00" funding-completion-target="05:00" closing="13:30" close="13:00"/>
+    <bank name="CLS" base-iso="EUR">
+        <currency iso="EUR" base-rate="1" scale="2" volatility-margin="0.01" group="EUROPE" opening="07:00" funding-completion-target="09:00" closing="17:30" close="18:00"/>
+        <currency iso="GBP" base-rate="1.15" scale="2" volatility-margin="0.03" group="EUROPE" opening="06:00" funding-completion-target="08:00" closing="14:30" close="15:00"/>
+        <currency iso="USD" base-rate="0.9" scale="2" volatility-margin="0.02" group="AMERICA" opening="06:30" funding-completion-target="08:30" closing="21:00" close="21:30"/>
+        <currency iso="JPY" base-rate="0.006" scale="6" volatility-margin="0.01" group="ASIA" opening="03:00" funding-completion-target="05:00" closing="13:30" close="13:00"/>
         <account name="a" short-limit="{}"/>
         <account name="b" short-limit="{}"/>
         <account name="c" short-limit="{}"/>

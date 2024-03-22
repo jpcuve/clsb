@@ -3,6 +3,7 @@ package com.messio.clsb
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalTime
 import jakarta.persistence.*
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 
@@ -21,6 +22,7 @@ class Bank(
     @Column(name = "when_closing", nullable = false) var closing: LocalTime = LocalTime.of(17, 0),
     @Column(name = "when_settlement_completion_target", nullable = false) var settlementCompletionTarget: LocalTime = LocalTime.of(10, 0),
     @Convert(converter = PositionConverter::class) @Column(name = "minimum_pay_in", nullable = false) var minimumPayIn: Position = Position.ZERO,
+    @Column(name = "base_iso", nullable = false) var baseIso: String = "",
 )
 
 enum class CurrencyGroup {
@@ -40,6 +42,9 @@ class Currency(
     @Column(name = "when_closing", nullable = false) var closing: LocalTime = LocalTime.of(23, 0),
     @Column(name = "when_funding_completion_target", nullable = false) var fundingCompletionTarget: LocalTime = LocalTime.of(6, 0),
     @Column(name = "when_close", nullable = false) var close: LocalTime = LocalTime.of(23, 59),
+    @Column(name = "volatility_margin", nullable = false) var volatilityMargin: BigDecimal = BigDecimal.ZERO,
+    @Column(name = "base_rate", nullable = false) var baseRate: BigDecimal = BigDecimal.ZERO,
+    @Column(name = "scale", nullable = false) var scale: Int = 0,
 )
 
 
