@@ -25,5 +25,6 @@ class RateService(
             } ?: throw EntityNotFoundException()
         }
 
-    fun getPositionValue(bank: Bank, position: Position, withVolatilityMargin: Boolean = false) = getPositionValue(bank, position, bank.baseIso, withVolatilityMargin)
+    fun getPositionValue(bank: Bank, position: Position, withVolatilityMargin: Boolean = false) =
+        getPositionValue(bank, position, bank.baseIso, withVolatilityMargin)
 }
