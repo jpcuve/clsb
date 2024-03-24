@@ -1,5 +1,8 @@
-package com.messio.clsb
+package com.messio.clsb.services
 
+import com.messio.clsb.Bank
+import com.messio.clsb.Facade
+import com.messio.clsb.Position
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import java.math.BigDecimal

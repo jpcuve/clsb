@@ -1,5 +1,6 @@
-package com.messio.clsb
+package com.messio.clsb.services
 
+import com.messio.clsb.*
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.stereotype.Service
