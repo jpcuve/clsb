@@ -58,6 +58,7 @@ class InitService(
                                         volatilityMargin = BigDecimal(attributes.getValue("volatility-margin")),
                                         baseRate = BigDecimal(attributes.getValue("base-rate")),
                                         scale = attributes.getValue("scale").toInt(),
+                                        payInSchedule = Schedule.parse(attributes.getValue("pay-in-schedule"))
                                     )
                                 )
                                 currencyMap[attributes.getValue("iso")] = currency
@@ -74,10 +75,6 @@ class InitService(
                             )
                         }
 
-                        "pay-in-schedule" -> {
-                            currentCurrency?.payInSchedules?.put(LocalTime.parse(attributes.getValue("scheduled")), attributes.getValue("proportion").toInt())
-                        }
-
                         "account" -> {
                             currentBank?.let { bank ->
                                 accountMap[attributes.getValue("name")] = facade.accountRepository.save(
@@ -89,6 +86,7 @@ class InitService(
                                 )
                             }
                         }
+
                         "instruction" -> {
                             accountMap[attributes.getValue("db")]?.let { db ->
                                 accountMap[attributes.getValue("cr")]?.let { cr ->

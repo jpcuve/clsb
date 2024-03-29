@@ -18,6 +18,7 @@ create table banks
     when_closing                      varchar(8)   not null,
     minimum_pay_in                    varchar(255) not null,
     base_iso                          varchar(3)   not null,
+    overall_short_limit               varchar(255) not null,
     primary key (id)
 );
 create table currencies
@@ -32,6 +33,7 @@ create table currencies
     volatility_margin              decimal(6, 3)  not null,
     base_rate                      decimal(10, 5) not null,
     scale                          int            not null,
+    pay_in_schedule                varchar(255)   not null,
     bank_id                        bigint         not null,
     primary key (id)
 );
@@ -40,12 +42,6 @@ create table currency_rtgs_periods
     currency_id bigint     not null,
     when_init   varchar(8) not null,
     when_done   varchar(8) not null
-);
-create table currency_pay_in_schedules
-(
-    currency_id bigint not null,
-    when_scheduled varchar(8) not null,
-    proportion int not null
 );
 create table instructions
 (
@@ -76,5 +72,3 @@ alter table instructions
     add constraint fk_instruction_account_cr foreign key (cr_id) references accounts (id);
 alter table currency_rtgs_periods
     add constraint fk_rtgs_period_currency foreign key (currency_id) references currencies (id);
-alter table currency_pay_in_schedules
-    add constraint fk_pay_in_schedule_currency foreign key (currency_id) references currencies (id);

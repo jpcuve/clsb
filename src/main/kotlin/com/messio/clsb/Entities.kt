@@ -13,6 +13,12 @@ class PositionConverter: AttributeConverter<Position, String>{
     override fun convertToEntityAttribute(dbData: String?): Position? = dbData?.let { Position.parse(dbData) }
 }
 
+@Converter
+class ScheduleConverter: AttributeConverter<Schedule, String>{
+    override fun convertToDatabaseColumn(attribute: Schedule?): String? = attribute?.toString()
+    override fun convertToEntityAttribute(dbData: String?): Schedule? = dbData?.let { Schedule.parse(dbData) }
+}
+
 @Entity
 @Table(name = "banks")
 class Bank(
@@ -23,6 +29,7 @@ class Bank(
     @Column(name = "when_settlement_completion_target", nullable = false) var settlementCompletionTarget: LocalTime = LocalTime.of(10, 0),
     @Convert(converter = PositionConverter::class) @Column(name = "minimum_pay_in", nullable = false) var minimumPayIn: Position = Position.ZERO,
     @Column(name = "base_iso", nullable = false) var baseIso: String = "",
+    @Convert(converter = PositionConverter::class) @Column(name = "overall_short_limit", nullable = false) var overallShortLimit: Position = Position.ZERO,
 )
 
 enum class CurrencyGroup {
@@ -45,12 +52,10 @@ class Currency(
     @Column(name = "volatility_margin", nullable = false) var volatilityMargin: BigDecimal = BigDecimal.ZERO,
     @Column(name = "base_rate", nullable = false) var baseRate: BigDecimal = BigDecimal.ZERO,
     @Column(name = "scale", nullable = false) var scale: Int = 0,
+    @Convert(converter = ScheduleConverter::class) @Column(name = "pay_in_schedule") var payInSchedule: Schedule = Schedule.EMPTY,
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "currency_rtgs_periods", joinColumns = [JoinColumn(name = "currency_id", nullable = false)])
     var realTimeGrossSettlementPeriods: MutableSet<RealTimeGrossSettlementPeriod> = mutableSetOf(),
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "currency_pay_in_schedules", joinColumns = [JoinColumn(name = "currency_id", nullable = false)])
-    @MapKeyColumn(name = "when_scheduled") @Column(name = "proportion") var payInSchedules: MutableMap<LocalTime, Int> = mutableMapOf(),
 )
 
 @Embeddable
