@@ -60,7 +60,7 @@ interface InstructionRepository: CrudRepository<Instruction, Long> {
 
 @Repository
 interface TradeRepository: CrudRepository<Trade, Long> {
-    @Query("select t1.ref, t1.id, t2.id, t1.amount from trades t1 join trades t2 on t1.ref=t2.ref and t1.day_settlement=?1 and t2.day_settlement=?1 and t1.party=t2.counterparty and t1.counterparty=t2.party", nativeQuery = true)
+    @Query("select t1.id, t2.id from trades t1 join trades t2 on t1.ref=t2.ref and t1.id < t2.id and t1.day_settlement=?1 and t2.day_settlement=?1 and t1.party=t2.counterparty and t1.counterparty=t2.party", nativeQuery = true)
     fun findMatchesByDay(day: LocalDate): Iterable<Array<Any>>
 }
 
