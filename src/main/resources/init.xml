@@ -22,4 +22,12 @@
         <instruction db="a" cr="b" moment="1970-01-01T09:30" type="SETTLEMENT" reference="Settlement 2" amount="{EUR=80,USD=100}"/>
         <instruction db="a" cr="b" moment="1970-01-01T09:30" type="PAY_IN" reference="Pay-in 1" amount="{EUR=100,USD=200}"/>
     </bank>
+    <trade party="a" counterparty="b" day-settlement="1970-01-01" reference="x" amount="{EUR=-100,USD=120}"/>
+    <trade party="b" counterparty="a" day-settlement="1970-01-01" reference="x" amount="{EUR=100,USD=-120}"/>
+    <trade party="a" counterparty="c" day-settlement="1970-01-01" reference="y" amount="{EUR=-150,GBP=90}"/>
+    <trade party="c" counterparty="a" day-settlement="1970-01-01" reference="y" amount="{EUR=150,GBP=-90}"/>
+    <trade party="c" counterparty="b" day-settlement="1970-01-01" reference="z" amount="{USD=200,JPY=-32000}"/>
+    <trade party="b" counterparty="c" day-settlement="1970-01-02" reference="z" amount="{USD=-200,JPY=32000}"/>
+    <trade party="c" counterparty="b" day-settlement="1970-01-02" reference="z" amount="{USD=200,JPY=-32000}"/>
+    <trade party="a" counterparty="c" day-settlement="1970-01-02" reference="y" amount="{EUR=-150,GBP=90}"/>
 </init>

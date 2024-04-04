@@ -56,6 +56,16 @@ create table instructions
     amount           varchar(255) not null,
     primary key (id)
 );
+create table trades
+(
+    id             bigint       not null auto_increment,
+    day_settlement varchar(10)  not null,
+    party          varchar(255) not null,
+    counterparty   varchar(255) not null,
+    ref            varchar(255) not null,
+    amount         varchar(255) not null,
+    primary key (id)
+);
 alter table accounts
     add constraint uk_account_bank_denomination unique (bank_id, denomination);
 alter table banks

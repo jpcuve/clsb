@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import java.time.LocalTime
 import jakarta.persistence.*
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 
@@ -97,4 +98,15 @@ class Instruction(
     @Column(name = "db_id", insertable = false, updatable = false) var dbId: Long = 0L,
     @ManyToOne @JoinColumn(name = "cr_id", nullable = false) var cr: Account,
     @Column(name = "cr_id", insertable = false, updatable = false) var crId: Long = 0L,
+)
+
+@Entity
+@Table(name = "trades")
+class Trade(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
+    @Column(name = "day_settlement", nullable = false) var daySettlement: LocalDate = LocalDate.now(),
+    @Column(name = "party", nullable = false) var party: String,
+    @Column(name = "counterparty", nullable = false) var counterparty: String,
+    @Column(name = "ref", nullable = false) var reference: String,
+    @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) var amount: Position,
 )

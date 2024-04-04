@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 import java.math.BigDecimal
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import javax.xml.parsers.SAXParserFactory
@@ -102,6 +103,17 @@ class InitService(
                                     )
                                 }
                             }
+                        }
+                        "trade" -> {
+                            facade.tradeRepository.save(
+                                Trade(
+                                    party = attributes.getValue("party"),
+                                    counterparty = attributes.getValue("counterparty"),
+                                    daySettlement = LocalDate.parse(attributes.getValue("day-settlement")),
+                                    reference = attributes.getValue("reference"),
+                                    amount = Position.parse(attributes.getValue("amount")),
+                                )
+                            )
                         }
                         else -> {
                         }
