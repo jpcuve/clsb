@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
-import java.time.LocalTime
-import java.util.concurrent.atomic.AtomicInteger
 
 @Component
 class BuildOneModel(
@@ -35,6 +33,34 @@ class BuildOneModel(
         do {
             settledCount = 0
             // simplest stuff, run once and only allow if sufficient provision on account
+            facade.tradeRepository.findMatchesByDaySettlement(moment.toLocalDate(), false).forEach { match ->
+                val trade = match[0] as Trade
+                facade.accountRepository.findTopByBankAndDenomination(bank, trade.party)?.let { db ->
+                    facade.accountRepository.findTopByBankAndDenomination(bank, trade.counterparty)?.let { cr ->
+                        if (balance.isProvisioned(db, trade.amount)){
+                            val instruction = facade.instructionRepository.save(
+                                Instruction(
+                                    execution = moment,
+                                    type = InstructionType.SETTLEMENT,
+                                    reference = trade.reference,
+                                    amount = trade.amount,
+                                    db = db,
+                                    cr = cr,
+                                )
+                            )
+                            facade.book(instruction, moment)
+                            balance.transfer(instruction.db, instruction.cr, instruction.amount)
+                            settledCount++
+                            match.forEach { o ->
+                                val t = o as Trade
+                                t.settled = true
+                                facade.tradeRepository.save(t)
+                            }
+                        }
+                    }
+                }
+            }
+/*
             facade.instructionRepository.findAll()
                 .filter { !it.execution.isAfter(moment) && it.type == InstructionType.SETTLEMENT && it.booked == null && balance.isProvisioned(it.db, it.amount) }
                 .forEach {
@@ -42,6 +68,7 @@ class BuildOneModel(
                     balance.transfer(it.db, it.cr, it.amount)
                     settledCount++
                 }
+*/
             logger.debug("Count of instructions settled: {}", settledCount)
         } while (settledCount > 0)
         logger.debug("Generating pay-outs")

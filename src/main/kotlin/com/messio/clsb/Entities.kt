@@ -109,4 +109,5 @@ class Trade(
     @Column(name = "counterparty", nullable = false) var counterparty: String,
     @Column(name = "ref", nullable = false) var reference: String,
     @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) var amount: Position,
+    @Column(name = "settled", nullable = false) var settled: Boolean = false,
 )

@@ -21,8 +21,9 @@ class ClsbApplication(
 			println(rateService.getPositionValue(bank, position))
 			println(rateService.getPositionValue(bank, position, true))
 		}
-		val settlementQueue = facade.tradeRepository.findMatchesByDay(LocalDate.of(1970, 1, 1)).map { Pair(it[0] as Long, it[1] as Long) }
-		println("Settlement queue: ${settlementQueue.joinToString(",")}")
+		facade.tradeRepository.findMatchesByDaySettlement(LocalDate.of(1970, 1, 1), false).forEach { match ->
+			println("${match[0]} ${match[1]}")
+		}
 	}
 }
 

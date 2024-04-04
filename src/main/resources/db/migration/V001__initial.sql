@@ -64,6 +64,7 @@ create table trades
     counterparty   varchar(255) not null,
     ref            varchar(255) not null,
     amount         varchar(255) not null,
+    settled        boolean      not null,
     primary key (id)
 );
 alter table accounts
