@@ -58,13 +58,13 @@ create table instructions
 );
 create table trades
 (
-    id             bigint       not null auto_increment,
-    day_settlement varchar(10)  not null,
-    party          varchar(255) not null,
-    counterparty   varchar(255) not null,
-    ref            varchar(255) not null,
-    amount         varchar(255) not null,
-    settled        boolean      not null,
+    id              bigint       not null auto_increment,
+    day_settlement  varchar(10)  not null,
+    principal_id    bigint       not null,
+    counterparty_id bigint       not null,
+    ref             varchar(255) not null,
+    amount          varchar(255) not null,
+    settled         boolean      not null,
     primary key (id)
 );
 alter table accounts
@@ -83,3 +83,7 @@ alter table instructions
     add constraint fk_instruction_account_cr foreign key (cr_id) references accounts (id);
 alter table currency_rtgs_periods
     add constraint fk_rtgs_period_currency foreign key (currency_id) references currencies (id);
+alter table trades
+    add constraint fk_trade_account_principal foreign key (principal_id) references accounts (id);
+alter table trades
+    add constraint fk_trade_account_counterparty foreign key (counterparty_id) references accounts (id);

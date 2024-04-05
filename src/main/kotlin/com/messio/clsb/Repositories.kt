@@ -60,7 +60,7 @@ interface InstructionRepository: CrudRepository<Instruction, Long> {
 
 @Repository
 interface TradeRepository: CrudRepository<Trade, Long> {
-    @Query("select t1, t2 from Trade t1, Trade t2 where t1.reference=t2.reference and t1.id<t2.id and t1.daySettlement=?1 and t2.daySettlement=?1 and t1.party=t2.counterparty and t1.counterparty=t2.party and t1.settled=?2 and t2.settled=?2")
+    @Query("select t1, t2 from Trade t1, Trade t2 where t1.reference=t2.reference and t1.id<t2.id and t1.daySettlement=?1 and t2.daySettlement=?1 and t1.principal=t2.counterparty and t1.counterparty=t2.principal and t1.settled=?2 and t2.settled=?2")
     fun findMatchesByDaySettlement(day: LocalDate, settled: Boolean): Iterable<Array<Any>>
 }
 

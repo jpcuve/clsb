@@ -105,15 +105,19 @@ class InitService(
                             }
                         }
                         "trade" -> {
-                            facade.tradeRepository.save(
-                                Trade(
-                                    party = attributes.getValue("party"),
-                                    counterparty = attributes.getValue("counterparty"),
-                                    daySettlement = LocalDate.parse(attributes.getValue("day-settlement")),
-                                    reference = attributes.getValue("reference"),
-                                    amount = Position.parse(attributes.getValue("amount")),
-                                )
-                            )
+                            accountMap[attributes.getValue("principal")]?.let { principal ->
+                                accountMap[attributes.getValue("counterparty")]?.let { counterparty ->
+                                    facade.tradeRepository.save(
+                                        Trade(
+                                            principal = principal,
+                                            counterparty = counterparty,
+                                            daySettlement = LocalDate.parse(attributes.getValue("day-settlement")),
+                                            reference = attributes.getValue("reference"),
+                                            amount = Position.parse(attributes.getValue("amount")),
+                                        )
+                                    )
+                                }
+                            }
                         }
                         else -> {
                         }

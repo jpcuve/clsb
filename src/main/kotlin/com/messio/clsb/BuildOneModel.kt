@@ -33,33 +33,30 @@ class BuildOneModel(
         do {
             settledCount = 0
             // simplest stuff, run once and only allow if sufficient provision on account
-            facade.tradeRepository.findMatchesByDaySettlement(moment.toLocalDate(), false).forEach { match ->
-                val trade = match[0] as Trade
-                facade.accountRepository.findTopByBankAndDenomination(bank, trade.party)?.let { db ->
-                    facade.accountRepository.findTopByBankAndDenomination(bank, trade.counterparty)?.let { cr ->
-                        if (balance.isProvisioned(db, trade.amount)){
-                            val instruction = facade.instructionRepository.save(
-                                Instruction(
-                                    execution = moment,
-                                    type = InstructionType.SETTLEMENT,
-                                    reference = trade.reference,
-                                    amount = trade.amount,
-                                    db = db,
-                                    cr = cr,
-                                )
+            facade.tradeRepository.findMatchesByDaySettlement(moment.toLocalDate(), false)
+                .map { Pair(it[0] as Trade, it[1] as Trade) }
+                .filter { it.first.amount.add(it.second.amount).isZero() }
+                .forEach {
+                    if (balance.isProvisioned(it.first.principal, it.first.amount)){
+                        val instruction = facade.instructionRepository.save(
+                            Instruction(
+                                execution = moment,
+                                type = InstructionType.SETTLEMENT,
+                                reference = it.first.reference,
+                                amount = it.first.amount,
+                                db = it.first.principal,
+                                cr = it.first.counterparty,
                             )
-                            facade.book(instruction, moment)
-                            balance.transfer(instruction.db, instruction.cr, instruction.amount)
-                            settledCount++
-                            match.forEach { o ->
-                                val t = o as Trade
-                                t.settled = true
-                                facade.tradeRepository.save(t)
-                            }
+                        )
+                        facade.book(instruction, moment)
+                        balance.transfer(instruction.db, instruction.cr, instruction.amount)
+                        settledCount++
+                        it.toList().forEach { t ->
+                            t.settled = true
+                            facade.tradeRepository.save(t)
                         }
                     }
                 }
-            }
 /*
             facade.instructionRepository.findAll()
                 .filter { !it.execution.isAfter(moment) && it.type == InstructionType.SETTLEMENT && it.booked == null && balance.isProvisioned(it.db, it.amount) }

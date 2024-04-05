@@ -105,9 +105,11 @@ class Instruction(
 class Trade(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
     @Column(name = "day_settlement", nullable = false) var daySettlement: LocalDate = LocalDate.now(),
-    @Column(name = "party", nullable = false) var party: String,
-    @Column(name = "counterparty", nullable = false) var counterparty: String,
     @Column(name = "ref", nullable = false) var reference: String,
     @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) var amount: Position,
     @Column(name = "settled", nullable = false) var settled: Boolean = false,
+    @ManyToOne @JoinColumn(name = "principal_id", nullable = false) var principal: Account,
+    @Column(name = "principal_id", insertable = false, updatable = false) var principalId: Long = 0L,
+    @ManyToOne @JoinColumn(name = "counterparty_id", nullable = false) var counterparty: Account,
+    @Column(name = "counterparty_id", insertable = false, updatable = false) var counterpartyId: Long = 0L,
 )
