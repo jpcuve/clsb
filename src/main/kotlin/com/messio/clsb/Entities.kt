@@ -80,9 +80,55 @@ class Account(
 )
 
 enum class InstructionType {
-    PAY, PAY_IN, PAY_OUT, SETTLEMENT
+    PAY, PAY_IN, PAY_OUT, SETTLEMENT, TRANSFER, TRADE
 }
 
+@Entity
+@Table(name = "instructions")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name="instruction_type")
+open class Instruction(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
+    @Enumerated(EnumType.STRING) @Column(name = "instruction_type", nullable = false, insertable = false, updatable = false) open var type: InstructionType,
+    @Column(name = "reference", nullable = false) var reference: String = "",
+    @ManyToOne @JoinColumn(name = "principal_id", nullable = false) var principal: Account,
+    @Column(name = "principal_id", insertable = false, updatable = false) var principalId: Long = 0L,
+    @ManyToOne @JoinColumn(name = "counterparty_id", nullable = false) var counterparty: Account,
+    @Column(name = "counterparty_id", insertable = false, updatable = false) var counterpartyId: Long = 0L,
+    @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) var amount: Position = Position.ZERO,
+    @Column(name = "when_executed") var executed: LocalDateTime? = null,
+)
+
+@Entity
+@Table(name = "transfers")
+class Transfer(
+    principal: Account,
+    counterparty: Account,
+    @Column(name = "when_execution") var execution: LocalDateTime? = null,
+):Instruction(type = InstructionType.TRANSFER, principal = principal, counterparty = counterparty)
+
+@Entity
+@Table(name = "trades")
+class Trade(
+    principal: Account,
+    counterparty: Account,
+    @Column(name = "when_settlement", nullable = false) var settlement: LocalDate = LocalDate.now(),
+    @Column(name = "match") var match: Long? = null,
+): Instruction(type = InstructionType.TRADE, principal = principal, counterparty = counterparty)
+
+@Entity
+@Table(name = "movements")
+class Movement(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
+    @ManyToOne @JoinColumn(name = "instruction_id", nullable = false) var instruction: Instruction,
+    @Column(name = "instruction_id", insertable = false, updatable = false) var instructionId: Long = 0L,
+    @ManyToOne @JoinColumn(name = "db_id", nullable = false) var db: Account,
+    @Column(name = "db_id", insertable = false, updatable = false) var dbId: Long = 0L,
+    @ManyToOne @JoinColumn(name = "cr_id", nullable = false) var cr: Account,
+    @Column(name = "cr_id", insertable = false, updatable = false) var crId: Long = 0L,
+)
+
+/*
 @Entity
 @Table(name = "instructions")
 @JsonIgnoreProperties("db", "cr")
@@ -113,3 +159,4 @@ class Trade(
     @ManyToOne @JoinColumn(name = "counterparty_id", nullable = false) var counterparty: Account,
     @Column(name = "counterparty_id", insertable = false, updatable = false) var counterpartyId: Long = 0L,
 )
+*/
