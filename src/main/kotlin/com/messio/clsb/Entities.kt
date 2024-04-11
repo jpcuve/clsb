@@ -77,7 +77,10 @@ class Account(
     @Column(name = "suspended", nullable = false) var suspended: Boolean = true,
     @Convert(converter = PositionConverter::class) @Column(name = "short_limit", nullable = false) var shortLimit: Position = Position.ZERO,
     @Convert(converter = PositionConverter::class) @Column(name = "collateral", nullable = false) var collateral: Position = Position.ZERO,
-)
+){
+    override fun equals(other: Any?) = this === other || (other is Account && id == other.id)
+    override fun hashCode() = id.hashCode()
+}
 
 enum class InstructionType {
     PAY, PAY_IN, PAY_OUT, SETTLEMENT, TRANSFER, TRADE
@@ -104,8 +107,18 @@ open class Instruction(
 class Transfer(
     principal: Account,
     counterparty: Account,
+    amount: Position,
     @Column(name = "when_execution") var execution: LocalDateTime? = null,
-):Instruction(type = InstructionType.TRANSFER, principal = principal, counterparty = counterparty)
+):Instruction(type = InstructionType.TRANSFER, principal = principal, counterparty = counterparty, amount = amount)
+
+@Entity
+@Table(name = "settlements")
+class Settlement(
+    principal: Account,
+    counterparty: Account,
+    amount: Position,
+    match: Long,
+): Instruction(type = InstructionType.SETTLEMENT, principal = principal, counterparty = counterparty, amount = amount, reference = "match° $match")
 
 @Entity
 @Table(name = "trades")
@@ -126,6 +139,7 @@ class Movement(
     @Column(name = "db_id", insertable = false, updatable = false) var dbId: Long = 0L,
     @ManyToOne @JoinColumn(name = "cr_id", nullable = false) var cr: Account,
     @Column(name = "cr_id", insertable = false, updatable = false) var crId: Long = 0L,
+    @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) var amount: Position = Position.ZERO,
 )
 
 /*
