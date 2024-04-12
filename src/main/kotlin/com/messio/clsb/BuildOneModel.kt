@@ -13,16 +13,19 @@ class BuildOneModel(
 ): BankModel() {
     override fun currencyClosing(moment: LocalDateTime, currency: Currency) {
         logger.debug("Closing currency: ${currency.iso}")
-        val transfers = facade.payOutRepository.findAll()
+        val payOuts = facade.payOutRepository.findByExecutedIsNull()
             .filter { it.amount.containsKey(currency.iso)}
             .toList()
-        facade.book(transfers, moment)
+        facade.book(payOuts, moment)
     }
 
     override fun bankSettlementCompletionTarget(moment: LocalDateTime, bank: Bank) {
         logger.debug("Booking pay-ins")
         val balance = Balance()
-        facade.book(facade.payInRepository.findAll().toList(), moment)
+        val instructions = mutableListOf<Instruction>()
+        instructions.addAll(facade.transferRepository.findPendingTransfers(moment).toList())
+        instructions.addAll(facade.payInRepository.findByExecutedIsNull().toList())
+        facade.book(instructions, moment)
         logger.debug("Assembling settlement queue")
         matchingService.matchTrades(moment)
         logger.debug("Settling sequentially")

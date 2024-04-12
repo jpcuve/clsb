@@ -67,10 +67,14 @@ interface TransferRepository: CrudRepository<Transfer, Long> {
 }
 
 @Repository
-interface PayInRepository: CrudRepository<PayIn, Long>
+interface PayInRepository: CrudRepository<PayIn, Long> {
+    fun findByExecutedIsNull(): Iterable<PayIn>
+}
 
 @Repository
-interface PayOutRepository: CrudRepository<PayOut, Long>
+interface PayOutRepository: CrudRepository<PayOut, Long> {
+    fun findByExecutedIsNull(): Iterable<PayOut>
+}
 
 @Repository
 interface TradeRepository: CrudRepository<Trade, Long> {
