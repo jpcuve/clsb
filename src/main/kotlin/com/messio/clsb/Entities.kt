@@ -31,6 +31,7 @@ class Bank(
     @Convert(converter = PositionConverter::class) @Column(name = "minimum_pay_in", nullable = false) var minimumPayIn: Position = Position.ZERO,
     @Column(name = "base_iso", nullable = false) var baseIso: String = "",
     @Convert(converter = PositionConverter::class) @Column(name = "overall_short_limit", nullable = false) var overallShortLimit: Position = Position.ZERO,
+    @OneToOne @JoinColumn(name = "mirror_id") var mirror: Account? = null,
 )
 
 enum class CurrencyGroup {
@@ -45,7 +46,7 @@ class Currency(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0L,
     @ManyToOne @JoinColumn(name = "bank_id", nullable = false) var bank: Bank,
     @Column(name = "bank_id", insertable = false, updatable = false, nullable = false) var bankId: Long = 0L,
-    @Column(name = "iso", nullable = false, unique = true) var iso: String = "",
+    @Column(name = "iso", nullable = false) var iso: String = "",
     @Column(name = "when_opening", nullable = false) var opening: LocalTime = LocalTime.of(1, 0),
     @Column(name = "when_closing", nullable = false) var closing: LocalTime = LocalTime.of(23, 0),
     @Column(name = "when_funding_completion_target", nullable = false) var fundingCompletionTarget: LocalTime = LocalTime.of(6, 0),
@@ -83,7 +84,7 @@ class Account(
 }
 
 enum class InstructionType {
-    PAY, PAY_IN, PAY_OUT, SETTLEMENT, TRANSFER, TRADE
+    Transfer, PayIn, PayOut, Settlement, Trade
 }
 
 @Entity
@@ -91,15 +92,15 @@ enum class InstructionType {
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name="instruction_type")
 open class Instruction(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0,
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") open var id: Long = 0,
     @Enumerated(EnumType.STRING) @Column(name = "instruction_type", nullable = false, insertable = false, updatable = false) open var type: InstructionType,
-    @Column(name = "reference", nullable = false) var reference: String = "",
-    @ManyToOne @JoinColumn(name = "principal_id", nullable = false) var principal: Account,
-    @Column(name = "principal_id", insertable = false, updatable = false) var principalId: Long = 0L,
-    @ManyToOne @JoinColumn(name = "counterparty_id", nullable = false) var counterparty: Account,
-    @Column(name = "counterparty_id", insertable = false, updatable = false) var counterpartyId: Long = 0L,
-    @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) var amount: Position = Position.ZERO,
-    @Column(name = "when_executed") var executed: LocalDateTime? = null,
+    @Column(name = "reference", nullable = false) open var reference: String = "",
+    @ManyToOne @JoinColumn(name = "principal_id", nullable = false) open var principal: Account,
+    @Column(name = "principal_id", insertable = false, updatable = false) open var principalId: Long = 0L,
+    @ManyToOne @JoinColumn(name = "counterparty_id", nullable = false) open var counterparty: Account,
+    @Column(name = "counterparty_id", insertable = false, updatable = false) open var counterpartyId: Long = 0L,
+    @Convert(converter = PositionConverter::class) @Column(name = "amount", nullable = false) open var amount: Position = Position.ZERO,
+    @Column(name = "when_executed") open var executed: LocalDateTime? = null,
 )
 
 @Entity
@@ -107,9 +108,28 @@ open class Instruction(
 class Transfer(
     principal: Account,
     counterparty: Account,
+    reference: String,
     amount: Position,
     @Column(name = "when_execution") var execution: LocalDateTime? = null,
-):Instruction(type = InstructionType.TRANSFER, principal = principal, counterparty = counterparty, amount = amount)
+):Instruction(type = InstructionType.Transfer, principal = principal, counterparty = counterparty, reference = reference, amount = amount)
+
+@Entity
+@Table(name = "pay_ins")
+class PayIn(
+    principal: Account,
+    bank: Bank,
+    reference: String,
+    amount: Position,
+):Instruction(type = InstructionType.PayIn, principal = principal, counterparty = bank.mirror ?: throw RuntimeException(), reference = reference, amount = amount)
+
+@Entity
+@Table(name = "pay_outs")
+class PayOut(
+    bank: Bank,
+    counterparty: Account,
+    reference: String,
+    amount: Position,
+):Instruction(type = InstructionType.PayOut, principal = bank.mirror ?: throw RuntimeException(), counterparty = counterparty, reference = reference, amount = amount)
 
 @Entity
 @Table(name = "settlements")
@@ -118,16 +138,18 @@ class Settlement(
     counterparty: Account,
     amount: Position,
     match: Long,
-): Instruction(type = InstructionType.SETTLEMENT, principal = principal, counterparty = counterparty, amount = amount, reference = "match° $match")
+): Instruction(type = InstructionType.Settlement, principal = principal, counterparty = counterparty, amount = amount, reference = "Match n° $match")
 
 @Entity
 @Table(name = "trades")
 class Trade(
     principal: Account,
     counterparty: Account,
+    reference: String,
+    amount: Position,
     @Column(name = "when_settlement", nullable = false) var settlement: LocalDate = LocalDate.now(),
     @Column(name = "match") var match: Long? = null,
-): Instruction(type = InstructionType.TRADE, principal = principal, counterparty = counterparty)
+): Instruction(type = InstructionType.Trade, principal = principal, counterparty = counterparty, reference = reference, amount = amount)
 
 @Entity
 @Table(name = "movements")

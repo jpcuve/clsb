@@ -16,7 +16,6 @@ import javax.xml.parsers.SAXParserFactory
 class InitService(
     val facade: Facade,
     @Value("classpath:init.xml") val initResource: Resource,
-    @Value("\${app.mirror-name}") val mirrorName: String,
 ) {
     fun initialize(){
         if (facade.bankRepository.count() == 0L) {
@@ -36,12 +35,14 @@ class InitService(
                                     baseIso = attributes.getValue("base-iso"),
                                 )
                             )
-                            facade.accountRepository.save(
-                                Account(
-                                    bank = bank,
-                                    denomination = mirrorName
-                                )
+
+                            val mirror = Account(
+                                bank = bank,
+                                denomination = bank.denomination
                             )
+                            facade.accountRepository.save(mirror)
+                            bank.mirror = mirror
+                            facade.bankRepository.save(bank)
                             currentBank = bank
                         }
 
@@ -88,30 +89,14 @@ class InitService(
                             }
                         }
 
-                        "instruction" -> {
-                            accountMap[attributes.getValue("db")]?.let { db ->
-                                accountMap[attributes.getValue("cr")]?.let { cr ->
-                                    facade.instructionRepository.save(
-                                        Instruction(
-                                            db = db,
-                                            cr = cr,
-                                            execution = LocalDateTime.parse(attributes.getValue("moment")),
-                                            type = InstructionType.valueOf(attributes.getValue("type")),
-                                            reference = attributes.getValue("reference"),
-                                            amount = Position.parse(attributes.getValue("amount")) ?: Position.ZERO,
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                        "trade" -> {
+                        "transfer" -> {
                             accountMap[attributes.getValue("principal")]?.let { principal ->
                                 accountMap[attributes.getValue("counterparty")]?.let { counterparty ->
-                                    facade.tradeRepository.save(
-                                        Trade(
+                                    facade.transferRepository.save(
+                                        Transfer(
                                             principal = principal,
                                             counterparty = counterparty,
-                                            daySettlement = LocalDate.parse(attributes.getValue("day-settlement")),
+                                            execution = LocalDateTime.parse(attributes.getValue("moment")),
                                             reference = attributes.getValue("reference"),
                                             amount = Position.parse(attributes.getValue("amount")),
                                         )
@@ -119,6 +104,38 @@ class InitService(
                                 }
                             }
                         }
+
+                        "pay-in" -> {
+                            currentBank?.let { bank ->
+                                accountMap[attributes.getValue("principal")]?.let { principal ->
+                                    facade.payInRepository.save(
+                                        PayIn(
+                                            principal = principal,
+                                            bank = bank,
+                                            reference = attributes.getValue("reference"),
+                                            amount = Position.parse(attributes.getValue("amount")),
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
+                        "trade" -> {
+                            accountMap[attributes.getValue("principal")]?.let { principal ->
+                                accountMap[attributes.getValue("counterparty")]?.let { counterparty ->
+                                    facade.tradeRepository.save(
+                                        Trade(
+                                            principal = principal,
+                                            counterparty = counterparty,
+                                            settlement = LocalDate.parse(attributes.getValue("settlement")),
+                                            reference = attributes.getValue("reference"),
+                                            amount = Position.parse(attributes.getValue("amount")),
+                                        )
+                                    )
+                                }
+                            }
+                        }
+
                         else -> {
                         }
                     }

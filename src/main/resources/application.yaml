@@ -28,7 +28,6 @@ logging:
   level:
     com.messio.gate: DEBUG
 app:
-  mirror-name: __MIRROR__
   start-date: 1970-01-01
   simulation-duration-in-days: 10
   identity:

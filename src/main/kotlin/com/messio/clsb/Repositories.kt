@@ -18,6 +18,8 @@ class Facade(
     val accountRepository: AccountRepository,
     val instructionRepository: InstructionRepository,
     val transferRepository: TransferRepository,
+    val payInRepository: PayInRepository,
+    val payOutRepository: PayOutRepository,
     val tradeRepository: TradeRepository,
     val settlementRepository: SettlementRepository,
     val movementRepository: MovementRepository,
@@ -63,6 +65,12 @@ interface TransferRepository: CrudRepository<Transfer, Long> {
     @Query("select t from Transfer t where t.executed is null and (t.execution is null or t.execution <= ?1)")
     fun findPendingTransfers(moment: LocalDateTime): Iterable<Transfer>
 }
+
+@Repository
+interface PayInRepository: CrudRepository<PayIn, Long>
+
+@Repository
+interface PayOutRepository: CrudRepository<PayOut, Long>
 
 @Repository
 interface TradeRepository: CrudRepository<Trade, Long> {
