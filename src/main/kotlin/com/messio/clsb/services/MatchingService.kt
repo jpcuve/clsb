@@ -12,7 +12,7 @@ class MatchingService(
 ) {
     fun matchTrades(moment: LocalDateTime){
         var match = facade.tradeRepository.findMaxMatch() ?: 0L
-        facade.tradeRepository.findMatchesByDaySettlement(moment.toLocalDate(), null)
+        facade.tradeRepository.findUnmatchedBySettlement(moment.toLocalDate())
             .map { Pair(it[0] as Trade, it[1] as Trade) }
             .filter { it.first.amount.add(it.second.amount).isZero() }
             .forEach {

@@ -21,9 +21,6 @@ class ClsbApplication(
 			println(rateService.getPositionValue(bank, position))
 			println(rateService.getPositionValue(bank, position, true))
 		}
-		facade.tradeRepository.findMatchesByDaySettlement(LocalDate.of(1970, 1, 1), null).forEach { match ->
-			println("${match[0]} ${match[1]}")
-		}
 	}
 }
 

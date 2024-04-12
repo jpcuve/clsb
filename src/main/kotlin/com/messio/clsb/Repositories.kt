@@ -74,8 +74,8 @@ interface PayOutRepository: CrudRepository<PayOut, Long>
 
 @Repository
 interface TradeRepository: CrudRepository<Trade, Long> {
-    @Query("select t1, t2 from Trade t1, Trade t2 where t1.reference=t2.reference and t1.id<t2.id and t1.settlement=?1 and t2.settlement=?1 and t1.principal=t2.counterparty and t1.counterparty=t2.principal and t1.match = ?2 and t2.match = ?2 ")
-    fun findMatchesByDaySettlement(day: LocalDate, match: Long?): Iterable<Array<Any>>
+    @Query("select t1, t2 from Trade t1, Trade t2 where t1.reference=t2.reference and t1.id<t2.id and t1.settlement=?1 and t2.settlement=?1 and t1.principal=t2.counterparty and t1.counterparty=t2.principal and t1.match is null and t2.match is null")
+    fun findUnmatchedBySettlement(day: LocalDate): Iterable<Array<Any>>
     @Query("select max(t.match) from Trade t")
     fun findMaxMatch(): Long?
 }
