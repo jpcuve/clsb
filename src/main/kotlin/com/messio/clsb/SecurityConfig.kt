@@ -37,6 +37,8 @@ import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.util.matcher.AnyRequestMatcher
+import org.springframework.web.cors.CorsConfiguration
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 import java.security.KeyPairGenerator
 
 @Configuration
@@ -90,7 +92,11 @@ class SecurityConfig(
             .csrf {
                 it.disable()
             }
-            .cors(Customizer.withDefaults())
+            .cors {
+                it.configurationSource(UrlBasedCorsConfigurationSource().apply {
+                    registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
+                })
+            }
             .sessionManagement {
                 it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             }
