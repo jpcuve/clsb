@@ -33,7 +33,6 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
-import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.util.matcher.AnyRequestMatcher
@@ -47,7 +46,7 @@ import java.security.KeyPairGenerator
 class SecurityConfig(
     val env: Environment,
     @Value("\${app.identity.client-id}") val clientId: String,
-    @Value("\${app.allowed-origins}") val origins: String,
+    @Value("\${app.allowed-origins}") val allowedOriginsAsString: String,
 ) {
     @Bean
     fun jwtVerifier(
@@ -96,7 +95,7 @@ class SecurityConfig(
             .cors {
                 it.configurationSource(UrlBasedCorsConfigurationSource().apply {
                     registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues().apply {
-                        allowedOrigins = origins.split(",")
+                        allowedOrigins = allowedOriginsAsString.split(",")
                     })
                 })
             }

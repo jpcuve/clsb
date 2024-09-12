@@ -14,7 +14,7 @@ class WebSocketConfig(
     @Value("\${app.allowed-origins}") val allowedOrigins: String,
 ): WebSocketMessageBrokerConfigurer {
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
-        registry.enableSimpleBroker("/topic")
+        registry.enableSimpleBroker("/topic", "/queue")
         registry.setApplicationDestinationPrefixes("/app")
     }
 

@@ -8,7 +8,8 @@ function App() {
     console.log("Sending stomp message")
     stompClient.publish({
       destination: "/app/echo",
-      body: "Echo 123"
+      body: "Echo 123",
+      headers: {'id-token': 'testing'}
     })
   } else {
     console.log("No stomp client available")
