@@ -2,4 +2,4 @@ GET http://localhost:8080/clsb/api
 
 
 ###
-GET http://localhost:8080/clsb/websocket
+GET http://localhost:8080/clsb/messaging
