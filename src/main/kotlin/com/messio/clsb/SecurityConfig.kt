@@ -94,7 +94,9 @@ class SecurityConfig(
             }
             .cors {
                 it.configurationSource(UrlBasedCorsConfigurationSource().apply {
-                    registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues())
+                    registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues().apply {
+                        allowedOrigins = listOf("http://localhost:5173")
+                    })
                 })
             }
             .sessionManagement {
@@ -117,6 +119,21 @@ class SecurityConfig(
 
     @Bean
     @Order(2)
+    fun websocketFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher("/websocket/**")
+            .csrf { it.disable() }
+//            .cors { it.disable() }
+//            .addFilterAfter(debugFilter(), BasicAuthenticationFilter::class.java)
+            .authorizeHttpRequests {
+                it.anyRequest().permitAll()
+            }
+        return http.build()
+    }
+
+
+        @Bean
+    @Order(3)
     fun h2ConsoleFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
             .securityMatcher(PathRequest.toH2Console())

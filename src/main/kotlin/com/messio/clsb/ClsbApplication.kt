@@ -5,8 +5,10 @@ import com.messio.clsb.services.RateService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
 import java.time.LocalDate
 
+@EnableWebSocketMessageBroker
 @SpringBootApplication
 class ClsbApplication(
 	val initService: InitService,
