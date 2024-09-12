@@ -47,6 +47,7 @@ import java.security.KeyPairGenerator
 class SecurityConfig(
     val env: Environment,
     @Value("\${app.identity.client-id}") val clientId: String,
+    @Value("\${app.allowed-origins}") val origins: String,
 ) {
     @Bean
     fun jwtVerifier(
@@ -95,7 +96,7 @@ class SecurityConfig(
             .cors {
                 it.configurationSource(UrlBasedCorsConfigurationSource().apply {
                     registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues().apply {
-                        allowedOrigins = listOf("http://localhost:5173")
+                        allowedOrigins = origins.split(",")
                     })
                 })
             }
@@ -135,19 +136,6 @@ class SecurityConfig(
             }
         return http.build()
     }
-
-    /*
-        @Bean
-        @Order(3)
-        fun graphqlFilterChain(http: HttpSecurity): SecurityFilterChain {
-            http
-                .securityMatcher("/graphiql")
-                .authorizeHttpRequests {
-                    it.anyRequest().permitAll()
-                }
-            return http.build()
-        }
-    */
 
     @Bean
     fun webFilterChain(http: HttpSecurity): SecurityFilterChain {

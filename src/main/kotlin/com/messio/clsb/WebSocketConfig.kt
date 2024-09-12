@@ -1,7 +1,9 @@
 package com.messio.clsb
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
+import org.springframework.core.io.Resource
 import org.springframework.messaging.simp.config.MessageBrokerRegistry
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry
@@ -9,7 +11,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 class WebSocketConfig(
-    val env: Environment,
+    @Value("\${app.allowed-origins}") val allowedOrigins: String,
 ): WebSocketMessageBrokerConfigurer {
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
         registry.enableSimpleBroker("/topic")
@@ -19,8 +21,8 @@ class WebSocketConfig(
     override fun registerStompEndpoints(registry: StompEndpointRegistry) {
         // must be specific allowed origin, not wildcard
         val endpoint = registry.addEndpoint("/messaging")
-        if (env.activeProfiles.isEmpty()){
-            endpoint.setAllowedOrigins("http://localhost:5173")
+        if (allowedOrigins.isNotBlank()){
+            endpoint.setAllowedOrigins(*allowedOrigins.split(",").toTypedArray())
         }
         endpoint.withSockJS()
     }
