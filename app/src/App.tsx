@@ -1,8 +1,23 @@
 import './App.css'
 import {AppShell, Button, Container } from '@mantine/core'
 import {useStompClient} from 'react-stomp-hooks'
+import {useState} from 'react'
 
 function App() {
+  console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
+  const [signedIn, isSignedIn] = useState<boolean>(false)
+  if (!signedIn){
+    const location = window.location
+    const uri = `${location.protocol}//${location.host}${location.pathname}`
+    console.log(`uri: ${uri}`)
+    const urlParams = new URLSearchParams(location.search)
+    const code = urlParams.get('code')
+    if (code){
+      // processing URL with code
+    } else {
+      // processing URL without code
+    }
+  }
   const stompClient = useStompClient()
   if (stompClient){
     console.log("Sending stomp message")
