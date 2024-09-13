@@ -53,11 +53,7 @@ class SecurityConfig(
         jsonNodeBodyHandler: HttpResponse.BodyHandler<JsonNode>,
         @Value("\${app.identity.jwk-set-url}") jwkSetUrl: String,
     ): JWTVerifier {
-        if (env.activeProfiles.contains("standalone")){
-            val keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair()
-            val algorithm = Algorithm.RSA256(keyPair.public as RSAPublicKey, null)
-            return JWT.require(algorithm).withIssuer("test").build()
-        } else {
+        if (!env.activeProfiles.contains("standalone")){
             val httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .followRedirects(HttpClient.Redirect.NORMAL)
@@ -68,20 +64,33 @@ class SecurityConfig(
                 .uri(URI.create(jwkSetUrl))
                 .header("Accept", "application/json")
                 .build()
-            val res = httpClient.send(req, jsonNodeBodyHandler)
-            val key0 = res.body()["keys"][0] as ObjectNode
-            val certificateChain = key0.get("x5c") as ArrayNode
-            val decodedCertificate = Base64.getDecoder().decode(certificateChain[0].asText())
-            ByteArrayInputStream(decodedCertificate).use { inputStream ->
-                val certificateFactory = CertificateFactory.getInstance("X.509")
-                val certificate = certificateFactory.generateCertificate(inputStream) as X509Certificate
-                val principal = LdapName(certificate.issuerX500Principal.name)
-                val issuer = principal.rdns.firstOrNull { it.type == "CN" }?.value?.toString() ?: ""
-                val publicKey = certificate.publicKey as RSAPublicKey
-                val algorithm = Algorithm.RSA256(publicKey, null)
-                return JWT.require(algorithm).withIssuer(issuer).build()
+            var delay = 1000L
+            while (delay < 120000L) {
+                try {
+                    val res = httpClient.send(req, jsonNodeBodyHandler)
+                    val key0 = res.body()["keys"][0] as ObjectNode
+                    val certificateChain = key0.get("x5c") as ArrayNode
+                    val decodedCertificate = Base64.getDecoder().decode(certificateChain[0].asText())
+                    ByteArrayInputStream(decodedCertificate).use { inputStream ->
+                        val certificateFactory = CertificateFactory.getInstance("X.509")
+                        val certificate = certificateFactory.generateCertificate(inputStream) as X509Certificate
+                        val principal = LdapName(certificate.issuerX500Principal.name)
+                        val issuer = principal.rdns.firstOrNull { it.type == "CN" }?.value?.toString() ?: ""
+                        val publicKey = certificate.publicKey as RSAPublicKey
+                        val algorithm = Algorithm.RSA256(publicKey, null)
+                        return JWT.require(algorithm).withIssuer(issuer).build()
+                    }
+                } catch (e: Exception) {
+                    // ignore
+                }
+                logger.info("Waiting for gate... {}ms", delay)
+                Thread.sleep(delay)
+                delay = delay / 2 * 3
             }
         }
+        val keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair()
+        val algorithm = Algorithm.RSA256(keyPair.public as RSAPublicKey, null)
+        return JWT.require(algorithm).withIssuer("test").build()
     }
 
     @Bean
@@ -178,14 +187,14 @@ class SecurityConfig(
                             aspects,
                         )
                     } else {
-                        SecurityConfig.logger.error("Client id not found in audience (${decodedIdToken.audience.joinToString(" ")}): $clientId")
+                        logger.error("Client id not found in audience (${decodedIdToken.audience.joinToString(" ")}): $clientId")
                     }
                 } catch (e: Exception){
-                    SecurityConfig.logger.error(e.message, e)
+                    logger.error(e.message, e)
                 }
 
             }
-            SecurityConfig.logger.debug("URI: ${req.method} ${req.requestURI} - ${email}")
+            logger.debug("URI: ${req.method} ${req.requestURI} - ${email}")
             chain.doFilter(req, res)
         }
     }
