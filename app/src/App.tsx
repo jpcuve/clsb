@@ -1,7 +1,8 @@
 import './App.css'
 import {Text, Box, Stack, Button} from '@mantine/core'
-import {useStompClient} from 'react-stomp-hooks'
 import {useEffect, useState} from 'react'
+import SignedOutView from './components/SignedOutView.tsx'
+import SignedInView from './components/SignedInView.tsx'
 
 function App() {
   console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
@@ -19,7 +20,6 @@ function App() {
       if (!authentication){
         const code = urlParams.get('code')
         if (code){
-          // processing URL with code
           const search = new URLSearchParams()
           search.append('grant_type', 'authorization_code')
           search.append('code', code)
@@ -50,10 +50,7 @@ function App() {
           } catch(e: any){
             setError(e.message)
           }
-          // navigate('/')
-
         } else {
-          // processing URL without code
           console.log(`uri: ${uri}`)
           const search = new URLSearchParams()
           search.append('client_id', import.meta.env.VITE_APP_CLIENT_ID)
@@ -61,34 +58,22 @@ function App() {
           search.append('scope', 'openid email profile')
           search.append('response_type', 'code')
           setSignInUrl(`${import.meta.env.VITE_APP_IDENTITY_URL}/sign-in?${search}`)
-
         }
       }
     })()
   }, [])
-/*
-  const stompClient = useStompClient()
-  if (stompClient){
-    console.log("Sending stomp message")
-    stompClient.publish({
-      destination: "/app/echo",
-      body: "Echo 123",
-      headers: {'id-token': 'testing'}
-    })
-  } else {
-    console.log("No stomp client available")
-  }
-*/
   return (
     <Box>
       {!authentication && <Stack>
           <Text>Signed out</Text>
           <Button onClick={() => window.location.replace(signInUrl)}>Sign-in</Button>
+          <SignedOutView/>
       </Stack>}
       {authentication && <Stack>
           <Text>Signed in</Text>
           <Button onClick={signOut}>Sign-out</Button>
           <Text fz="xs">{JSON.stringify(authentication)}</Text>
+          <SignedInView/>
       </Stack>}
       {error && <Text c="red">{error}</Text>}
     </Box>
