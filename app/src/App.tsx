@@ -1,5 +1,4 @@
-import './App.css'
-import {Text, Box, Stack, Button} from '@mantine/core'
+import {Text, Stack, Button, Group} from '@mantine/core'
 import {useEffect, useState} from 'react'
 import SignedOutView from './components/SignedOutView.tsx'
 import SignedInView from './components/SignedInView.tsx'
@@ -66,19 +65,22 @@ function App() {
     })()
   }, [])
   return (
-    <Box>
-      {!authentication && <Stack>
-          <Text>Signed out</Text>
-          <Button onClick={() => window.location.replace(signInUrl)}>Sign-in</Button>
+    <Stack p="sm">
+      {!authentication && <>
+          <Group>
+              <Button onClick={() => window.location.replace(signInUrl)}>Sign-in</Button>
+          </Group>
           <SignedOutView/>
-      </Stack>}
-      {authentication && <Stack>
-          <Text>Signed in</Text>
-          <Button onClick={signOut}>Sign-out</Button>
+      </>}
+      {authentication && <>
+          <Group>
+              <Text>{authentication.u.name}</Text>
+              <Button onClick={signOut}>Sign-out</Button>
+          </Group>
           <SignedInView authentication={authentication}/>
-      </Stack>}
+      </>}
       {error && <Text c="red">{error}</Text>}
-    </Box>
+    </Stack>
   )
 }
 
