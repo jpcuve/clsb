@@ -3,6 +3,8 @@ import {Text, Box, Stack, Button} from '@mantine/core'
 import {useEffect, useState} from 'react'
 import SignedOutView from './components/SignedOutView.tsx'
 import SignedInView from './components/SignedInView.tsx'
+import {Authentication, defaultAuthentication} from './entities.ts'
+
 
 function App() {
   console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
@@ -10,7 +12,7 @@ function App() {
   const urlParams = new URLSearchParams(location.search)
   const [signInUrl, setSignInUrl] = useState<string>('')
   const [error, setError] = useState<string|null>(urlParams.get('error'))
-  const [authentication, setAuthentication] = useState<any>()
+  const [authentication, setAuthentication] = useState<Authentication>()
   const signOut = () => {
     setAuthentication(undefined)
     window.location.href = uri
@@ -33,19 +35,20 @@ function App() {
               },
               body: search,
             })
+
             const t = await res.json()
             const {error, access_token} = t
             if (error){
               setError(error)
             } else {
+              let authentication: Authentication = {...defaultAuthentication, t}
               const res = await fetch(`${import.meta.env.VITE_APP_IDENTITY_URL}/auth/userinfo`, {
                 headers: {
                   'Authorization': `Bearer ${access_token}`
                 }
               })
-              const u = await res.json()
-              console.log(`User info: ${JSON.stringify(u)}`)
-              setAuthentication({t, u})
+              authentication.u = await res.json()
+              setAuthentication(authentication)
             }
           } catch(e: any){
             setError(e.message)
@@ -72,8 +75,7 @@ function App() {
       {authentication && <Stack>
           <Text>Signed in</Text>
           <Button onClick={signOut}>Sign-out</Button>
-          <Text fz="xs">{JSON.stringify(authentication)}</Text>
-          <SignedInView/>
+          <SignedInView authentication={authentication}/>
       </Stack>}
       {error && <Text c="red">{error}</Text>}
     </Box>
