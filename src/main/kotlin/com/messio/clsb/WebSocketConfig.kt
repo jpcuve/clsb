@@ -15,6 +15,7 @@ class WebSocketConfig(
 ): WebSocketMessageBrokerConfigurer {
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
         registry.enableSimpleBroker("/topic", "/queue")
+        // messages sent to /app/** are routed to @MessageMapping annotated message handler
         registry.setApplicationDestinationPrefixes("/app")
     }
 
