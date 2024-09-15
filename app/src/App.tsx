@@ -24,6 +24,7 @@ function App() {
       window.location.replace(`${import.meta.env.VITE_APP_IDENTITY_URL}/sign-in?${search}`)
     }
   }
+  const handleError = (message: string) => navigate(`/error?${message}`)
   useEffect(() => {
     (async () => {
       const urlParams = new URLSearchParams(window.location.search)
@@ -44,7 +45,7 @@ function App() {
           })
           const t = await res.json()
           if (t.error) {
-            throw new Error(t.error)
+            handleError(t.error)
           }
           res = await fetch(`${import.meta.env.VITE_APP_IDENTITY_URL}/auth/userinfo`, {
             headers: {
@@ -53,12 +54,12 @@ function App() {
           })
           const u = await res.json()
           if (u.error){
-            throw new Error(u.error)
+            handleError(u.error)
           }
           setAuthentication({t, u})
           navigate('/secure')
         } catch(e: any){
-          navigate(`/error?${e.message}`)
+          handleError(e.message)
         }
       }
     })()
