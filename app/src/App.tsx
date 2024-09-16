@@ -1,21 +1,21 @@
 import {Text, Stack, Button, Group} from '@mantine/core'
-import {createContext, useEffect, useState} from 'react'
+import {useEffect} from 'react'
 import SignedOutView from './components/SignedOutView.tsx'
 import SignedInView from './components/SignedInView.tsx'
-import {Authentication, defaultAuthentication} from './entities.ts'
+import {Authentication} from './entities.ts'
 import {navigate} from 'wouter/use-browser-location'
 import {Route, Router} from 'wouter'
 import ErrorView from './components/ErrorView.tsx'
 import api from './api.ts'
-
-export const AuthenticationContext = createContext<Authentication>(defaultAuthentication)
+import {useSessionStorage} from 'usehooks-ts'
 
 function App() {
   console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
-  const [authentication, setAuthentication] = useState<Authentication>()
+  const webContext = import.meta.env.VITE_APP_WEB_CONTEXT
+  const [authentication, setAuthentication, removeAuthentication] = useSessionStorage<Authentication|undefined>(webContext, undefined)
   const signInOut = () => {
     if (authentication){
-      setAuthentication(undefined)
+      removeAuthentication()
       navigate(import.meta.env.VITE_APP_WEB_CONTEXT)
     } else {
       const search = new URLSearchParams()
@@ -58,9 +58,7 @@ function App() {
       <Router base={import.meta.env.VITE_APP_WEB_CONTEXT}>
         <Route path="/"><SignedOutView/></Route>
         {authentication && <Route path="/secure">
-            <AuthenticationContext.Provider value={authentication}>
-                <SignedInView/>
-            </AuthenticationContext.Provider>
+          <SignedInView/>
         </Route>}
         <Route path="/error" component={ErrorView}/>
       </Router>
