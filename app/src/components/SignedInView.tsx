@@ -1,9 +1,11 @@
 import {Box} from '@mantine/core'
-import {FC} from 'react'
+import {FC, useContext} from 'react'
 import {IPublishParams, useStompClient, useSubscription} from 'react-stomp-hooks'
 import {Authentication} from '../entities.ts'
+import {AuthenticationContext} from '../App.tsx'
 
-const SignedInView: FC<{authentication: Authentication}> = props => {
+const SignedInView: FC = () => {
+  const authentication = useContext<Authentication>(AuthenticationContext)
   const stompClient = useStompClient()
   if (stompClient){
     const message: IPublishParams = {
@@ -20,7 +22,7 @@ const SignedInView: FC<{authentication: Authentication}> = props => {
     console.log(`Received message: ${message.body}`)
   })
   return (
-    <Box>Signed in view: {JSON.stringify(props.authentication)}</Box>
+    <Box>Signed in view: {JSON.stringify(authentication)}</Box>
   )
 }
 
