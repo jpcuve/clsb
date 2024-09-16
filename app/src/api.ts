@@ -25,7 +25,7 @@ const api: any = {
   },
 
   banks: async (token: string) => {
-    const res = await fetch(`${import.meta.env.VITE_APP_REMOTE_URL}/api/banks`, {
+    const res = await fetch(`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/api/banks`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

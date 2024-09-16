@@ -20,7 +20,7 @@ function App() {
     } else {
       const search = new URLSearchParams()
       search.append('client_id', import.meta.env.VITE_APP_CLIENT_ID)
-      search.append('redirect_uri', `${window.location.protocol}//${window.location.host}`)  // TODO add deploy web context
+      search.append('redirect_uri', `${window.location.protocol}//${window.location.host}${import.meta.env.VITE_APP_WEB_CONTEXT}`)
       search.append('scope', 'openid email profile')
       search.append('response_type', 'code')
       window.location.replace(`${import.meta.env.VITE_APP_IDENTITY_URL}/sign-in?${search}`)
