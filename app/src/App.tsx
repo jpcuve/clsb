@@ -4,7 +4,7 @@ import SignedOutView from './components/SignedOutView.tsx'
 import SignedInView from './components/SignedInView.tsx'
 import {Authentication, defaultAuthentication} from './entities.ts'
 import {navigate} from 'wouter/use-browser-location'
-import {Route} from 'wouter'
+import {Route, Router} from 'wouter'
 import ErrorView from './components/ErrorView.tsx'
 import api from './api.ts'
 
@@ -16,7 +16,7 @@ function App() {
   const signInOut = () => {
     if (authentication){
       setAuthentication(undefined)
-      navigate('/')
+      navigate(import.meta.env.VITE_APP_WEB_CONTEXT)
     } else {
       const search = new URLSearchParams()
       search.append('client_id', import.meta.env.VITE_APP_CLIENT_ID)
@@ -42,7 +42,7 @@ function App() {
             handleError(u.error)
           }
           setAuthentication({t, u})
-          navigate('/secure')
+          navigate(`${import.meta.env.VITE_APP_WEB_CONTEXT}/secure`)
         } catch(e: any){
           handleError(e.message)
         }
@@ -55,13 +55,15 @@ function App() {
         {authentication && <Text>{authentication.u.name}</Text>}
         <Button onClick={signInOut}>{authentication ? 'Sign-out' : 'Sign-in'}</Button>
       </Group>
-      <Route path="/"><SignedOutView/></Route>
-      {authentication && <Route path="/secure">
-          <AuthenticationContext.Provider value={authentication}>
-              <SignedInView/>
-          </AuthenticationContext.Provider>
-      </Route>}
-      <Route path="/error" component={ErrorView}/>
+      <Router base={import.meta.env.VITE_APP_WEB_CONTEXT}>
+        <Route path="/"><SignedOutView/></Route>
+        {authentication && <Route path="/secure">
+            <AuthenticationContext.Provider value={authentication}>
+                <SignedInView/>
+            </AuthenticationContext.Provider>
+        </Route>}
+        <Route path="/error" component={ErrorView}/>
+      </Router>
     </Stack>
   )
 }
