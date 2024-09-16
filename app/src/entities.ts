@@ -26,3 +26,13 @@ export const defaultAuthentication: Authentication = {
     aspects: [],
   }
 }
+
+export interface Bank {
+  id: number,
+  denomination: string,
+}
+
+export const defaultBank: Bank = {
+  id: 0,
+  denomination: '',
+}

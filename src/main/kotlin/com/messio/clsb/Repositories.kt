@@ -41,6 +41,7 @@ class Facade(
 @Repository
 interface BankRepository: CrudRepository<Bank, Long> {
     fun findTopByDenomination(denomination: String): Bank?
+    fun findByOrderById(): Iterable<Bank>
 }
 
 @Repository
@@ -48,8 +49,6 @@ interface CurrencyRepository: CrudRepository<Currency, Long> {
     fun findTopByBankAndIso(bank: Bank, iso: String): Currency?
     fun findByBank(bank: Bank): Iterable<Currency>
 }
-
-
 
 @Repository
 interface AccountRepository: CrudRepository<Account, Long> {

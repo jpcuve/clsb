@@ -8,8 +8,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api")
 class ApiController(
-    facade: Facade
+    val facade: Facade
 ) {
     @GetMapping
-    fun apiIndex() = mapOf("status" to "ok")
+    fun getIndex() = mapOf("status" to "ok")
+
+    @GetMapping("/banks")
+    fun getBanks() = facade.bankRepository.findByOrderById()
 }
