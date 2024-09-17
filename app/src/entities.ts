@@ -13,26 +13,22 @@ export interface Authentication {
   }
 }
 
-export const defaultAuthentication: Authentication = {
-  t: {
-    access_token: '',
-    id_token: '',
-  },
-  u: {
-    email: '',
-    name: '',
-    roles: [],
-    features: [],
-    aspects: [],
-  }
-}
-
 export interface Bank {
   id: number,
   denomination: string,
 }
 
-export const defaultBank: Bank = {
-  id: 0,
-  denomination: '',
+export interface Account {
+  id: number;
+  denomination: string,
+}
+
+export interface Currency {
+  id: number,
+  iso: string,
+}
+
+export interface Perpetual {
+  currencies: Currency[],
+  accounts: Account[],
 }

@@ -51,7 +51,7 @@ function App() {
       window.location.replace(`${import.meta.env.VITE_APP_IDENTITY_URL}/sign-in?${search}`)
     }
   }
-  const handleError = (message: string) => navigate(`/error?${message}`)
+  const handleError = (message: string) => navigate(`${import.meta.env.VITE_APP_WEB_CONTEXT}/error?${message}`)
   useEffect(() => {
     (async () => {
       const urlParams = new URLSearchParams(window.location.search)

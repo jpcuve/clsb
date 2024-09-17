@@ -3,18 +3,18 @@ import {FC, useEffect, useState} from 'react'
 import {IPublishParams, useStompClient, useSubscription} from 'react-stomp-hooks'
 import {Bank} from '../entities.ts'
 import useClient from '../hooks/useClient.ts'
-import AccountListView from './AccountListView.tsx'
 import {Route} from 'wouter'
 import {navigate} from 'wouter/use-browser-location'
+import DashboardView from './DashboardView.tsx'
 
 const SignedInView: FC = () => {
   const client = useClient()
   const [banks, setBanks] = useState<Bank[]>([])
-  const [selection, setSelection] = useState<number>(0)
+  const [bank, setBank] = useState<Bank|undefined>()
   const handleChangeBank = (idAsString: string|null) => {
     if (idAsString){
-      setSelection(banks.findIndex(it => it.id.toString() === idAsString))
-      navigate(`${import.meta.env.VITE_APP_WEB_CONTEXT}/secure/accounts`)
+      setBank(banks.find(it => it.id.toString() === idAsString))
+      navigate(`${import.meta.env.VITE_APP_WEB_CONTEXT}/secure/dashboard`)
     }
   }
   const stompClient = useStompClient()
@@ -44,10 +44,10 @@ const SignedInView: FC = () => {
   return (
     <Stack>
       <Group>
-        <Select value={banks[selection]?.id?.toString() ?? '0'} onChange={handleChangeBank} data={banks.map(it => ({value: it.id.toString(), label: it.denomination}))}/>
+        <Select value={bank?.id?.toString() ?? '0'} onChange={handleChangeBank} data={banks.map(it => ({value: it.id.toString(), label: it.denomination}))}/>
       </Group>
-      {banks.length > 0 && <Route path="accounts">
-          <AccountListView bank={banks[selection]}/>
+      {bank && <Route path="dashboard">
+          <DashboardView bank={bank}/>
       </Route>
       }
     </Stack>
