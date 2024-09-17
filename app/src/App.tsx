@@ -6,8 +6,33 @@ import {Authentication} from './entities.ts'
 import {navigate} from 'wouter/use-browser-location'
 import {Route, Router} from 'wouter'
 import ErrorView from './components/ErrorView.tsx'
-import api from './api.ts'
 import {useSessionStorage} from 'usehooks-ts'
+
+const fetchToken = async (code: string, scope: string) => {
+  const search = new URLSearchParams()
+  search.append('grant_type', 'authorization_code')
+  search.append('code', code)
+  search.append('redirect_uri', `${window.location.protocol}//${window.location.host}${window.location.pathname}`)
+  search.append('scope', scope)
+  const res = await fetch(`${import.meta.env.VITE_APP_IDENTITY_URL}/auth/token`,  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: search,
+  })
+  return res.json()
+}
+
+const fetchUserInfo = async (token: string) => {
+  const res = await fetch(`${import.meta.env.VITE_APP_IDENTITY_URL}/auth/userinfo`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  return res.json()
+}
+
 
 function App() {
   console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
@@ -33,11 +58,11 @@ function App() {
       const code = urlParams.get('code')
       if (!authentication && code){
         try {
-          const t = await api.token(code, urlParams.get('scope') || '')
+          const t = await fetchToken(code, urlParams.get('scope') || '')
           if (t.error) {
             handleError(t.error)
           }
-          const u = await api.userInfo(t.access_token)
+          const u = await fetchUserInfo(t.access_token)
           if (u.error){
             handleError(u.error)
           }
