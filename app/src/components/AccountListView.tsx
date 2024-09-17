@@ -4,7 +4,7 @@ import {Box} from '@mantine/core'
 
 const AccountListView: FC<{bank: Bank}> = props => {
   return (
-    <Box>{props.bank.denomination}</Box>
+    <Box>{props.bank.denomination}: All accounts</Box>
   )
 
 }

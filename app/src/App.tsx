@@ -82,7 +82,7 @@ function App() {
       </Group>
       <Router base={import.meta.env.VITE_APP_WEB_CONTEXT}>
         <Route path="/"><SignedOutView/></Route>
-        {authentication && <Route path="/secure">
+        {authentication && <Route path="/secure" nest>
           <SignedInView/>
         </Route>}
         <Route path="/error" component={ErrorView}/>
