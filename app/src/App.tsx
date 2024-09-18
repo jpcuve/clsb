@@ -65,7 +65,7 @@ function App() {
             handleError(u.error)
           }
           setAuthentication({t, u})
-          navigate('dashboard')
+          navigate('admin/dashboard')
         } catch(e: any){
           handleError(e.message)
         }

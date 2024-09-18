@@ -1,14 +1,15 @@
 import {configureStore, createSlice, PayloadAction} from '@reduxjs/toolkit'
-import {Feedback, Perpetual} from './entities.ts'
+import {defaultPerpetual, Feedback, Perpetual} from './entities.ts'
 
 export interface ApplicationState {
   fetching: boolean,
-  perpetual?: Perpetual,
+  perpetual: Perpetual,
   feedbacks: Feedback[],
 }
 
 const defaultApplicationState: ApplicationState = {
   fetching: false,
+  perpetual: defaultPerpetual,
   feedbacks: [],
 }
 
@@ -19,9 +20,6 @@ const applicationSlice = createSlice({
     updateFetching(state: ApplicationState, action: PayloadAction<boolean>){
       return {...state, fetching: action.payload}
     },
-    updatePerpetual(state: ApplicationState, action: PayloadAction<Perpetual>){
-      return {...state, perpetual: action.payload}
-    },
     updateFeedbacks(state: ApplicationState, action: PayloadAction<Feedback[]>){
       return {...state, feedbacks: action.payload}
     },
@@ -29,7 +27,7 @@ const applicationSlice = createSlice({
 })
 
 // next functions (type: string, payload: any): only create actions
-const {updateFetching, updatePerpetual, updateFeedbacks} = applicationSlice.actions
+const {updateFetching, updateFeedbacks} = applicationSlice.actions
 
 export const store = configureStore({
   reducer:{
@@ -41,7 +39,6 @@ export type RootState = ReturnType<typeof store.getState>
 
 export const applicationState = {
   updateFetching: (fetching: boolean) => store.dispatch(updateFetching(fetching)),
-  updatePerpetual: (perpetual: Perpetual) => store.dispatch(updatePerpetual(perpetual)),
   notify: (feedback: Feedback, timeout: number = 2000) => {
     const fs = store.getState().application.feedbacks
     store.dispatch(updateFeedbacks([...fs, feedback]))

@@ -1,22 +1,14 @@
-import {useEffect, useState} from 'react'
-import {Bank} from '../entities.ts'
-import useClient from '../hooks/useClient.ts'
-import {applicationState} from '../store.ts'
+import {Text, Stack} from '@mantine/core'
+import {FC, useContext} from 'react'
+import {PerpetualContext} from './Admin.tsx'
 
-const Dashboard = () => {
-  const client = useClient()
-  const [banks, setBanks] = useState<Bank[]>([])
-  useEffect(() => {
-    (async () => {
-      try {
-        setBanks(await client.banks())
-      } catch (e: any) {
-        applicationState.notifyError(e.message)
-      }
-    })()
-  }, [])
+const Dashboard: FC = () => {
+  const perpetual = useContext(PerpetualContext);
   return (
-    <div>Dashboard: {JSON.stringify(banks)}</div>
+    <Stack>
+      <Text>Admin dashboard</Text>
+      <Text>{JSON.stringify(perpetual)}</Text>
+    </Stack>
   )
 }
 

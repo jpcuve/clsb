@@ -6,11 +6,16 @@ import { MantineProvider } from '@mantine/core'
 import '@mantine/core/styles.css'
 import {StompSessionProvider} from 'react-stomp-hooks'
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from 'react-router-dom'
+import Admin from './components/Admin.tsx'
 import Dashboard from './components/Dashboard.tsx'
+import {Provider} from 'react-redux'
+import {store} from './store.ts'
 
 const router = createBrowserRouter(createRoutesFromElements(
   <Route path="/" element={<App/>}>
-    <Route path="dashboard" element={<Dashboard/>}/>
+    <Route path="admin" element={<Admin/>}>
+      <Route path="dashboard" element={<Dashboard/>}/>
+    </Route>
   </Route>
 ), {
   basename: import.meta.env.VITE_APP_WEB_CONTEXT,
@@ -18,10 +23,12 @@ const router = createBrowserRouter(createRoutesFromElements(
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider>
-      <StompSessionProvider url={"http://localhost:8080/clsb/messaging"}>
-        <RouterProvider router={router}/>
-      </StompSessionProvider>
-    </MantineProvider>
+    <Provider store={store}>
+      <MantineProvider>
+        <StompSessionProvider url={"http://localhost:8080/clsb/messaging"}>
+          <RouterProvider router={router}/>
+        </StompSessionProvider>
+      </MantineProvider>
+    </Provider>
   </StrictMode>,
 )

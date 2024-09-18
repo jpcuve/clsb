@@ -21,6 +21,13 @@ export interface Feedback {
 export interface Bank {
   id: number,
   denomination: string,
+  baseIso: string,
+}
+
+export const defaultBank: Bank = {
+  id: 0,
+  denomination: '',
+  baseIso: '',
 }
 
 export interface Account {
@@ -37,4 +44,10 @@ export interface Perpetual {
   bank: Bank,
   currencies: Currency[],
   accounts: Account[],
+}
+
+export const defaultPerpetual: Perpetual = {
+  bank: defaultBank,
+  currencies: [],
+  accounts: [],
 }
