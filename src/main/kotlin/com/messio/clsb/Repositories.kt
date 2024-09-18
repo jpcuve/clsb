@@ -57,6 +57,13 @@ interface AccountRepository: CrudRepository<Account, Long> {
 }
 
 @Repository
+interface AccountCurrencyRepository: CrudRepository<AccountCurrency, Long> {
+    fun findTopByAccountAndCurrency(account: Account, currency: Currency): AccountCurrency?
+    fun findByAccount(account: Account): Iterable<AccountCurrency>
+    fun findByCurrency(currency: Currency): Iterable<AccountCurrency>
+}
+
+@Repository
 interface InstructionRepository: CrudRepository<Instruction, Long>
 
 @Repository

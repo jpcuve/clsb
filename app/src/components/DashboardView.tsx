@@ -23,8 +23,8 @@ const DashboardView: FC<{bank: Bank}> = props => {
   return (
     <Stack>
       <Text>Dashboard view: {props.bank.denomination}</Text>
-      {accounts.map(it => <Text>{it.denomination}</Text>)}
-      {currencies.map(it => <Text>{it.iso}</Text>)}
+      {accounts.map(it => <Text>{JSON.stringify(it)}</Text>)}
+      {currencies.map(it => <Text>{JSON.stringify(it)}</Text>)}
     </Stack>
   )
 }

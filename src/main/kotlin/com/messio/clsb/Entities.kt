@@ -74,14 +74,24 @@ class Account(
     @Column(name = "bank_id", insertable = false, updatable = false, nullable = false) var bankId: Long = 0L,
     @ManyToOne @JoinColumn(name = "bank_id") var bank: Bank,
     @Column(name = "denomination", nullable = false) var denomination: String = "",
-    @Column(name = "eligible", nullable = false) var eligible: Boolean = true,
-    @Column(name = "suspended", nullable = false) var suspended: Boolean = true,
-    @Convert(converter = PositionConverter::class) @Column(name = "short_limit", nullable = false) var shortLimit: Position = Position.ZERO,
-    @Convert(converter = PositionConverter::class) @Column(name = "collateral", nullable = false) var collateral: Position = Position.ZERO,
+    @OneToMany(mappedBy = "account") var currencies: Set<AccountCurrency> = emptySet(),
 ){
     override fun equals(other: Any?) = this === other || (other is Account && id == other.id)
     override fun hashCode() = id.hashCode()
 }
+
+@Entity
+@Table(name = "account_currencies", uniqueConstraints = [UniqueConstraint(columnNames = ["account_id", "currency_id"])])
+class AccountCurrency(
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "id") var id: Long = 0L,
+    @Column(name = "account_id", insertable = false, updatable = false, nullable = false) var accountId: Long = 0L,
+    @ManyToOne @JoinColumn(name = "account_id") var account: Account,
+    @Column(name = "currency_id", insertable = false, updatable = false, nullable = false) var currencyId: Long = 0L,
+    @ManyToOne @JoinColumn(name = "currency_id") var currency: Currency,
+    @Column(name = "suspended", nullable = false) var suspended: Boolean = true,
+    @Column(name = "short_limit", nullable = false) var shortLimit: BigDecimal = BigDecimal.ZERO,
+    @Column(name = "collateral", nullable = false) var collateral: BigDecimal = BigDecimal.ZERO,
+)
 
 enum class InstructionType {
     Transfer, PayIn, PayOut, Settlement, Trade

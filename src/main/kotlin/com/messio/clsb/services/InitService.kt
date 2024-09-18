@@ -83,7 +83,6 @@ class InitService(
                                     Account(
                                         bank = bank,
                                         denomination = attributes.getValue("name"),
-                                        shortLimit = Position.parse(attributes.getValue("short-limit"))
                                     )
                                 )
                             }

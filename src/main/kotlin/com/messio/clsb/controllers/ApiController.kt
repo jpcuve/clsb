@@ -24,6 +24,7 @@ class ApiController(
     @GetMapping("/perpetual/{bank-id}")
     fun getPerpetual(@PathVariable("bank-id") bankId: Long) = facade.bankRepository.findByIdOrNull(bankId)?.let { bank ->
         PerpetualValue(
+            bank = bank,
             accounts = facade.accountRepository.findByBank(bank).toList(),
             currencies = facade.currencyRepository.findByBank(bank).toList(),
         )
