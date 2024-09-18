@@ -16,7 +16,6 @@ const Admin = () => {
       const bankId = Number(idAsString)
       const perpetual = await client.perpetual(bankId)
       setPerpetual(perpetual)
-      applicationState.updatePerpetual(perpetual)
     }
   }
   useEffect(() => {
