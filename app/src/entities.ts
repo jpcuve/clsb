@@ -13,6 +13,11 @@ export interface Authentication {
   }
 }
 
+export interface Feedback {
+  level: 'error'|'success'|'warning'|'info'
+  message: string,
+}
+
 export interface Bank {
   id: number,
   denomination: string,
@@ -29,6 +34,7 @@ export interface Currency {
 }
 
 export interface Perpetual {
+  bank: Bank,
   currencies: Currency[],
   accounts: Account[],
 }

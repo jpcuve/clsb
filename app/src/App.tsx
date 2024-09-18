@@ -1,12 +1,9 @@
 import {Text, Stack, Button, Group} from '@mantine/core'
 import {useEffect} from 'react'
-import SignedOutView from './components/SignedOutView.tsx'
-import SignedInView from './components/SignedInView.tsx'
 import {Authentication} from './entities.ts'
-import {navigate} from 'wouter/use-browser-location'
-import {Route, Router} from 'wouter'
-import ErrorView from './components/ErrorView.tsx'
 import {useSessionStorage} from 'usehooks-ts'
+import {useNavigate} from 'react-router'
+import {Outlet} from 'react-router-dom'
 
 const fetchToken = async (code: string, scope: string) => {
   const search = new URLSearchParams()
@@ -36,12 +33,13 @@ const fetchUserInfo = async (token: string) => {
 
 function App() {
   console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
+  const navigate = useNavigate()
   const webContext = import.meta.env.VITE_APP_WEB_CONTEXT
   const [authentication, setAuthentication, removeAuthentication] = useSessionStorage<Authentication|undefined>(webContext, undefined)
   const signInOut = () => {
     if (authentication){
       removeAuthentication()
-      navigate(import.meta.env.VITE_APP_WEB_CONTEXT)
+      navigate('/')
     } else {
       const search = new URLSearchParams()
       search.append('client_id', import.meta.env.VITE_APP_CLIENT_ID)
@@ -67,7 +65,7 @@ function App() {
             handleError(u.error)
           }
           setAuthentication({t, u})
-          navigate(`${import.meta.env.VITE_APP_WEB_CONTEXT}/secure`)
+          navigate('dashboard')
         } catch(e: any){
           handleError(e.message)
         }
@@ -80,13 +78,19 @@ function App() {
         {authentication && <Text>{authentication.u.name}</Text>}
         <Button onClick={signInOut}>{authentication ? 'Sign-out' : 'Sign-in'}</Button>
       </Group>
-      <Router base={import.meta.env.VITE_APP_WEB_CONTEXT}>
-        <Route path="/"><SignedOutView/></Route>
-        {authentication && <Route path="/secure" nest>
-          <SignedInView/>
-        </Route>}
-        <Route path="/error" component={ErrorView}/>
+      <Outlet/>
+{/*
+      <Router basename={import.meta.env.VITE_APP_WEB_CONTEXT}>
+        <Routes>
+          <Route path="/"><SignedOutView/></Route>
+          {authentication && <Route path="/secure">
+              <SignedInView/>
+          </Route>}
+          <Route path="/error" component={ErrorView}/>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </Router>
+*/}
     </Stack>
   )
 }
