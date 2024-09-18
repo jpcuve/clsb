@@ -9,12 +9,11 @@ function useClient(){
   if (authentication){
     headers['Authorization'] = `Bearer ${authentication.t.id_token}`
   }
-  const client: any = {
-    banks: async () => await (await fetch(`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/api/banks`, {headers})).json() as Promise<Bank[]>,
-    perpetual: async (bankId: number) => await (await fetch(`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/api/perpetual/${bankId}`, {headers})).json() as Promise<Perpetual>,
-
+  class Client {
+    async banks() { return await (await fetch(`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/api/banks`, {headers})).json() as Promise<Bank[]>}
+    async perpetual(bankId: number){ return await (await fetch(`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/api/perpetual/${bankId}`, {headers})).json() as Promise<Perpetual>}
   }
-  return client
+  return new Client()
 }
 
 export default useClient
