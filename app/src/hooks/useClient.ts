@@ -9,9 +9,10 @@ function useClient(){
   if (authentication){
     headers['Authorization'] = `Bearer ${authentication.t.id_token}`
   }
+  const endPoint: string = `${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/api`
   class Client {
-    async banks() { return await (await fetch(`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/api/banks`, {headers})).json() as Promise<Bank[]>}
-    async perpetual(bankId: number){ return await (await fetch(`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/api/perpetual/${bankId}`, {headers})).json() as Promise<Perpetual>}
+    async banks() { return await (await fetch(`${endPoint}/banks`, {headers})).json() as Promise<Bank[]>}
+    async perpetual(bankId: number){ return await (await fetch(`${endPoint}/perpetual/${bankId}`, {headers})).json() as Promise<Perpetual>}
   }
   return new Client()
 }
