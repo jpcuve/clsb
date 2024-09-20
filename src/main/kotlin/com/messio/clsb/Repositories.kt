@@ -1,6 +1,5 @@
 package com.messio.clsb
 
-import legacyb1.Movements
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.jpa.repository.Query
