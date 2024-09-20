@@ -25,7 +25,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <MantineProvider>
-        <StompSessionProvider url={"http://localhost:8080/clsb/messaging"}>
+        <StompSessionProvider url={`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/message`}>
           <RouterProvider router={router}/>
         </StompSessionProvider>
       </MantineProvider>
