@@ -127,7 +127,7 @@ class SecurityConfig(
     }
 
     @Bean
-    @Order(1)
+    @Order(2)
     fun messagingFilterChain(http: HttpSecurity, verifier: JWTVerifier): SecurityFilterChain {
         http
             .securityMatcher("/messaging/**")
