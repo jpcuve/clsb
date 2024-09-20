@@ -3,7 +3,7 @@ import {useEffect} from 'react'
 import {Authentication} from './entities.ts'
 import {useSessionStorage} from 'usehooks-ts'
 import {useNavigate} from 'react-router'
-import {Outlet} from 'react-router-dom'
+import {Outlet, useSearchParams} from 'react-router-dom'
 
 const fetchToken = async (code: string, scope: string) => {
   const search = new URLSearchParams()
@@ -34,8 +34,8 @@ const fetchUserInfo = async (token: string) => {
 function App() {
   console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
   const navigate = useNavigate()
-  const webContext = import.meta.env.VITE_APP_WEB_CONTEXT
-  const [authentication, setAuthentication, removeAuthentication] = useSessionStorage<Authentication|undefined>(webContext, undefined)
+  const [searchParams] = useSearchParams()
+  const [authentication, setAuthentication, removeAuthentication] = useSessionStorage<Authentication|undefined>(import.meta.env.VITE_APP_WEB_CONTEXT, undefined)
   const signInOut = () => {
     if (authentication){
       removeAuthentication()
@@ -49,14 +49,13 @@ function App() {
       window.location.replace(`${import.meta.env.VITE_APP_IDENTITY_URL}/sign-in?${search}`)
     }
   }
-  const handleError = (message: string) => navigate(`${import.meta.env.VITE_APP_WEB_CONTEXT}/error?${message}`)
+  const handleError = (message: string) => navigate(`/error?${message}`)
   useEffect(() => {
     (async () => {
-      const urlParams = new URLSearchParams(window.location.search)
-      const code = urlParams.get('code')
+      const code = searchParams.get('code')
       if (!authentication && code){
         try {
-          const t = await fetchToken(code, urlParams.get('scope') || '')
+          const t = await fetchToken(code, searchParams.get('scope') || '')
           if (t.error) {
             handleError(t.error)
           }
@@ -78,19 +77,8 @@ function App() {
         {authentication && <Text>{authentication.u.name}</Text>}
         <Button onClick={signInOut}>{authentication ? 'Sign-out' : 'Sign-in'}</Button>
       </Group>
+      {searchParams.get('error') && <Text c="red">{searchParams.get('error')}</Text>}
       <Outlet/>
-{/*
-      <Router basename={import.meta.env.VITE_APP_WEB_CONTEXT}>
-        <Routes>
-          <Route path="/"><SignedOutView/></Route>
-          {authentication && <Route path="/secure">
-              <SignedInView/>
-          </Route>}
-          <Route path="/error" component={ErrorView}/>
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-*/}
     </Stack>
   )
 }

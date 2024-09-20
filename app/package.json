@@ -3,9 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "npm@9.2.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:test": "env-cmd -f .env.test npm run build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
