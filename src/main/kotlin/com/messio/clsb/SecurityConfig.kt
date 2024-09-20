@@ -131,28 +131,6 @@ class SecurityConfig(
     fun messagingFilterChain(http: HttpSecurity, verifier: JWTVerifier): SecurityFilterChain {
         http
             .securityMatcher("/messaging/**")
-            .csrf {
-                it.disable()
-            }
-            .cors {
-                it.configurationSource(UrlBasedCorsConfigurationSource().apply {
-                    registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues().apply {
-                        allowedOrigins = allowedOriginsAsString.split(",")
-                    })
-                })
-            }
-            .sessionManagement {
-                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            }
-            .headers {
-                it.frameOptions { it2 ->
-                    it2.disable()
-                }
-                it.httpStrictTransportSecurity { it2 ->
-                    it2.disable()
-                }
-            }
-            .addFilterAfter(securityFilter(verifier), BasicAuthenticationFilter::class.java)
             .authorizeHttpRequests {
                 it.anyRequest().permitAll()
             }
