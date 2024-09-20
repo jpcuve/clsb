@@ -127,25 +127,6 @@ class SecurityConfig(
     }
 
     @Bean
-    @Order(2)
-    fun messagingFilterChain(http: HttpSecurity, verifier: JWTVerifier): SecurityFilterChain {
-        http
-            .securityMatcher("/messaging/**")
-            .headers {
-                it.frameOptions { it2 ->
-                    it2.disable()
-                }
-                it.httpStrictTransportSecurity { it2 ->
-                    it2.disable()
-                }
-            }
-            .authorizeHttpRequests {
-                it.anyRequest().permitAll()
-            }
-        return http.build()
-    }
-
-    @Bean
     @Order(3)
     fun h2ConsoleFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
