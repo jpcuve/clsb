@@ -25,7 +25,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
       <MantineProvider>
-        <StompSessionProvider url={`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/message`}>
+        <StompSessionProvider url={`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/messaging`}>
           <RouterProvider router={router}/>
         </StompSessionProvider>
       </MantineProvider>
