@@ -131,6 +131,14 @@ class SecurityConfig(
     fun messagingFilterChain(http: HttpSecurity, verifier: JWTVerifier): SecurityFilterChain {
         http
             .securityMatcher("/messaging/**")
+            .headers {
+                it.frameOptions { it2 ->
+                    it2.disable()
+                }
+                it.httpStrictTransportSecurity { it2 ->
+                    it2.disable()
+                }
+            }
             .authorizeHttpRequests {
                 it.anyRequest().permitAll()
             }
