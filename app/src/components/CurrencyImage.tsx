@@ -21,6 +21,7 @@ const CurrencyImage: FC<{c: string, ccy: Currency}> = props => {
       <path
         d={`M ${convertLocalTime(props.ccy.closing) - height} ${height} l ${height} -${height} l ${height} ${height}`}
         fill="black"/>
+      <text x={1} y={height - 1} fontSize={height - 1} color="black">{props.ccy.iso}</text>
     </svg>
   )
 }

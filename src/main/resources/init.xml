@@ -13,7 +13,7 @@
         <currency iso="EUR" pay-in-schedule="{}" base-rate="1" scale="2" volatility-margin="0.01" group="EUROPE" opening="07:00" funding-completion-target="09:00" closing="17:30" close="18:00"/>
         <currency iso="GBP" pay-in-schedule="{}" base-rate="1.15" scale="2" volatility-margin="0.03" group="EUROPE" opening="06:00" funding-completion-target="08:00" closing="14:30" close="15:00"/>
         <currency iso="USD" pay-in-schedule="{}" base-rate="0.9" scale="2" volatility-margin="0.02" group="AMERICA" opening="06:30" funding-completion-target="08:30" closing="21:00" close="21:30"/>
-        <currency iso="JPY" pay-in-schedule="{}" base-rate="0.006" scale="6" volatility-margin="0.01" group="ASIA" opening="03:00" funding-completion-target="05:00" closing="13:30" close="13:00"/>
+        <currency iso="JPY" pay-in-schedule="{}" base-rate="0.006" scale="6" volatility-margin="0.01" group="ASIA" opening="03:00" funding-completion-target="05:00" closing="13:30" close="14:00"/>
         <account name="a"/>
         <account name="b"/>
         <account name="c"/>
