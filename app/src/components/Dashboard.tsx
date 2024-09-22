@@ -3,6 +3,7 @@ import {FC, useContext} from 'react'
 import {PerpetualContext} from './Admin.tsx'
 import {IPublishParams, useStompClient, useSubscription} from 'react-stomp-hooks'
 import {applicationState} from '../store.ts'
+import CurrencyImage from './CurrencyImage.tsx'
 
 const Dashboard: FC = () => {
   const perpetual = useContext(PerpetualContext)
@@ -26,6 +27,9 @@ const Dashboard: FC = () => {
     <Stack>
       <Text>Admin dashboard</Text>
       <Text>{JSON.stringify(perpetual)}</Text>
+      {perpetual.currencies.map(it =>
+        <CurrencyImage c="red" ccy={it}/>
+      )}
     </Stack>
   )
 }

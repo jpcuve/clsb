@@ -35,9 +35,16 @@ export interface Account {
   denomination: string,
 }
 
+export type LocalTime = [number, number]
+
 export interface Currency {
   id: number,
   iso: string,
+  opening: LocalTime,
+  fundingCompletionTarget: LocalTime,
+  closing: LocalTime,
+  close: LocalTime,
+  realTimeGrossSettlementPeriods: {init: LocalTime, done: LocalTime}[],
 }
 
 export interface Perpetual {
