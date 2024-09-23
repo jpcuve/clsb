@@ -58,7 +58,9 @@ class Currency(
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "currency_rtgs_periods", joinColumns = [JoinColumn(name = "currency_id", nullable = false)])
     var realTimeGrossSettlementPeriods: MutableSet<RealTimeGrossSettlementPeriod> = mutableSetOf(),
-)
+) {
+    val color get() = "red"
+}
 
 @Embeddable
 class RealTimeGrossSettlementPeriod(
