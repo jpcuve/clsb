@@ -3,7 +3,6 @@ import {FC, useContext} from 'react'
 import {PerpetualContext} from './Admin.tsx'
 import {IPublishParams, useStompClient, useSubscription} from 'react-stomp-hooks'
 import {applicationState} from '../store.ts'
-import CurrencyImage from './CurrencyImage.tsx'
 import BankImage from './BankImage.tsx'
 
 const Dashboard: FC = () => {

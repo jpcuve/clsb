@@ -24,6 +24,7 @@ const BankImage: FC<{perpetual: Perpetual, ratio: number}> = props => {
       {[...Array(24).keys()].map(it => <line x1={it * 60} y1={0} x2={it * 60} y2={height} stroke="black"/>)}
       <rect x={convertLocalTime(perpetual.bank.opening)} y={0} width={convertLocalTime(perpetual.bank.closing) - convertLocalTime(perpetual.bank.opening)} height={height / 2} fill="grey"/>
       <path d={`M ${convertLocalTime(perpetual.bank.settlementCompletionTarget) - height} 0 l ${height} ${height} l ${height} -${height}`} fill="white" stroke="black"/>
+      {[...Array(8).keys()].map(it => <text x={1 + it * 60 * 3} y={height - 1} stroke="black">{`${it * 3}`}</text>)}
       {perpetual.currencies.map((it, index) => CurrencyImage(it, index))}
     </svg>
   )
