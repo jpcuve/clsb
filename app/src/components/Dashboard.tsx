@@ -26,7 +26,7 @@ const Dashboard: FC = () => {
   return (
     <Stack>
       <Text>Admin dashboard</Text>
-      <BankImage perpetual={perpetual} ratio={90}/>
+      <BankImage perpetual={perpetual} ratio={45}/>
     </Stack>
   )
 }
