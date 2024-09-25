@@ -28,7 +28,7 @@ const router = createBrowserRouter(createRoutesFromElements(
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <Provider store={store}>
-      <MantineProvider>
+      <MantineProvider defaultColorScheme="auto">
         <StompSessionProvider url={`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}/messaging`}>
           <RouterProvider router={router}/>
         </StompSessionProvider>
