@@ -59,7 +59,7 @@ class Currency(
     @CollectionTable(name = "currency_rtgs_periods", joinColumns = [JoinColumn(name = "currency_id", nullable = false)])
     var realTimeGrossSettlementPeriods: MutableSet<RealTimeGrossSettlementPeriod> = mutableSetOf(),
 ) {
-    val color get() = "red"
+    val color get() = listOf("#eaba71", "#ecbd2a", "#ba8e2b", "#8d9736", "#18a96e", "#17a78d", "#19a6b1", "#4698ce", "#998aC0", "#cb78a8")[id.toInt()]
 }
 
 @Embeddable

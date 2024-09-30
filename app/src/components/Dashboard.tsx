@@ -1,4 +1,4 @@
-import {Text, Stack} from '@mantine/core'
+import {Stack} from '@mantine/core'
 import {FC, useContext} from 'react'
 import {PerpetualContext} from './Admin.tsx'
 import {IPublishParams, useStompClient, useSubscription} from 'react-stomp-hooks'
@@ -25,8 +25,7 @@ const Dashboard: FC = () => {
 
   return (
     <Stack>
-      <Text>Admin dashboard</Text>
-      <BankImage perpetual={perpetual} ratio={45}/>
+      <BankImage perpetual={perpetual} ratio={90}/>
     </Stack>
   )
 }

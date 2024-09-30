@@ -1,4 +1,4 @@
-import {Text, Stack, Button, Group} from '@mantine/core'
+import {Text, Button, Group, Flex, AppShell, Menu} from '@mantine/core'
 import {useEffect} from 'react'
 import {Authentication} from './entities.ts'
 import {useSessionStorage} from 'usehooks-ts'
@@ -71,16 +71,30 @@ function App() {
       }
     })()
   }, [])
-  return (
-    <Stack p="sm">
-      <Group>
-        {authentication && <Text>{authentication.u.name}</Text>}
-        <Button onClick={signInOut}>{authentication ? 'Sign-out' : 'Sign-in'}</Button>
-      </Group>
-      {searchParams.get('error') && <Text c="red">{searchParams.get('error')}</Text>}
-      <Outlet/>
-    </Stack>
-  )
+  return authentication ? (
+    <AppShell header={{height: {base: 30}}} p="sm">
+      <AppShell.Header>
+        <Group justify="space-between" h="100%" p={2}>
+          <Text>CLSB</Text>
+          <Menu shadow="md">
+            <Menu.Target>
+              <Button variant="transparent">{authentication.u.name}</Button>
+            </Menu.Target>
+            <Menu.Dropdown>
+              <Menu.Item onClick={signInOut}>Sign-out</Menu.Item>
+            </Menu.Dropdown>
+          </Menu>
+        </Group>
+      </AppShell.Header>
+      <AppShell.Main>
+        <Outlet/>
+      </AppShell.Main>
+    </AppShell>
+  ) : (
+      <Flex justify="center" align="center" h="100vh">
+        <Button onClick={signInOut}>Sign-in</Button>
+      </Flex>
+    )
 }
 
 export default App
