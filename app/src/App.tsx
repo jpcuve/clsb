@@ -51,7 +51,9 @@ function App() {
     <AppShell header={{height: {base: 45}}} p="sm">
       <AppShell.Header>
         <Group justify="space-between" h="100%" p={2}>
-          <Text>CLSB</Text>
+          <Group>
+            <Text>CLSB ({perpetual.bank.baseIso})</Text>
+          </Group>
           <Select value={perpetual.bank.id.toString()} onChange={handleChangeBank} data={banks.map(it => ({value: it.id.toString(), label: it.denomination}))}/>
           <Menu shadow="md">
             <Menu.Target>
