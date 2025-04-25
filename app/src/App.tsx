@@ -48,7 +48,7 @@ function App() {
     })()
   }, [])
   return secureClient.signedIn ? (
-    <AppShell header={{height: {base: 30}}} p="sm">
+    <AppShell header={{height: {base: 45}}} p="sm">
       <AppShell.Header>
         <Group justify="space-between" h="100%" p={2}>
           <Text>CLSB</Text>
