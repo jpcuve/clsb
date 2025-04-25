@@ -1,27 +1,26 @@
 import {createContext, useEffect, useState} from 'react'
 import {Bank, defaultPerpetual, Perpetual} from '../entities.ts'
-import useClient from '../hooks/useClient.ts'
 import {applicationState} from '../store.ts'
 import {Group, Select, Stack, Text} from '@mantine/core'
 import {Outlet} from 'react-router-dom'
+import secureClient from "../client.ts";
 
 export const PerpetualContext = createContext<Perpetual>(defaultPerpetual)
 
 const Admin = () => {
-  const client = useClient()
   const [banks, setBanks] = useState<Bank[]>([])
   const [perpetual, setPerpetual] = useState<Perpetual>(defaultPerpetual)
   const handleChangeBank = async (idAsString: string|null) => {
     if (idAsString){
       const bankId = Number(idAsString)
-      const perpetual = await client.perpetual(bankId)
+      const perpetual = await secureClient.perpetual(bankId)
       setPerpetual(perpetual)
     }
   }
   useEffect(() => {
     (async () => {
       try {
-        const banks = await client.banks()
+        const banks = await secureClient.banks()
         setBanks(banks)
         if (banks.length > 0){
           await handleChangeBank(banks[0].id.toString())

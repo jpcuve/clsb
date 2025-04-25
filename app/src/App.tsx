@@ -1,10 +1,10 @@
 import {Text, Button, Group, Flex, AppShell, Menu} from '@mantine/core'
 import {useEffect} from 'react'
-import {Authentication} from './entities.ts'
-import {useSessionStorage} from 'usehooks-ts'
 import {useNavigate} from 'react-router'
 import {Outlet, useSearchParams} from 'react-router-dom'
+import secureClient from "./client.ts";
 
+/*
 const fetchToken = async (code: string, scope: string) => {
   const search = new URLSearchParams()
   search.append('grant_type', 'authorization_code')
@@ -29,23 +29,19 @@ const fetchUserInfo = async (token: string) => {
   })
   return res.json()
 }
+*/
 
 
 function App() {
   console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const [authentication, setAuthentication, removeAuthentication] = useSessionStorage<Authentication|undefined>(import.meta.env.VITE_APP_WEB_CONTEXT, undefined)
   const signInOut = () => {
-    if (authentication){
-      removeAuthentication()
+    if (secureClient.signedIn){
+      secureClient.signOut()
       navigate('/')
     } else {
-      const search = new URLSearchParams()
-      search.append('client_id', import.meta.env.VITE_APP_CLIENT_ID)
-      search.append('redirect_uri', `${window.location.protocol}//${window.location.host}${import.meta.env.VITE_APP_WEB_CONTEXT}`)
-      search.append('scope', 'openid email profile')
-      search.append('response_type', 'code')
+      const search = secureClient.authorizeSearchParameters('openid email profile')
       window.location.replace(`${import.meta.env.VITE_APP_IDENTITY_URL}/sign-in?${search}`)
     }
   }
@@ -53,17 +49,9 @@ function App() {
   useEffect(() => {
     (async () => {
       const code = searchParams.get('code')
-      if (!authentication && code){
+      if (!secureClient.signedIn && code){
         try {
-          const t = await fetchToken(code, searchParams.get('scope') || '')
-          if (t.error) {
-            handleError(t.error)
-          }
-          const u = await fetchUserInfo(t.access_token)
-          if (u.error){
-            handleError(u.error)
-          }
-          setAuthentication({t, u})
+          await secureClient.signIn(code, searchParams.get('scope') || '')
           navigate('admin/dashboard')
         } catch(e: any){
           handleError(e.message)
@@ -71,14 +59,14 @@ function App() {
       }
     })()
   }, [])
-  return authentication ? (
+  return secureClient.signedIn ? (
     <AppShell header={{height: {base: 30}}} p="sm">
       <AppShell.Header>
         <Group justify="space-between" h="100%" p={2}>
           <Text>CLSB</Text>
           <Menu shadow="md">
             <Menu.Target>
-              <Button variant="transparent">{authentication.u.name}</Button>
+              <Button variant="transparent">{secureClient.userinfo.name}</Button>
             </Menu.Target>
             <Menu.Dropdown>
               <Menu.Item onClick={signInOut}>Sign-out</Menu.Item>
