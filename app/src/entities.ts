@@ -1,5 +1,3 @@
-import {today} from './helper.ts'
-
 export interface Token {
   access_token: string,
   id_token: string,
@@ -21,22 +19,6 @@ export interface PasswordPolicy {
   maxPastPasswordCount: number,
   maxFailedSignInAttemptCount: number,
   sessionTimeoutInSeconds: number,
-}
-
-export const defaultPasswordPolicy: PasswordPolicy = {
-  emailPattern: '.*',
-  rank: 1,
-  minLength: 8,
-  maxLength: 64,
-  minLowerCase: 0,
-  minUpperCase: 0,
-  minDigit: 0,
-  minSpecial: 0,
-  minAgeInDays: 0,
-  maxAgeInDays: 0,
-  maxPastPasswordCount: 8,
-  maxFailedSignInAttemptCount: 6,
-  sessionTimeoutInSeconds: 0,
 }
 
 export interface Userinfo {

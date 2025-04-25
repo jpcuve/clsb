@@ -1,9 +1,9 @@
 import {createContext, useEffect, useState} from 'react'
 import {Bank, defaultPerpetual, Perpetual} from '../entities.ts'
-import {applicationState} from '../store.ts'
 import {Group, Select, Stack, Text} from '@mantine/core'
 import {Outlet} from 'react-router-dom'
 import secureClient from "../client.ts";
+import {notifications} from "@mantine/notifications";
 
 export const PerpetualContext = createContext<Perpetual>(defaultPerpetual)
 
@@ -26,7 +26,10 @@ const Admin = () => {
           await handleChangeBank(banks[0].id.toString())
         }
       } catch (e: any) {
-        applicationState.notifyError(e.message)
+        console.log(e)
+        if (e instanceof Error){
+          notifications.show({color: 'red', message: e.message})
+        }
       }
     })()
   }, [])

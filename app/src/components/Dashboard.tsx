@@ -2,8 +2,8 @@ import {Stack} from '@mantine/core'
 import {FC, useContext} from 'react'
 import {PerpetualContext} from './Admin.tsx'
 import {IPublishParams, useStompClient, useSubscription} from 'react-stomp-hooks'
-import {applicationState} from '../store.ts'
 import BankImage from './BankImage.tsx'
+import {notifications} from "@mantine/notifications";
 
 const Dashboard: FC = () => {
   const perpetual = useContext(PerpetualContext)
@@ -17,7 +17,7 @@ const Dashboard: FC = () => {
     console.log(`Sending message: ${message.body}`)
     stompClient.publish(message)
   } else {
-    applicationState.notifyError('No stomp client')
+    notifications.show({color: 'red', message: 'No stomp client'})
   }
   useSubscription('/topic/ping', message => {
     console.log(`Received message: ${message.body}`)
