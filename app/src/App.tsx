@@ -40,7 +40,7 @@ function App() {
           if (banks.length > 0){
             await handleChangeBank(banks[0].id.toString())
           }
-          navigate('admin/dashboard')
+          navigate('/dashboard')
         } catch(e: any){
           handleError(e.message)
         }

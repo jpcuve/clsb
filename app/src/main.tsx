@@ -5,22 +5,18 @@ import App from './App.tsx'
 import { MantineProvider } from '@mantine/core'
 import '@mantine/core/styles.css'
 import {StompSessionProvider} from 'react-stomp-hooks'
-import {createBrowserRouter, createRoutesFromElements, Navigate, Route, RouterProvider} from 'react-router-dom'
-import Admin from './components/Admin.tsx'
+import {createBrowserRouter, Navigate, RouterProvider} from 'react-router-dom'
 import Dashboard from './components/Dashboard.tsx'
 import Test from './components/Test.tsx'
 import {Notifications} from "@mantine/notifications";
 
-const router = createBrowserRouter(createRoutesFromElements(
-  <Route path="/" element={<App/>}>
-    <Route index element={<Navigate to="/" replace/>}/>
-    <Route path="test" element={<Test/>}/>
-    <Route path="admin" element={<Admin/>}>
-      <Route path="dashboard" element={<Dashboard/>}/>
-    </Route>
-    <Route path="*" element={<Navigate to="/" replace/>}/>
-  </Route>
-), {
+const router = createBrowserRouter([
+  {path: '/', element: <App/>, children: [
+      {path: 'test', element: <Test/>},
+      {path: 'dashboard', element: <Dashboard/>},
+    ]},
+  {path: '*', element: <Navigate to={"/"} replace/>}
+], {
   basename: import.meta.env.VITE_APP_WEB_CONTEXT,
 })
 
