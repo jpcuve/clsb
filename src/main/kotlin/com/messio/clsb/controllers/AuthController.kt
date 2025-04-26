@@ -3,6 +3,7 @@ package com.messio.clsb.controllers
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,7 +26,7 @@ class AuthController(
         res.sendRedirect("$redirectUri?code=$CODE")
     }
 
-    @PostMapping("/auth/token")
+    @PostMapping("/auth/token", consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun postAuthToken(
         @RequestParam("grant_type") grantType: String,
         @RequestParam("code") code: String,
