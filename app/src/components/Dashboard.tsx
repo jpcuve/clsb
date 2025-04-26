@@ -1,12 +1,9 @@
 import {Stack} from '@mantine/core'
-import {FC, useContext} from 'react'
+import {FC} from 'react'
 import {IPublishParams, useStompClient, useSubscription} from 'react-stomp-hooks'
-import BankImage from './BankImage.tsx'
 import {notifications} from "@mantine/notifications";
-import PerpetualContext from "../contexts/PerpetualContext.ts";
 
 const Dashboard: FC = () => {
-  const perpetual = useContext(PerpetualContext)
   const stompClient = useStompClient()
   if (stompClient){
     const message: IPublishParams = {
@@ -25,7 +22,7 @@ const Dashboard: FC = () => {
 
   return (
     <Stack>
-      <BankImage perpetual={perpetual} ratio={90}/>
+      Dashboard
     </Stack>
   )
 }

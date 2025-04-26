@@ -5,6 +5,7 @@ import {Outlet, useSearchParams} from 'react-router-dom'
 import secureClient from "./client.ts";
 import PerpetualContext from './contexts/PerpetualContext.ts';
 import {Bank, defaultPerpetual, Perpetual} from "./entities.ts";
+import BankImage from "./components/BankImage.tsx";
 
 function App() {
   console.log(`Starting: ${import.meta.env.VITE_APP_TITLE}`)
@@ -34,7 +35,7 @@ function App() {
       const code = searchParams.get('code')
       if (!secureClient.signedIn && code){
         try {
-          await secureClient.signIn(code, searchParams.get('scope') || '')
+          await secureClient.signIn(code, searchParams.get('scope') ?? '')
           const banks = await secureClient.banks()
           setBanks(banks)
           if (banks.length > 0){
@@ -67,6 +68,7 @@ function App() {
       </AppShell.Header>
       <AppShell.Main>
         <PerpetualContext.Provider value={perpetual}>
+          <BankImage perpetual={perpetual} ratio={90}/>
           <Outlet/>
         </PerpetualContext.Provider>
       </AppShell.Main>

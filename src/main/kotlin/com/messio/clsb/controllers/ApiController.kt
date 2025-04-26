@@ -3,7 +3,6 @@ package com.messio.clsb.controllers
 import com.messio.clsb.Facade
 import com.messio.clsb.PerpetualValue
 import jakarta.persistence.EntityNotFoundException
-import jakarta.websocket.server.PathParam
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
