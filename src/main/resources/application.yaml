@@ -33,7 +33,5 @@ app:
   simulation-duration-in-days: 10
   identity:
     jwk-set-url: https://gate.messio.com/auth/keys
-    base-url: https://gate.messio.com
     client-id: 48c75db4-405a-4f2f-a149-7036db6b6418
-    client-secret: secret_for_clsb
 

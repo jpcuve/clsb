@@ -17,6 +17,22 @@ import org.springframework.web.bind.annotation.RestController
 class AuthController(
     val objectMapper: ObjectMapper
 ) {
+    @GetMapping("/keys")
+    open fun getKeys(): JsonNode {
+        val ret = objectMapper.createObjectNode()
+        val keys = objectMapper.createArrayNode()
+        val key = objectMapper.createObjectNode()
+        key.put("kty", "RSA")
+        key.put("alg", "RS256")
+        key.put("use", "sig")
+        key.put("kid", "key-id")
+        key.put("n", "modulus")
+        key.put("e", "exponent")
+        keys.add(key)
+        ret.set<JsonNode>("keys", keys)
+        return ret
+    }
+
     @GetMapping("/sign-in")
     fun getSignIn(
         @RequestParam("response_type") responseType: String,
