@@ -127,6 +127,28 @@ class SecurityConfig(
     }
 
     @Bean
+    @Order(2)
+    fun authFilterChain(http: HttpSecurity): SecurityFilterChain {
+        http
+            .securityMatcher("/auth/**")
+            .csrf {
+                it.disable()
+            }
+            .cors { // always allow all
+                it.configurationSource(UrlBasedCorsConfigurationSource().apply {
+                    registerCorsConfiguration("/**", CorsConfiguration().applyPermitDefaultValues().apply { addAllowedMethod("DELETE") })
+                })
+            }
+            .sessionManagement() {
+                it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .authorizeHttpRequests {
+                it.anyRequest().permitAll()
+            }
+        return http.build()
+    }
+
+    @Bean
     @Order(3)
     fun h2ConsoleFilterChain(http: HttpSecurity): SecurityFilterChain {
         http

@@ -41,6 +41,12 @@ class AuthController(
         return ret
     }
 
+    @GetMapping("/auth/userinfo")
+    fun getUserInfo(): Map<String, String> {
+        val ret = mutableMapOf<String, String>()
+        return ret
+    }
+
     companion object {
         const val CODE: String = "code"
     }
