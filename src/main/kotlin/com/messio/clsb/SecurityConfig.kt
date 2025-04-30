@@ -26,44 +26,35 @@ import java.security.cert.X509Certificate
 import java.security.interfaces.RSAPublicKey
 import java.time.Duration
 import java.util.*
-import javax.naming.ldap.LdapName
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.core.annotation.Order
-import org.springframework.core.env.Environment
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.util.matcher.AnyRequestMatcher
 import org.springframework.web.cors.CorsConfiguration
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource
+import java.security.KeyPair
 import java.security.KeyPairGenerator
+import java.security.interfaces.RSAPrivateKey
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 class SecurityConfig(
-    val env: Environment,
+    val jsonNodeBodyHandler: HttpResponse.BodyHandler<JsonNode>,
     @Value("\${app.identity.client-id}") val clientId: String,
     @Value("\${app.allowed-origins}") val allowedOriginsAsString: String,
+    @Value("\${app.identity.jwk-set-url}") val jwkSetUrl: String,
 ) {
+
     @Bean
-    fun jwtVerifier(
-        jsonNodeBodyHandler: HttpResponse.BodyHandler<JsonNode>,
-        @Value("\${app.identity.jwk-set-url}") jwkSetUrl: String,
-    ): JWTVerifier {
-        if (!env.activeProfiles.contains("standalone")){
-            val httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
-                .followRedirects(HttpClient.Redirect.NORMAL)
-                .connectTimeout(Duration.ofSeconds(2L))
-                .build()
-            val req = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create(jwkSetUrl))
-                .header("Accept", "application/json")
-                .build()
+    fun keyPair(): KeyPair {
+        if (jwkSetUrl.startsWith("http")) {
+            val httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(2L)).build()
+            val req = HttpRequest.newBuilder().GET().uri(URI.create(jwkSetUrl)).build()
             var delay = 1000L
             while (delay < 120000L) {
                 try {
@@ -74,23 +65,24 @@ class SecurityConfig(
                     ByteArrayInputStream(decodedCertificate).use { inputStream ->
                         val certificateFactory = CertificateFactory.getInstance("X.509")
                         val certificate = certificateFactory.generateCertificate(inputStream) as X509Certificate
-                        val principal = LdapName(certificate.issuerX500Principal.name)
-                        val issuer = principal.rdns.firstOrNull { it.type == "CN" }?.value?.toString() ?: ""
                         val publicKey = certificate.publicKey as RSAPublicKey
-                        val algorithm = Algorithm.RSA256(publicKey, null)
-                        return JWT.require(algorithm).withIssuer(issuer).build()
+                        return KeyPair(publicKey, null)
                     }
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     // ignore
                 }
-                logger.info("Waiting for gate... {}ms", delay)
+                logger.info("Waiting for public key... {}ms", delay)
                 Thread.sleep(delay)
                 delay = delay / 2 * 3
             }
         }
-        val keyPair = KeyPairGenerator.getInstance("RSA").genKeyPair()
-        val algorithm = Algorithm.RSA256(keyPair.public as RSAPublicKey, null)
-        return JWT.require(algorithm).withIssuer("test").build()
+        return KeyPairGenerator.getInstance("RSA").genKeyPair()
+    }
+
+    @Bean
+    fun jwtVerifier(keyPair: KeyPair): JWTVerifier {
+        val algorithm = Algorithm.RSA256(keyPair.public as RSAPublicKey, keyPair.private as RSAPrivateKey?)
+        return JWT.require(algorithm).build()
     }
 
     @Bean

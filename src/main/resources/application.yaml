@@ -32,6 +32,6 @@ app:
   start-date: 1970-01-01
   simulation-duration-in-days: 10
   identity:
-    jwk-set-url: https://gate.messio.com/auth/keys
+    jwk-set-url: local
     client-id: 48c75db4-405a-4f2f-a149-7036db6b6418
 

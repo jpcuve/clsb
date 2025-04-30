@@ -1,4 +1,4 @@
-import {Text, Button, Group, Flex, AppShell, Menu, Select} from '@mantine/core'
+import {Text, Button, Group, Flex, AppShell, Menu, Select, Stack} from '@mantine/core'
 import {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router'
 import {Outlet, useSearchParams} from 'react-router-dom'
@@ -42,8 +42,10 @@ function App() {
             await handleChangeBank(banks[0].id.toString())
           }
           navigate('/dashboard')
-        } catch(e: any){
-          handleError(e.message)
+        } catch(e: unknown){
+          if (e instanceof Error){
+            handleError(e.message)
+          }
         }
       }
     })()
@@ -75,7 +77,11 @@ function App() {
     </AppShell>
   ) : (
       <Flex justify="center" align="center" h="100vh">
-        <Button onClick={signInOut}>Sign-in</Button>
+        <Stack>
+          <Button onClick={signInOut}>Sign-in</Button>
+
+
+        </Stack>
       </Flex>
     )
 }
