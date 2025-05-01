@@ -79,8 +79,7 @@ function App() {
       <Flex justify="center" align="center" h="100vh">
         <Stack>
           <Button onClick={signInOut}>Sign-in</Button>
-
-
+          {searchParams.get('error') && <Text c="red">{searchParams.get('error')}</Text>}
         </Stack>
       </Flex>
     )
