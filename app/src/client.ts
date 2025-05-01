@@ -108,7 +108,7 @@ class SecureClient {
     }
     let res = await fetch(`${import.meta.env.VITE_APP_REMOTE_HOST}${import.meta.env.VITE_APP_WEB_CONTEXT}${endPoint}`, options)
     if (!res.ok){
-      if (res.status === 401){
+      if (res.status === 401 || res.status === 403){
         // attempt to refresh
         await this.refresh()
         idToken = sessionStorage.getItem(this.idTokenKey)
